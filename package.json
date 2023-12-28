@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/wraith13/flounder.style.js/issues"
   },
-  "homepage": "https://github.com/wraith13/flounder.style.js#readme",
+  "homepage": "https://github.com/wraith13/flounder.style.js/#readme",
   "devDependencies": {
     "typescript": "^5.3.3"
   }
