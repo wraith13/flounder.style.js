@@ -1,0 +1,27 @@
+{
+  "name": "@wraith13/flounder.style.js",
+  "version": "1.0.0",
+  "description": "Digital color depth pattern style maker for TypeScript/JavaScript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wraith13/flounder.style.js.git"
+  },
+  "keywords": [
+    "css",
+    "style",
+    "pattern"
+  ],
+  "author": "wraith13",
+  "license": "BSL-1.0",
+  "bugs": {
+    "url": "https://github.com/wraith13/flounder.style.js/issues"
+  },
+  "homepage": "https://github.com/wraith13/flounder.style.js#readme",
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

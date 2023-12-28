@@ -1,0 +1,39 @@
+{
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "compilerOptions": {
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "strict": true,
+        "declaration": true,
+        "target": "es5",
+        "lib": [
+            "es6",
+            "dom",
+            "scripthost"
+        ],
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "sourceMap": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "forceConsistentCasingInFileNames": true,
+        "traceResolution": false,
+        "listFiles": false,
+        "stripInternal": true,
+        "skipDefaultLibCheck": true,
+        "skipLibCheck": true,
+        "pretty": false,
+        "noEmitOnError": true,
+        "esModuleInterop": true,
+        "outDir": "library",
+        "rootDir": "."
+    },
+    "exclude": [
+        "library"
+    ]
+}
