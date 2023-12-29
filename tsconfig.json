@@ -30,10 +30,13 @@
         "pretty": false,
         "noEmitOnError": true,
         "esModuleInterop": true,
-        "outDir": "library",
+        "resolveJsonModule": true,
+        // "outFile": "index.js",
         "rootDir": "."
     },
+    "files": [
+        "index.ts"
+    ],
     "exclude": [
-        "library"
     ]
 }
