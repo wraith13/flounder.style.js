@@ -28,13 +28,16 @@ declare module "index" {
             spotIntervalSize?: number;
             depth: number;
             maxSpotSize?: number;
+            reverseRate?: number | "auto";
             maximumFractionDigits?: number;
         }
         const getPatternType: (data: Arguments) => FlounderType;
         const getLayoutAngle: (data: Arguments) => LayoutAngle;
         const getBackgroundColor: (data: Arguments) => Color;
+        const getReverseRate: (data: Arguments) => number;
         const makePatternStyleList: (data: Arguments) => StyleProperty[];
         const makePlainStyleListOrNull: (data: Arguments) => StyleProperty[] | null;
+        const reverseArguments: (data: Arguments) => Arguments;
         const makeTriPatternStyleList: (data: Arguments) => StyleProperty[];
         const makeTetraPatternStyleList: (data: Arguments) => StyleProperty[];
     }

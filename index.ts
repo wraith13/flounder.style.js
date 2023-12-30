@@ -44,11 +44,17 @@ export module flounderStyle
         spotIntervalSize?: number;
         depth: number; // must be 0.0 <= depth and depth <= 1.0
         maxSpotSize?: number; // must be 1 <= maxSpotSize and maxSpotSize <= (spotIntervalSize *0.5);
+        reverseRate?: number | "auto"; // must be 0.0 <= depth and depth <= 1.0
         maximumFractionDigits?: number;
     }
     export const getPatternType = (data: Arguments): FlounderType => data.type ?? "tri";
     export const getLayoutAngle = (data: Arguments): LayoutAngle => data.layoutAngle ?? "regular";
     export const getBackgroundColor = (data: Arguments): Color => data.backgroundColor ?? "transparent";
+    export const getReverseRate = (data: Arguments): number =>
+        "number" === typeof data.reverseRate ? data.reverseRate:
+        "auto" === data.reverseRate && "tri" === data.type ? triPatternHalfRadiusSpotArea:
+        "auto" === data.reverseRate && "tetra" === data.type ? TetraPatternHalfRadiusSpotArea:
+        999;
     const numberToString = (data: Arguments, value: number) =>
         value.toLocaleString("en-US", { maximumFractionDigits: data.maximumFractionDigits ?? config.defaultMaximumFractionDigits, });
     const makeResult = ({ backgroundColor = undefined as StyleValue, backgroundImage = undefined as StyleValue, backgroundSize = undefined as StyleValue, backgroundPosition = undefined as StyleValue}): StyleProperty[] =>
@@ -71,7 +77,7 @@ export module flounderStyle
         }
     };
     const makeRadialGradientString = (data: Arguments, radius: string) =>
-        `radial-gradient(circle at center, ${data.foregroundColor} ${radius}, ${getBackgroundColor(data)} ${radius})`;
+        `radial-gradient(circle at center, ${data.foregroundColor} ${radius}, transparent ${radius})`;
     const root2 = Math.sqrt(2.0);
     const root3 = Math.sqrt(3.0);
     const triPatternHalfRadiusSpotArea = Math.PI / (2 *root3);
@@ -104,38 +110,63 @@ export module flounderStyle
         {
             const minRadius = spotIntervalSize *0.5;
             const maxRadius = spotIntervalSize *maxRadiusRate;
-            const radiusMaxWidth = maxRadius -minRadius;
-            const minRate = halfRadiusSpotArea *halfRadiusSpotArea;
-            const maxRate = 1.0;
-            const rateMaxWidth = maxRate -minRate;
-            const rate = data.depth *data.depth;
-            const rateWidth = rate -minRate;
-            radius = minRadius +(radiusMaxWidth *(rateWidth / rateMaxWidth));
+            const MaxRadiusWidth = maxRadius -minRadius;
+            const minAreaRate = halfRadiusSpotArea;
+            const maxAreaRate = 1.0;
+            const maxAreaRateWidth = minAreaRate -maxAreaRate;
+            const areaRate = data.depth;
+            const areaRateWidth = areaRate -minAreaRate;
+            const adjusterForReducePixelCollapseEffect = undefined === data.maxSpotSize ? 0.9: 0.7;
+            radius = minRadius +(MaxRadiusWidth *Math.pow(areaRateWidth / maxAreaRateWidth, 2) *adjusterForReducePixelCollapseEffect);
         }
         if (undefined !== data.maxSpotSize && data.maxSpotSize < radius)
         {
-            spotIntervalSize = spotIntervalSize *(data.maxSpotSize /radius);
+            spotIntervalSize = spotIntervalSize *data.maxSpotSize /radius;
             radius = data.maxSpotSize;
         }
         return { radius, spotIntervalSize };
     };
+    export const reverseArguments = (data: Arguments): Arguments =>
+    {
+        const result = structuredClone(data);
+        result.foregroundColor = getBackgroundColor(data);
+        result.backgroundColor = data.foregroundColor;
+        result.depth = 1.0 -data.depth;
+        delete result.reverseRate;
+        return result;
+    };
     export const makeTriPatternStyleList = (data: Arguments): StyleProperty[] =>
     {
+        if ("transparent" === data.foregroundColor)
+        {
+            throw new Error(`foregroundColor must be other than "transparent".`);
+        }
         const plain = makePlainStyleListOrNull(data);
         if (null !== plain)
         {
             return plain;
         }
         else
+        if (getReverseRate(data) <= data.depth)
+        {
+            if ("transparent" === getBackgroundColor(data))
+            {
+                throw new Error(`When using reverseRate, foregroundColor and backgroundColor must be other than "transparent".`);
+            }
+            return makeTriPatternStyleList(reverseArguments(data));
+        }
+        else
         {
             const { radius, spotIntervalSize } = calculateSize(data, triPatternHalfRadiusSpotArea, 1.0 /root3);
             const radialGradient = makeRadialGradientString(data, `${numberToString(data, radius)}px`);
+            const backgroundColor: StyleValue = getBackgroundColor(data);
             const backgroundImage: StyleValue = Array.from({ length: 4 }).map(_ => radialGradient).join(", ");
             switch(getLayoutAngle(data))
             {
             case "regular": // horizontal
                 return makeResult
                 ({
+                    backgroundColor,
                     backgroundImage,
                     backgroundSize: `${numberToString(data, spotIntervalSize *2.0)}px ${numberToString(data, spotIntervalSize *root3)}px`,
                     backgroundPosition: `0px 0px, ${numberToString(data, spotIntervalSize)}px 0px, ${numberToString(data, spotIntervalSize *0.5)}px ${numberToString(data, spotIntervalSize *root3 *0.5)}px, ${numberToString(data, spotIntervalSize *1.5)}px ${numberToString(data, spotIntervalSize * root3 * 0.5)}px`
@@ -143,6 +174,7 @@ export module flounderStyle
             case "alternative": // vertical
                 return makeResult
                 ({
+                    backgroundColor,
                     backgroundImage,
                     backgroundSize: ` ${numberToString(data, spotIntervalSize *root3)}px ${numberToString(data, spotIntervalSize *2.0)}px`,
                     backgroundPosition: `0px 0px, 0px ${numberToString(data, spotIntervalSize)}px, ${numberToString(data, spotIntervalSize *root3 *0.5)}px ${numberToString(data, spotIntervalSize *0.5)}px, ${numberToString(data, spotIntervalSize *root3 *0.5)}px ${numberToString(data, spotIntervalSize *1.5)}px`
@@ -154,26 +186,42 @@ export module flounderStyle
     };
     export const makeTetraPatternStyleList = (data: Arguments): StyleProperty[] =>
     {
+        if ("transparent" === data.foregroundColor)
+        {
+            throw new Error(`foregroundColor must be other than "transparent".`);
+        }
         const plain = makePlainStyleListOrNull(data);
         if (null !== plain)
         {
             return plain;
         }
         else
+        if (getReverseRate(data) <= data.depth)
+        {
+            if ("transparent" === getBackgroundColor(data))
+            {
+                throw new Error(`When using reverseRate, foregroundColor and backgroundColor must be other than "transparent".`);
+            }
+            return makeTetraPatternStyleList(reverseArguments(data));
+        }
+        else
         {
             const { radius, spotIntervalSize } = calculateSize(data, TetraPatternHalfRadiusSpotArea, 0.5 *root2);
             const radialGradient = makeRadialGradientString(data, `${numberToString(data, radius)}px`);
+            const backgroundColor: StyleValue = getBackgroundColor(data);
             switch(getLayoutAngle(data))
             {
             case "regular": // straight
                 return makeResult
                 ({
+                    backgroundColor,
                     backgroundImage: radialGradient,
                     backgroundSize: `${numberToString(data, spotIntervalSize)}px ${numberToString(data, spotIntervalSize)}px`,
                 });
             case "alternative": // slant
                 return makeResult
                 ({
+                    backgroundColor,
                     backgroundImage: Array.from({ length: 2 }).map(_ => radialGradient).join(", "),
                     backgroundSize: `${numberToString(data, (spotIntervalSize *2.0) /root2)}px ${numberToString(data, (spotIntervalSize *2.0) /root2)}px`,
                     backgroundPosition: `0px 0px, ${numberToString(data, spotIntervalSize /root2)}px ${numberToString(data, spotIntervalSize /root2)}px`
