@@ -54,7 +54,7 @@ const data: flounderStyle.Arguments =
     maxSpotSize: undefined,
     spotIntervalSize: 32,
 };
-const styleList = flounderStyle.makePattern(data);
+const styleList = flounderStyle.makePatternStyleList(data);
 
 // apply style list
 const element = document.getElementById("YOUR-ELEMENT");

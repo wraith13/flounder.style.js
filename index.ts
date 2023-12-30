@@ -49,7 +49,6 @@ export module flounderStyle
     export const getPatternType = (data: Arguments): FlounderType => data.type ?? "tri";
     export const getLayoutAngle = (data: Arguments): LayoutAngle => data.layoutAngle ?? "regular";
     export const getBackgroundColor = (data: Arguments): Color => data.backgroundColor ?? "transparent";
-
     const numberToString = (data: Arguments, value: number) =>
         value.toLocaleString("en-US", { maximumFractionDigits: data.maximumFractionDigits ?? config.defaultMaximumFractionDigits, });
     const makeResult = ({ backgroundColor = undefined as StyleValue, backgroundImage = undefined as StyleValue, backgroundSize = undefined as StyleValue, backgroundPosition = undefined as StyleValue}): StyleProperty[] =>
@@ -59,14 +58,14 @@ export module flounderStyle
         { key: { css: "background-size", dom: "backgroundSize", }, value:backgroundSize, },
         { key: { css: "background-position", dom: "backgroundPosition", }, value:backgroundPosition, },
     ];
-    export const makePattern = (data: Arguments): StyleProperty[] =>
+    export const makePatternStyleList = (data: Arguments): StyleProperty[] =>
     {
         switch(getPatternType(data))
         {
         case "tri":
-            return makeTriPattern(data);
+            return makeTriPatternStyleList(data);
         case "tetra":
-            return makeTetraPattern(data);
+            return makeTetraPatternStyleList(data);
         default:
             throw new Error(`Unknown FlounderType: ${data.type}`);
         }
@@ -77,7 +76,7 @@ export module flounderStyle
     const root3 = Math.sqrt(3.0);
     const triPatternHalfRadiusSpotArea = Math.PI / (2 *root3);
     const TetraPatternHalfRadiusSpotArea = Math.PI / 4;
-    export const makePlainOrNull = (data: Arguments): StyleProperty[] | null =>
+    export const makePlainStyleListOrNull = (data: Arguments): StyleProperty[] | null =>
     {
         if (data.depth <= 0.0)
         {
@@ -118,12 +117,11 @@ export module flounderStyle
             spotIntervalSize = spotIntervalSize *(data.maxSpotSize /radius);
             radius = data.maxSpotSize;
         }
-        //console.log({ radius, spotIntervalSize });
         return { radius, spotIntervalSize };
     };
-    export const makeTriPattern = (data: Arguments): StyleProperty[] =>
+    export const makeTriPatternStyleList = (data: Arguments): StyleProperty[] =>
     {
-        const plain = makePlainOrNull(data);
+        const plain = makePlainStyleListOrNull(data);
         if (null !== plain)
         {
             return plain;
@@ -154,9 +152,9 @@ export module flounderStyle
             }
         }
     };
-    export const makeTetraPattern = (data: Arguments): StyleProperty[] =>
+    export const makeTetraPatternStyleList = (data: Arguments): StyleProperty[] =>
     {
-        const plain = makePlainOrNull(data);
+        const plain = makePlainStyleListOrNull(data);
         if (null !== plain)
         {
             return plain;
