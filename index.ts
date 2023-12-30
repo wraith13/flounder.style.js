@@ -38,11 +38,11 @@ export module flounderStyle
     export interface Arguments
     {
         type?: FlounderType;
+        layoutAngle?: LayoutAngle;
         foregroundColor: Color;
         backgroundColor?: Color; // default is "transparent"
         spotIntervalSize?: number;
         depth: number; // must be 0.0 <= depth and depth <= 1.0
-        layoutAngle?: LayoutAngle;
         maxSpotSize?: number; // must be 1 <= maxSpotSize and maxSpotSize <= (spotIntervalSize *0.5);
         maximumFractionDigits?: number;
     }
@@ -105,10 +105,10 @@ export module flounderStyle
             const minRadius = spotIntervalSize *0.5;
             const maxRadius = spotIntervalSize *maxRadiusRate;
             const radiusMaxWidth = maxRadius -minRadius;
-            const minRate = Math.sqrt(halfRadiusSpotArea);
+            const minRate = halfRadiusSpotArea *halfRadiusSpotArea;
             const maxRate = 1.0;
             const rateMaxWidth = maxRate -minRate;
-            const rate = Math.sqrt(data.depth);
+            const rate = data.depth *data.depth;
             const rateWidth = rate -minRate;
             radius = minRadius +(radiusMaxWidth *(rateWidth / rateMaxWidth));
         }

@@ -50,9 +50,8 @@ const data: flounderStyle.Arguments =
     type: "tri",
     layoutAngle: "regular",
     foregroundColor: "#AAFFDD",
+    spotIntervalSize: 24,
     depth: 0.5,
-    maxSpotSize: undefined,
-    spotIntervalSize: 32,
 };
 const styleList = flounderStyle.makePatternStyleList(data);
 
@@ -63,6 +62,19 @@ flounderStyle.setStyleList(element, styleList);
 // get CSS string
 console.log(`CSS: ${flounderStyle.styleListToString(styleList)}`);
 ```
+
+### flounderStyle.Arguments
+
+|key|type|default|description|
+|---|---|---|---|
+|type|FlounderType|"try"|"try" or "tetra"|
+|layoutAngle|LayoutAngle|"regular"|"regular" or "alternative"|
+|foregroundColor|Color|`NOT OPTIONAL`|Pattern foreground [CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)|
+|backgroundColor|Color|"transparent"|Pattern background [CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)|
+|spotIntervalSize|number|24|...|
+|depth|number|`NOT OPTIONAL`|must be 0.0 <= depth and depth <= 1.0|
+|maxSpotSize|number|`undefined`|must be 1 <= maxSpotSize and maxSpotSize <= (spotIntervalSize *0.5)|
+|maximumFractionDigits|number|2|...|
 
 ## Development environment construction
 
