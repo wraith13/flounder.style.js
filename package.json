@@ -1,6 +1,6 @@
 {
   "name": "@wraith13/flounder.style.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Digital color depth pattern style maker for TypeScript/JavaScript",
   "main": "index.js",
   "scripts": {
