@@ -50,10 +50,10 @@ export module flounderStyle
     export const getPatternType = (data: Arguments): FlounderType => data.type ?? "tri";
     export const getLayoutAngle = (data: Arguments): LayoutAngle => data.layoutAngle ?? "regular";
     export const getBackgroundColor = (data: Arguments): Color => data.backgroundColor ?? "transparent";
-    export const getReverseRate = (data: Arguments): number =>
+    export const getActualReverseRate = (data: Arguments): number =>
         "number" === typeof data.reverseRate ? data.reverseRate:
-        "auto" === data.reverseRate && "tri" === data.type ? triPatternHalfRadiusSpotArea:
-        "auto" === data.reverseRate && "tetra" === data.type ? TetraPatternHalfRadiusSpotArea:
+        ("auto" === data.reverseRate && "tri" === getPatternType(data)) ? triPatternHalfRadiusSpotArea:
+        ("auto" === data.reverseRate && "tetra" === getPatternType(data)) ? TetraPatternHalfRadiusSpotArea:
         999;
     const numberToString = (data: Arguments, value: number) =>
         value.toLocaleString("en-US", { maximumFractionDigits: data.maximumFractionDigits ?? config.defaultMaximumFractionDigits, });
@@ -147,11 +147,11 @@ export module flounderStyle
             return plain;
         }
         else
-        if (getReverseRate(data) <= data.depth)
+        if (getActualReverseRate(data) < data.depth)
         {
             if ("transparent" === getBackgroundColor(data))
             {
-                throw new Error(`When using reverseRate, foregroundColor and backgroundColor must be other than "transparent".`);
+                throw new Error(`When using reverseRate, backgroundColor must be other than "transparent".`);
             }
             return makeTriPatternStyleList(reverseArguments(data));
         }
@@ -196,11 +196,11 @@ export module flounderStyle
             return plain;
         }
         else
-        if (getReverseRate(data) <= data.depth)
+        if (getActualReverseRate(data) < data.depth)
         {
             if ("transparent" === getBackgroundColor(data))
             {
-                throw new Error(`When using reverseRate, foregroundColor and backgroundColor must be other than "transparent".`);
+                throw new Error(`When using reverseRate, backgroundColor must be other than "transparent".`);
             }
             return makeTetraPatternStyleList(reverseArguments(data));
         }

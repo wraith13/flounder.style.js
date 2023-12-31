@@ -36,10 +36,10 @@ define("index", ["require", "exports", "config"], function (require, exports, co
         flounderStyle.getPatternType = function (data) { var _a; return (_a = data.type) !== null && _a !== void 0 ? _a : "tri"; };
         flounderStyle.getLayoutAngle = function (data) { var _a; return (_a = data.layoutAngle) !== null && _a !== void 0 ? _a : "regular"; };
         flounderStyle.getBackgroundColor = function (data) { var _a; return (_a = data.backgroundColor) !== null && _a !== void 0 ? _a : "transparent"; };
-        flounderStyle.getReverseRate = function (data) {
+        flounderStyle.getActualReverseRate = function (data) {
             return "number" === typeof data.reverseRate ? data.reverseRate :
-                "auto" === data.reverseRate && "tri" === data.type ? triPatternHalfRadiusSpotArea :
-                    "auto" === data.reverseRate && "tetra" === data.type ? TetraPatternHalfRadiusSpotArea :
+                ("auto" === data.reverseRate && "tri" === flounderStyle.getPatternType(data)) ? triPatternHalfRadiusSpotArea :
+                    ("auto" === data.reverseRate && "tetra" === flounderStyle.getPatternType(data)) ? TetraPatternHalfRadiusSpotArea :
                         999;
         };
         var numberToString = function (data, value) { var _a; return value.toLocaleString("en-US", { maximumFractionDigits: (_a = data.maximumFractionDigits) !== null && _a !== void 0 ? _a : config_json_1.default.defaultMaximumFractionDigits, }); };
@@ -122,9 +122,9 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             if (null !== plain) {
                 return plain;
             }
-            else if (flounderStyle.getReverseRate(data) <= data.depth) {
+            else if (flounderStyle.getActualReverseRate(data) < data.depth) {
                 if ("transparent" === flounderStyle.getBackgroundColor(data)) {
-                    throw new Error("When using reverseRate, foregroundColor and backgroundColor must be other than \"transparent\".");
+                    throw new Error("When using reverseRate, backgroundColor must be other than \"transparent\".");
                 }
                 return flounderStyle.makeTriPatternStyleList(flounderStyle.reverseArguments(data));
             }
@@ -161,9 +161,9 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             if (null !== plain) {
                 return plain;
             }
-            else if (flounderStyle.getReverseRate(data) <= data.depth) {
+            else if (flounderStyle.getActualReverseRate(data) < data.depth) {
                 if ("transparent" === flounderStyle.getBackgroundColor(data)) {
-                    throw new Error("When using reverseRate, foregroundColor and backgroundColor must be other than \"transparent\".");
+                    throw new Error("When using reverseRate, backgroundColor must be other than \"transparent\".");
                 }
                 return flounderStyle.makeTetraPatternStyleList(flounderStyle.reverseArguments(data));
             }
