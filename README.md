@@ -65,7 +65,7 @@ console.log(`CSS: ${flounderStyle.styleListToString(styleList)}`);
 
 |key|type|default|description|
 |---|---|---|---|
-|type|FlounderType|"try"|see [demo](./demo.html). "try" or "tetra"|
+|type|FlounderType|"tri"|see [demo](./demo.html). "tri" or "tetra"|
 |layoutAngle|LayoutAngle|"regular"|see [demo](./demo.html). "regular" or "alternative"|
 |foregroundColor|Color|`NOT OPTIONAL`|Pattern foreground [CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value). foregroundColor must be other than "transparent".|
 |backgroundColor|Color|"transparent"|Pattern background [CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value). When using reverseRate, backgroundColor must be other than "transparent".|

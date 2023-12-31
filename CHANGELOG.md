@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.0.1 - 2024-01-01
+
+### Fixed
+
+- README.md: "try" -> "tri"
+
 ## 1.0.0 - 2024-01-01
 
 ### Added
