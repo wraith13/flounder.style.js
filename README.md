@@ -26,7 +26,7 @@ background-position: 0px 0px, 21.55px 0px, 10.77px 18.66px, 32.32px 18.66px;
 
 ## Redering Samples
 
-See [all samples on the demo page](./demo.html).
+See [all samples on the demo page](https://wraith13.github.io/flounder.style.js/demo.html).
 
 ![](./image/sample0.png)
 ![](./image/sample1.png)
