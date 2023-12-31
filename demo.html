@@ -1,0 +1,118 @@
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://wraith13.github.io/evil-commonjs/index.js"></script>
+<title>flounder.style.js demo</title>
+<style>
+body
+{
+    margin: 0px;
+    padding: 0px;
+}
+h1
+{
+    margin: 0px;
+    padding: 0.5rem;
+    background-color: #AAFFDD;
+    font-family: monospace;
+}
+#screen-body
+{
+    padding: 1rem;
+}
+.sample.title
+{
+    margin-top:1rem;
+}
+.sample
+{
+    display: block;
+    font-size: 1.5rem;
+    line-height: 100%;
+    text-align: center;
+    padding: 1rem;
+    border-style: solid;
+    border-width: 1px;
+    border-color: green;
+    font-family: monospace;
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.sample + .sample:not(.title)
+{
+    border-top-style: none;
+    border-top-width: 0px;
+}
+</style>
+</head>
+<body>
+<h1>flounder.style.js demo</h1>
+<div id="screen-body"></div>
+<script>
+window.module.sequentialLoad
+([
+    { path:"https://wraith13.github.io/minamo.js/index.js", mapping:["minamo.js"] },
+    { path:"./index.js", mapping:["flounder.style.js"] },
+]).then
+(
+    map =>
+    {
+        const { flounderStyle } = require("flounder.style.js");
+        const $make = minamo.dom.make;
+        const $tag = minamo.dom.tag;
+        const $div = $tag("div");
+        const valueToString = (value) => undefined === value ? "undefined": JSON.stringify(value);
+        const makeTitle = (data) =>
+            $div("sample title")(`type:${valueToString(data.type)}, layoutAngle:${valueToString(data.layoutAngle)}, maxSpotSize:${valueToString(data.maxSpotSize)}, reverseRate:${valueToString(data.reverseRate)}`);
+        const makeArguments = (data, depth) =>
+        {
+            const result = structuredClone(data);
+            data.depth = depth;
+            return result;
+        };
+        const makeSample = (data) => flounderStyle.setStyleList
+        (
+            $make(HTMLDivElement)
+            (
+                $div("sample")(`depth:${(data.depth).toLocaleString("en-US", { minimumFractionDigits:2, maximumFractionDigits:2, })}`)
+            ),
+            flounderStyle.makePatternStyleList(data)
+        );
+        const resolution = 20;
+        minamo.dom.replaceChildren
+        (
+            document.getElementById("screen-body"),
+            [
+                { type: "tri", layoutAngle: "regular", foregroundColor: "#AAFFDD", depth: 0, maxSpotSize: undefined, spotIntervalSize: 24, },
+                { type: "tri", layoutAngle: "alternative", foregroundColor: "#AAFFDD", depth: 0, maxSpotSize: undefined, spotIntervalSize: 24, },
+                { type: "tetra", layoutAngle: "regular", foregroundColor: "#AAFFDD", depth: 0, maxSpotSize: undefined, spotIntervalSize: 24, },
+                { type: "tetra", layoutAngle: "alternative", foregroundColor: "#AAFFDD", depth: 0, maxSpotSize: undefined, spotIntervalSize: 24, },
+                { type: "tri", layoutAngle: "regular", foregroundColor: "#AAFFDD", depth: 0, maxSpotSize: 4, spotIntervalSize: 24, },
+                { type: "tri", layoutAngle: "alternative", foregroundColor: "#AAFFDD", depth: 0, maxSpotSize: 4, spotIntervalSize: 24, },
+                { type: "tetra", layoutAngle: "regular", foregroundColor: "#AAFFDD", depth: 0, maxSpotSize: 4, spotIntervalSize: 24, },
+                { type: "tetra", layoutAngle: "alternative", foregroundColor: "#AAFFDD", depth: 0, maxSpotSize: 4, spotIntervalSize: 24, },
+                { type: "tri", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxSpotSize: undefined, spotIntervalSize: 24, },
+                { type: "tri", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxSpotSize: undefined, spotIntervalSize: 24, },
+                { type: "tetra", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxSpotSize: undefined, spotIntervalSize: 24, },
+                { type: "tetra", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxSpotSize: undefined, spotIntervalSize: 24, },
+                { type: "tri", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxSpotSize: 4, spotIntervalSize: 24, },
+                { type: "tri", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxSpotSize: 4, spotIntervalSize: 24, },
+                { type: "tetra", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxSpotSize: 4, spotIntervalSize: 24, },
+                { type: "tetra", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxSpotSize: 4, spotIntervalSize: 24, },
+            ]
+            .map
+            (
+                data =>
+                [
+                    makeTitle(data),
+                    Array.from({ length: resolution +1, })
+                        .map((_, ix) => makeSample(makeArguments(data, ix *(1.0 /resolution)))),
+                ]
+            )
+        );
+    }
+);
+</script>
+</body>
+</html>
