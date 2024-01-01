@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 define("config", [], {
     "defaultSpotIntervalSize": 24,
+    "defaultBlur": 0.0,
     "defaultMaximumFractionDigits": 3
 });
 define("index", ["require", "exports", "config"], function (require, exports, config_json_1) {
@@ -36,6 +37,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
         flounderStyle.getPatternType = function (data) { var _a; return (_a = data.type) !== null && _a !== void 0 ? _a : "tri"; };
         flounderStyle.getLayoutAngle = function (data) { var _a; return (_a = data.layoutAngle) !== null && _a !== void 0 ? _a : "regular"; };
         flounderStyle.getBackgroundColor = function (data) { var _a; return (_a = data.backgroundColor) !== null && _a !== void 0 ? _a : "transparent"; };
+        flounderStyle.getBlur = function (data) { var _a; return (_a = data.blur) !== null && _a !== void 0 ? _a : config_json_1.default.defaultBlur; };
         flounderStyle.getActualReverseRate = function (data) {
             return "number" === typeof data.reverseRate ? data.reverseRate :
                 ("auto" === data.reverseRate && "tri" === flounderStyle.getPatternType(data)) ? triPatternHalfRadiusSpotArea :
@@ -62,8 +64,9 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                     throw new Error("Unknown FlounderType: ".concat(data.type));
             }
         };
-        var makeRadialGradientString = function (data, radius) {
-            return "radial-gradient(circle at center, ".concat(data.foregroundColor, " ").concat(radius, ", transparent ").concat(radius, ")");
+        var makeRadialGradientString = function (data, radius, blur) {
+            if (blur === void 0) { blur = Math.min(radius / 0.5, flounderStyle.getBlur(data)) / 0.5; }
+            return "radial-gradient(circle at center, ".concat(data.foregroundColor, " ").concat(numberToString(data, radius - blur), "px, transparent ").concat(numberToString(data, radius + blur), "px)");
         };
         var root2 = Math.sqrt(2.0);
         var root3 = Math.sqrt(3.0);
@@ -130,7 +133,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             }
             else {
                 var _a = calculateSize(data, triPatternHalfRadiusSpotArea, 1.0 / root3), radius = _a.radius, spotIntervalSize = _a.spotIntervalSize;
-                var radialGradient_1 = makeRadialGradientString(data, "".concat(numberToString(data, radius), "px"));
+                var radialGradient_1 = makeRadialGradientString(data, radius);
                 var backgroundColor = flounderStyle.getBackgroundColor(data);
                 var backgroundImage = Array.from({ length: 4 }).map(function (_) { return radialGradient_1; }).join(", ");
                 switch (flounderStyle.getLayoutAngle(data)) {
@@ -169,7 +172,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             }
             else {
                 var _a = calculateSize(data, TetraPatternHalfRadiusSpotArea, 0.5 * root2), radius = _a.radius, spotIntervalSize = _a.spotIntervalSize;
-                var radialGradient_2 = makeRadialGradientString(data, "".concat(numberToString(data, radius), "px"));
+                var radialGradient_2 = makeRadialGradientString(data, radius);
                 var backgroundColor = flounderStyle.getBackgroundColor(data);
                 switch (flounderStyle.getLayoutAngle(data)) {
                     case "regular": // straight

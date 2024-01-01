@@ -43,6 +43,7 @@ export module flounderStyle
         backgroundColor?: Color; // default is "transparent"
         spotIntervalSize?: number;
         depth: number; // must be 0.0 <= depth and depth <= 1.0
+        blur?: number; // must be 0.0 <= blur
         maxSpotSize?: number; // must be 1 <= maxSpotSize and maxSpotSize <= (spotIntervalSize *0.5);
         reverseRate?: number | "auto"; // must be 0.0 <= depth and depth <= 1.0
         maximumFractionDigits?: number;
@@ -50,6 +51,7 @@ export module flounderStyle
     export const getPatternType = (data: Arguments): FlounderType => data.type ?? "tri";
     export const getLayoutAngle = (data: Arguments): LayoutAngle => data.layoutAngle ?? "regular";
     export const getBackgroundColor = (data: Arguments): Color => data.backgroundColor ?? "transparent";
+    export const getBlur = (data: Arguments): number => data.blur ?? config.defaultBlur;
     export const getActualReverseRate = (data: Arguments): number =>
         "number" === typeof data.reverseRate ? data.reverseRate:
         ("auto" === data.reverseRate && "tri" === getPatternType(data)) ? triPatternHalfRadiusSpotArea:
@@ -76,8 +78,8 @@ export module flounderStyle
             throw new Error(`Unknown FlounderType: ${data.type}`);
         }
     };
-    const makeRadialGradientString = (data: Arguments, radius: string) =>
-        `radial-gradient(circle at center, ${data.foregroundColor} ${radius}, transparent ${radius})`;
+    const makeRadialGradientString = (data: Arguments, radius: number, blur = Math.min(radius /0.5, getBlur(data)) /0.5) =>
+        `radial-gradient(circle at center, ${data.foregroundColor} ${numberToString(data, radius -blur)}px, transparent ${numberToString(data, radius +blur)}px)`;
     const root2 = Math.sqrt(2.0);
     const root3 = Math.sqrt(3.0);
     const triPatternHalfRadiusSpotArea = Math.PI / (2 *root3);
@@ -158,7 +160,7 @@ export module flounderStyle
         else
         {
             const { radius, spotIntervalSize } = calculateSize(data, triPatternHalfRadiusSpotArea, 1.0 /root3);
-            const radialGradient = makeRadialGradientString(data, `${numberToString(data, radius)}px`);
+            const radialGradient = makeRadialGradientString(data, radius);
             const backgroundColor: StyleValue = getBackgroundColor(data);
             const backgroundImage: StyleValue = Array.from({ length: 4 }).map(_ => radialGradient).join(", ");
             switch(getLayoutAngle(data))
@@ -207,7 +209,7 @@ export module flounderStyle
         else
         {
             const { radius, spotIntervalSize } = calculateSize(data, TetraPatternHalfRadiusSpotArea, 0.5 *root2);
-            const radialGradient = makeRadialGradientString(data, `${numberToString(data, radius)}px`);
+            const radialGradient = makeRadialGradientString(data, radius);
             const backgroundColor: StyleValue = getBackgroundColor(data);
             switch(getLayoutAngle(data))
             {

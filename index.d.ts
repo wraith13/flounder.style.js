@@ -27,6 +27,7 @@ declare module "index" {
             backgroundColor?: Color;
             spotIntervalSize?: number;
             depth: number;
+            blur?: number;
             maxSpotSize?: number;
             reverseRate?: number | "auto";
             maximumFractionDigits?: number;
@@ -34,6 +35,7 @@ declare module "index" {
         const getPatternType: (data: Arguments) => FlounderType;
         const getLayoutAngle: (data: Arguments) => LayoutAngle;
         const getBackgroundColor: (data: Arguments) => Color;
+        const getBlur: (data: Arguments) => number;
         const getActualReverseRate: (data: Arguments) => number;
         const makePatternStyleList: (data: Arguments) => StyleProperty[];
         const makePlainStyleListOrNull: (data: Arguments) => StyleProperty[] | null;
