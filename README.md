@@ -65,15 +65,16 @@ console.log(`CSS: ${flounderStyle.styleListToString(styleList)}`);
 
 |key|type|default|description|
 |---|---|---|---|
-|type|FlounderType|"tri"|see [demo](./demo.html). "tri" or "tetra"|
-|layoutAngle|LayoutAngle|"regular"|see [demo](./demo.html). "regular" or "alternative"|
-|foregroundColor|Color|`NOT OPTIONAL`|Pattern foreground [CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value). foregroundColor must be other than "transparent".|
-|backgroundColor|Color|"transparent"|Pattern background [CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value). When using reverseRate, backgroundColor must be other than "transparent".|
-|spotIntervalSize|number|24|Number of pixels from the center of a spot to the center of the next spot.|
-|depth|number|`NOT OPTIONAL`|Must be 0.0 <= depth and depth <= 1.0|
-|maxSpotSize|number|`undefined`|If maxSpotSize is specified, instead of increasing the spot size beyond this value, spotIntervalSize will be decreased. Must be 1 <= maxSpotSize and maxSpotSize <= (spotIntervalSize *0.5)|
-|reverseRate|number \| "auto" |`undefined`|To avoid pixel collapse, when depth is greater than reverseRate, the foreground color, background color, and depth are reversed. When using reverseRate, backgroundColor must be other than "transparent". Must be 0.0 <= reverseRate and reverseRate <= 1.0 or "auto". If "auto" is specified, it will be set to the same value as the depth at which the spots touch each other.|
-|maximumFractionDigits|number|3|The maximum number of digits after the decimal point for numbers used in the generated CSS.|
+|type|"tri" \| "tetra"|"tri"|see [demo](https://wraith13.github.io/flounder.style.js/demo.html).|
+|layoutAngle|"regular" \| "alternative"|"regular"|see [demo](https://wraith13.github.io/flounder.style.js/demo.html).|
+|foregroundColor|[CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)|`NOT OPTIONAL`|Foreground pattern color. foregroundColor must be other than "transparent".|
+|backgroundColor|[CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)|"transparent"|Background pattern color. When using reverseRate, backgroundColor must be other than "transparent".|
+|spotIntervalSize|number(pixel)|24|Number of pixels from the center of a spot to the center of the next spot.|
+|depth|number(rate)|`NOT OPTIONAL`|Rate of area occupied by foreground color pattern|
+|blur|number(pixel)|0.0|If you want to improve the visibility of overlapping text, increase this value to blur the pattern.|
+|maxSpotSize|number(pixel)|`undefined`|If maxSpotSize is specified, instead of increasing the spot size beyond this value, spotIntervalSize will be decreased.|
+|reverseRate|number(rate) \| "auto" |`undefined`|To avoid pixel collapse, when depth is greater than reverseRate, the foreground color, background color, and depth are reversed. When using reverseRate, backgroundColor must be other than "transparent". If "auto" is specified, it will be set to the same value as the depth at which the spots touch each other.|
+|maximumFractionDigits|number(count)|3|The maximum number of digits after the decimal point for numbers used in the generated CSS.|
 
 ## Development environment construction
 

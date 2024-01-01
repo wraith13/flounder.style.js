@@ -6,6 +6,10 @@
 
 - blur argument
 
+### Changed
+
+- Updated README.md
+
 ## 1.0.1 - 2024-01-01
 
 ### Fixed
