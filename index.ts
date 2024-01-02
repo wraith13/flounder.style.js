@@ -113,13 +113,12 @@ export module flounderStyle
             const minRadius = spotIntervalSize *0.5;
             const maxRadius = spotIntervalSize *maxRadiusRate;
             const MaxRadiusWidth = maxRadius -minRadius;
-            const minAreaRate = halfRadiusSpotArea;
+            const minAreaRate = 1.0 -Math.sqrt(1.0 -halfRadiusSpotArea);
             const maxAreaRate = 1.0;
             const maxAreaRateWidth = minAreaRate -maxAreaRate;
-            const areaRate = data.depth;
+            const areaRate = 1.0 -Math.sqrt(1.0 -data.depth);
             const areaRateWidth = areaRate -minAreaRate;
-            const adjusterForReducePixelCollapseEffect = undefined === data.maxSpotSize ? 0.9: 0.7;
-            radius = minRadius +(MaxRadiusWidth *Math.pow(areaRateWidth / maxAreaRateWidth, 2) *adjusterForReducePixelCollapseEffect);
+            radius = minRadius +(MaxRadiusWidth *Math.pow(areaRateWidth / maxAreaRateWidth, 2));
         }
         if (undefined !== data.maxSpotSize && data.maxSpotSize < radius)
         {

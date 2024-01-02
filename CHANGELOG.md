@@ -1,5 +1,11 @@
 # Change Log
 
+## ?.?.? - 2024-01-??
+
+### Changed
+
+- Improved the expression at high depth.
+
 ## 1.1.0 - 2024-01-01
 
 ### Added
