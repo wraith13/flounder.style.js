@@ -13,7 +13,7 @@ declare module "index" {
         const setStyleList: (element: HTMLElement, styleList: StyleProperty[]) => HTMLElement;
         const styleToString: (style: StyleProperty) => string;
         const styleListToString: (styleList: StyleProperty[], separator?: string) => string;
-        type FlounderType = "tri" | "tetra";
+        type FlounderType = "trispot" | "tetraspot";
         type Style = {
             key: StyleKey;
             value: StyleValue;
@@ -22,13 +22,13 @@ declare module "index" {
         type LayoutAngle = "regular" | "alternative";
         interface Arguments {
             type?: FlounderType;
-            layoutAngle?: LayoutAngle;
+            layoutAngle?: LayoutAngle | number;
             foregroundColor: Color;
             backgroundColor?: Color;
-            spotIntervalSize?: number;
+            intervalSize?: number;
             depth: number;
             blur?: number;
-            maxSpotSize?: number;
+            maxPatternSize?: number;
             reverseRate?: number | "auto";
             maximumFractionDigits?: number;
         }

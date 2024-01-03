@@ -1,9 +1,13 @@
 # Change Log
 
-## ?.?.? - 2024-01-??
+## 2.?.? - 2024-01-??
 
 ### Changed
 
+- "tri" -> "trispot"
+- "tetra" -> "tetraspot"
+- "spotIntervalSize" -> "intervalSize"
+- "maxSpotSize" -> "maxPatternSize"
 - Improved the expression at high depth.
 
 ## 1.1.0 - 2024-01-01

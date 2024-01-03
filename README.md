@@ -48,7 +48,7 @@ const data: flounderStyle.Arguments =
     type: "tri",
     layoutAngle: "regular",
     foregroundColor: "#AAFFDD",
-    spotIntervalSize: 24,
+    intervalSize: 24,
     depth: 0.5,
 };
 const styleList = flounderStyle.makePatternStyleList(data);
@@ -65,14 +65,14 @@ console.log(`CSS: ${flounderStyle.styleListToString(styleList)}`);
 
 |key|type|default|description|
 |---|---|---|---|
-|type|"tri" \| "tetra"|"tri"|see [demo](https://wraith13.github.io/flounder.style.js/demo.html).|
+|type|"trispot" \| "tetraspot"|"trispot"|see [demo](https://wraith13.github.io/flounder.style.js/demo.html).|
 |layoutAngle|"regular" \| "alternative"|"regular"|see [demo](https://wraith13.github.io/flounder.style.js/demo.html).|
 |foregroundColor|[CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)|`NOT OPTIONAL`|Foreground pattern color. foregroundColor must be other than "transparent".|
 |backgroundColor|[CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)|"transparent"|Background pattern color. When using reverseRate, backgroundColor must be other than "transparent".|
-|spotIntervalSize|number(pixel)|24|Number of pixels from the center of a spot to the center of the next spot.|
+|intervalSize|number(pixel)|24|Number of pixels from the center of a spot to the center of the next spot.|
 |depth|number(rate)|`NOT OPTIONAL`|Rate of area occupied by foreground color pattern|
 |blur|number(pixel)|0.0|If you want to improve the visibility of overlapping text, increase this value to blur the pattern.|
-|maxSpotSize|number(pixel)|`undefined`|If maxSpotSize is specified, instead of increasing the spot size beyond this value, spotIntervalSize will be decreased.|
+|maxPatternSize|number(pixel)|`undefined`|If maxPatternSize is specified, instead of increasing the spot size beyond this value, intervalSize will be decreased.|
 |reverseRate|number(rate) \| "auto" |`undefined`|To avoid pixel collapse, when depth is greater than reverseRate, the foreground color, background color, and depth are reversed. When using reverseRate, backgroundColor must be other than "transparent". If "auto" is specified, it will be set to the same value as the depth at which the spots touch each other.|
 |maximumFractionDigits|number(count)|3|The maximum number of digits after the decimal point for numbers used in the generated CSS.|
 
