@@ -31,14 +31,14 @@ export module flounderStyle
     export const styleToString = (style: StyleProperty) => `${style.key.css}: ${style.value ?? "inherit"};`;
     export const styleListToString = (styleList: StyleProperty[], separator: string = " ") =>
         styleList.filter(i => undefined !== i.value).map(i => styleToString(i)).join(separator);
-    export type FlounderType = "trispot" | "tetraspot";
+    export type FlounderType = "trispot" | "tetraspot" | "diline" | "triline";
     export type Style = { key: StyleKey; value: StyleValue; };
-    export type Color = string;
+    export type Color = string; // https://developer.mozilla.org/en-US/docs/Web/CSS/color_value
     export type LayoutAngle = "regular" | "alternative";
-    export interface Arguments
+    export interface ArgumentsBase
     {
-        type?: FlounderType;
-        layoutAngle?: LayoutAngle;
+        type: FlounderType;
+        layoutAngle?: LayoutAngle | number;
         foregroundColor: Color;
         backgroundColor?: Color; // default is "transparent"
         intervalSize?: number;
@@ -48,14 +48,38 @@ export module flounderStyle
         reverseRate?: number | "auto"; // must be 0.0 <= depth and depth <= 1.0
         maximumFractionDigits?: number;
     }
-    export const getLayoutAngle = (data: Arguments): LayoutAngle => data.layoutAngle ?? "regular";
+    export interface SpotArguments extends ArgumentsBase
+    {
+        type: "trispot" | "tetraspot";
+        layoutAngle?: LayoutAngle;
+    }
+    export interface LineArguments extends ArgumentsBase
+    {
+        type: "diline" | "triline";
+    }
+    export type Arguments = SpotArguments | LineArguments;
     export const getPatternType = (data: Arguments): FlounderType => data.type ?? "trispot";
+    export const getLayoutAngle = (data: Arguments) =>
+    {
+        if ("number" === typeof data.layoutAngle)
+        {
+            throw new Error(`When using ${data.type}, number cannot be used for layoutAngle.`);
+        }
+        return data.layoutAngle ?? "regular"
+    };
+    export const getActualLayoutAngle = (data: Arguments): number =>
+        "number" === typeof data.layoutAngle ? data.layoutAngle:
+        ("regular" === (data.layoutAngle ?? "regular") ? 0.0: ("diline" === data.type ? 0.125: 0.25));
     export const getBackgroundColor = (data: Arguments): Color => data.backgroundColor ?? "transparent";
+    export const getIntervalSize = (data: Arguments) =>
+        data.intervalSize ?? config.defaultSpotIntervalSize;
     export const getBlur = (data: Arguments): number => data.blur ?? config.defaultBlur;
     export const getActualReverseRate = (data: Arguments): number =>
         "number" === typeof data.reverseRate ? data.reverseRate:
         ("auto" === data.reverseRate && "trispot" === getPatternType(data)) ? triPatternHalfRadiusSpotArea:
         ("auto" === data.reverseRate && "tetraspot" === getPatternType(data)) ? TetraPatternHalfRadiusSpotArea:
+        ("auto" === data.reverseRate && "diline" === getPatternType(data)) ? 0.0:
+        ("auto" === data.reverseRate && "triline" === getPatternType(data)) ? 0.0:
         999;
     const numberToString = (data: Arguments, value: number) =>
         value.toLocaleString("en-US", { maximumFractionDigits: data.maximumFractionDigits ?? config.defaultMaximumFractionDigits, });
@@ -71,15 +95,30 @@ export module flounderStyle
         switch(getPatternType(data))
         {
         case "trispot":
-            return makeTriPatternStyleList(data);
+            return makeTrispotStyleList(data);
         case "tetraspot":
-            return makeTetraPatternStyleList(data);
+            return makeTetraspotStyleList(data);
+        case "diline":
+            return makeDilineStyleList(data);
+        case "triline":
+            return makeTrilineStyleList(data);
         default:
             throw new Error(`Unknown FlounderType: ${data.type}`);
         }
     };
-    const makeRadialGradientString = (data: Arguments, radius: number, blur = Math.min(radius /0.5, getBlur(data)) /0.5) =>
+    const makeRadialGradientString = (data: Arguments, radius: number, blur = Math.min(radius, getBlur(data)) /0.5) =>
         `radial-gradient(circle at center, ${data.foregroundColor} ${numberToString(data, radius -blur)}px, transparent ${numberToString(data, radius +blur)}px)`;
+    const makeLinearGradientString = (data: Arguments, radius: number, intervalSize: number, angle: number, blur = Math.min(intervalSize -radius, radius, getBlur(data)) /0.5) =>
+    {
+        const deg = numberToString(data, 360.0 *angle);
+        const patternStart = numberToString(data, 0);
+        const a = numberToString(data, Math.max(0, radius -blur));
+        const b = numberToString(data, Math.min(intervalSize *0.5, radius +blur));
+        const c = numberToString(data, Math.max(intervalSize *0.5, intervalSize -radius -blur));
+        const d = numberToString(data, Math.min(intervalSize, intervalSize -radius +blur));
+        const patternEnd = numberToString(data, intervalSize);
+        return `repeating-linear-gradient(${deg}deg, ${data.foregroundColor} calc(${patternStart}px + 50%), ${data.foregroundColor} calc(${a}px + 50%), transparent calc(${b}px + 50%), transparent calc(${c}px + 50%), ${data.foregroundColor} calc(${d}px + 50%), ${data.foregroundColor} calc(${patternEnd}px + 50%))`;
+    }
     const root2 = Math.sqrt(2.0);
     const root3 = Math.sqrt(3.0);
     const triPatternHalfRadiusSpotArea = Math.PI / (2 *root3);
@@ -100,10 +139,19 @@ export module flounderStyle
             return null;
         }
     };
+    const calculateMaxPatternSize = (data: Arguments, intervalSize: number, radius: number) =>
+    {
+        if (undefined !== data.maxPatternSize && data.maxPatternSize < radius)
+        {
+            intervalSize = intervalSize *data.maxPatternSize /radius;
+            radius = data.maxPatternSize;
+        }
+        return { intervalSize, radius, };
+    };
     const calculateSize = (data: Arguments, halfRadiusSpotArea: number, maxRadiusRate: number) =>
     {
         var radius: number;
-        var intervalSize = data.intervalSize ?? config.defaultSpotIntervalSize;
+        const intervalSize = getIntervalSize(data);
         if (data.depth <= halfRadiusSpotArea)
         {
             radius = Math.sqrt(data.depth / halfRadiusSpotArea) *(intervalSize *0.5);
@@ -120,12 +168,7 @@ export module flounderStyle
             const areaRateWidth = areaRate -minAreaRate;
             radius = minRadius +(MaxRadiusWidth *Math.pow(areaRateWidth / maxAreaRateWidth, 2));
         }
-        if (undefined !== data.maxPatternSize && data.maxPatternSize < radius)
-        {
-            intervalSize = intervalSize *data.maxPatternSize /radius;
-            radius = data.maxPatternSize;
-        }
-        return { radius, intervalSize };
+        return calculateMaxPatternSize(data, intervalSize, radius);
     };
     export const reverseArguments = (data: Arguments): Arguments =>
     {
@@ -136,7 +179,7 @@ export module flounderStyle
         delete result.reverseRate;
         return result;
     };
-    export const makeTriPatternStyleList = (data: Arguments): StyleProperty[] =>
+    export const makeTrispotStyleList = (data: Arguments): StyleProperty[] =>
     {
         if ("transparent" === data.foregroundColor)
         {
@@ -154,11 +197,11 @@ export module flounderStyle
             {
                 throw new Error(`When using reverseRate, backgroundColor must be other than "transparent".`);
             }
-            return makeTriPatternStyleList(reverseArguments(data));
+            return makeTrispotStyleList(reverseArguments(data));
         }
         else
         {
-            const { radius, intervalSize } = calculateSize(data, triPatternHalfRadiusSpotArea, 1.0 /root3);
+            const { intervalSize, radius, } = calculateSize(data, triPatternHalfRadiusSpotArea, 1.0 /root3);
             const radialGradient = makeRadialGradientString(data, radius);
             const backgroundColor: StyleValue = getBackgroundColor(data);
             const backgroundImage: StyleValue = Array.from({ length: 4 }).map(_ => radialGradient).join(", ");
@@ -185,7 +228,7 @@ export module flounderStyle
             }
         }
     };
-    export const makeTetraPatternStyleList = (data: Arguments): StyleProperty[] =>
+    export const makeTetraspotStyleList = (data: Arguments): StyleProperty[] =>
     {
         if ("transparent" === data.foregroundColor)
         {
@@ -203,11 +246,11 @@ export module flounderStyle
             {
                 throw new Error(`When using reverseRate, backgroundColor must be other than "transparent".`);
             }
-            return makeTetraPatternStyleList(reverseArguments(data));
+            return makeTetraspotStyleList(reverseArguments(data));
         }
         else
         {
-            const { radius, intervalSize } = calculateSize(data, TetraPatternHalfRadiusSpotArea, 0.5 *root2);
+            const { intervalSize, radius, } = calculateSize(data, TetraPatternHalfRadiusSpotArea, 0.5 *root2);
             const radialGradient = makeRadialGradientString(data, radius);
             const backgroundColor: StyleValue = getBackgroundColor(data);
             switch(getLayoutAngle(data))
@@ -230,6 +273,91 @@ export module flounderStyle
             default:
                 throw new Error(`Unknown LayoutAngle: ${data.layoutAngle}`);
             }
+        }
+    };
+    export const makeDilineStyleList = (data: Arguments): StyleProperty[] =>
+    {
+        if ("transparent" === data.foregroundColor)
+        {
+            throw new Error(`foregroundColor must be other than "transparent".`);
+        }
+        const plain = makePlainStyleListOrNull(data);
+        if (null !== plain)
+        {
+            return plain;
+        }
+        else
+        if (getActualReverseRate(data) < data.depth)
+        {
+            if ("transparent" === getBackgroundColor(data))
+            {
+                throw new Error(`When using reverseRate, backgroundColor must be other than "transparent".`);
+            }
+            return makeDilineStyleList(reverseArguments(data));
+        }
+        else
+        {
+            const backgroundColor: StyleValue = getBackgroundColor(data);
+            const angleOffset = getActualLayoutAngle(data);
+            const { intervalSize, radius, } = calculateMaxPatternSize
+            (
+                data,
+                getIntervalSize(data),
+                (1.0 -Math.sqrt(1.0 -data.depth)) *(getIntervalSize(data) /2.0)
+            );
+            return makeResult
+            ({
+                backgroundColor,
+                backgroundImage:
+                [
+                    makeLinearGradientString(data, radius, intervalSize, (0.0 /4.0) +angleOffset),
+                    makeLinearGradientString(data, radius, intervalSize, (1.0 /4.0) +angleOffset),
+                ]
+                .join(", ")
+            });
+        }
+    };
+    export const makeTrilineStyleList = (data: Arguments): StyleProperty[] =>
+    {
+        if ("transparent" === data.foregroundColor)
+        {
+            throw new Error(`foregroundColor must be other than "transparent".`);
+        }
+        const plain = makePlainStyleListOrNull(data);
+        if (null !== plain)
+        {
+            return plain;
+        }
+        else
+        if (getActualReverseRate(data) < data.depth)
+        {
+            if ("transparent" === getBackgroundColor(data))
+            {
+                throw new Error(`When using reverseRate, backgroundColor must be other than "transparent".`);
+            }
+            return makeTrilineStyleList(reverseArguments(data));
+        }
+        else
+        {
+            const backgroundColor: StyleValue = getBackgroundColor(data);
+            const angleOffset = getActualLayoutAngle(data);
+            const { intervalSize, radius, } = calculateMaxPatternSize
+            (
+                data,
+                getIntervalSize(data),
+                (1.0 -Math.sqrt(1.0 -data.depth)) *(getIntervalSize(data) /3.0)
+            );
+            return makeResult
+            ({
+                backgroundColor,
+                backgroundImage:
+                [
+                    makeLinearGradientString(data, radius, intervalSize, (0.0 /6.0) +angleOffset),
+                    makeLinearGradientString(data, radius, intervalSize, (1.0 /6.0) +angleOffset),
+                    makeLinearGradientString(data, radius, intervalSize, (2.0 /6.0) +angleOffset),
+                ]
+                .join(", ")
+            });
         }
     };
 }

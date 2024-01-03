@@ -13,15 +13,15 @@ declare module "index" {
         const setStyleList: (element: HTMLElement, styleList: StyleProperty[]) => HTMLElement;
         const styleToString: (style: StyleProperty) => string;
         const styleListToString: (styleList: StyleProperty[], separator?: string) => string;
-        type FlounderType = "trispot" | "tetraspot";
+        type FlounderType = "trispot" | "tetraspot" | "diline" | "triline";
         type Style = {
             key: StyleKey;
             value: StyleValue;
         };
         type Color = string;
         type LayoutAngle = "regular" | "alternative";
-        interface Arguments {
-            type?: FlounderType;
+        interface ArgumentsBase {
+            type: FlounderType;
             layoutAngle?: LayoutAngle | number;
             foregroundColor: Color;
             backgroundColor?: Color;
@@ -32,15 +32,27 @@ declare module "index" {
             reverseRate?: number | "auto";
             maximumFractionDigits?: number;
         }
+        interface SpotArguments extends ArgumentsBase {
+            type: "trispot" | "tetraspot";
+            layoutAngle?: LayoutAngle;
+        }
+        interface LineArguments extends ArgumentsBase {
+            type: "diline" | "triline";
+        }
+        type Arguments = SpotArguments | LineArguments;
         const getPatternType: (data: Arguments) => FlounderType;
         const getLayoutAngle: (data: Arguments) => LayoutAngle;
+        const getActualLayoutAngle: (data: Arguments) => number;
         const getBackgroundColor: (data: Arguments) => Color;
+        const getIntervalSize: (data: Arguments) => number;
         const getBlur: (data: Arguments) => number;
         const getActualReverseRate: (data: Arguments) => number;
         const makePatternStyleList: (data: Arguments) => StyleProperty[];
         const makePlainStyleListOrNull: (data: Arguments) => StyleProperty[] | null;
         const reverseArguments: (data: Arguments) => Arguments;
-        const makeTriPatternStyleList: (data: Arguments) => StyleProperty[];
-        const makeTetraPatternStyleList: (data: Arguments) => StyleProperty[];
+        const makeTrispotStyleList: (data: Arguments) => StyleProperty[];
+        const makeTetraspotStyleList: (data: Arguments) => StyleProperty[];
+        const makeDilineStyleList: (data: Arguments) => StyleProperty[];
+        const makeTrilineStyleList: (data: Arguments) => StyleProperty[];
     }
 }

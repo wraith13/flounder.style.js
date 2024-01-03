@@ -2,6 +2,11 @@
 
 ## 2.?.? - 2024-01-??
 
+### Added
+
+- "diline"
+- "triline"
+
 ### Changed
 
 - "tri" -> "trispot"
