@@ -53,8 +53,8 @@ h1
 window.module.sequentialLoad
 ([
     { path:"https://wraith13.github.io/minamo.js/index.js", mapping:["minamo.js"] },
-    { path:"https://wraith13.github.io/flounder.style.js/index.js", mapping:["flounder.style.js"] },
-    // { path:"./index.js", mapping:["flounder.style.js"] },
+    // { path:"https://wraith13.github.io/flounder.style.js/index.js", mapping:["flounder.style.js"] },
+    { path:"./index.js", mapping:["flounder.style.js"] },
 ]).then
 (
     map =>
@@ -117,6 +117,8 @@ window.module.sequentialLoad
                 { type: "diline", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, intervalSize: 24, },
                 { type: "triline", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, intervalSize: 24, },
                 { type: "triline", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, intervalSize: 24, },
+                { type: "stripe", layoutAngle: 0.2, foregroundColor: "#AAFFDD", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
+                { type: "stripe", layoutAngle: 0.2, foregroundColor: "#AAFFDD", depth: 0, maxPatternSize: 4, intervalSize: 24, },
                 { type: "diline", layoutAngle: 0.2, foregroundColor: "#AAFFDD", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
                 { type: "triline", layoutAngle: 0.2, foregroundColor: "#AAFFDD", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
                 { type: "diline", layoutAngle: 0.2, foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, intervalSize: 24, },

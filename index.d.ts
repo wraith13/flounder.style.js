@@ -13,7 +13,7 @@ declare module "index" {
         const setStyleList: (element: HTMLElement, styleList: StyleProperty[]) => HTMLElement;
         const styleToString: (style: StyleProperty) => string;
         const styleListToString: (styleList: StyleProperty[], separator?: string) => string;
-        type FlounderType = "trispot" | "tetraspot" | "diline" | "triline";
+        type FlounderType = Arguments["type"];
         type Style = {
             key: StyleKey;
             value: StyleValue;
@@ -37,7 +37,7 @@ declare module "index" {
             layoutAngle?: LayoutAngle;
         }
         interface LineArguments extends ArgumentsBase {
-            type: "diline" | "triline";
+            type: "stripe" | "diline" | "triline";
         }
         type Arguments = SpotArguments | LineArguments;
         const getPatternType: (data: Arguments) => FlounderType;
@@ -52,6 +52,7 @@ declare module "index" {
         const reverseArguments: (data: Arguments) => Arguments;
         const makeTrispotStyleList: (data: Arguments) => StyleProperty[];
         const makeTetraspotStyleList: (data: Arguments) => StyleProperty[];
+        const makeStripeStyleList: (data: Arguments) => StyleProperty[];
         const makeDilineStyleList: (data: Arguments) => StyleProperty[];
         const makeTrilineStyleList: (data: Arguments) => StyleProperty[];
     }

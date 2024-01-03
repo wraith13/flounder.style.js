@@ -4,6 +4,7 @@
 
 ### Added
 
+- "stripe"
 - "diline"
 - "triline"
 

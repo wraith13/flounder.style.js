@@ -31,7 +31,7 @@ export module flounderStyle
     export const styleToString = (style: StyleProperty) => `${style.key.css}: ${style.value ?? "inherit"};`;
     export const styleListToString = (styleList: StyleProperty[], separator: string = " ") =>
         styleList.filter(i => undefined !== i.value).map(i => styleToString(i)).join(separator);
-    export type FlounderType = "trispot" | "tetraspot" | "diline" | "triline";
+    export type FlounderType = Arguments["type"];
     export type Style = { key: StyleKey; value: StyleValue; };
     export type Color = string; // https://developer.mozilla.org/en-US/docs/Web/CSS/color_value
     export type LayoutAngle = "regular" | "alternative";
@@ -55,7 +55,7 @@ export module flounderStyle
     }
     export interface LineArguments extends ArgumentsBase
     {
-        type: "diline" | "triline";
+        type: "stripe" | "diline" | "triline";
     }
     export type Arguments = SpotArguments | LineArguments;
     export const getPatternType = (data: Arguments): FlounderType => data.type ?? "trispot";
@@ -98,6 +98,8 @@ export module flounderStyle
             return makeTrispotStyleList(data);
         case "tetraspot":
             return makeTetraspotStyleList(data);
+        case "stripe":
+            return makeStripeStyleList(data);
         case "diline":
             return makeDilineStyleList(data);
         case "triline":
@@ -273,6 +275,43 @@ export module flounderStyle
             default:
                 throw new Error(`Unknown LayoutAngle: ${data.layoutAngle}`);
             }
+        }
+    };
+    export const makeStripeStyleList = (data: Arguments): StyleProperty[] =>
+    {
+        if ("transparent" === data.foregroundColor)
+        {
+            throw new Error(`foregroundColor must be other than "transparent".`);
+        }
+        const plain = makePlainStyleListOrNull(data);
+        if (null !== plain)
+        {
+            return plain;
+        }
+        else
+        if (getActualReverseRate(data) < data.depth)
+        {
+            if ("transparent" === getBackgroundColor(data))
+            {
+                throw new Error(`When using reverseRate, backgroundColor must be other than "transparent".`);
+            }
+            return makeDilineStyleList(reverseArguments(data));
+        }
+        else
+        {
+            const backgroundColor: StyleValue = getBackgroundColor(data);
+            const angleOffset = getActualLayoutAngle(data);
+            const { intervalSize, radius, } = calculateMaxPatternSize
+            (
+                data,
+                getIntervalSize(data),
+                data.depth *(getIntervalSize(data) /2.0)
+            );
+            return makeResult
+            ({
+                backgroundColor,
+                backgroundImage: makeLinearGradientString(data, radius, intervalSize, angleOffset)
+            });
         }
     };
     export const makeDilineStyleList = (data: Arguments): StyleProperty[] =>

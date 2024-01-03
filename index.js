@@ -74,6 +74,8 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                     return flounderStyle.makeTrispotStyleList(data);
                 case "tetraspot":
                     return flounderStyle.makeTetraspotStyleList(data);
+                case "stripe":
+                    return flounderStyle.makeStripeStyleList(data);
                 case "diline":
                     return flounderStyle.makeDilineStyleList(data);
                 case "triline":
@@ -221,6 +223,30 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                     default:
                         throw new Error("Unknown LayoutAngle: ".concat(data.layoutAngle));
                 }
+            }
+        };
+        flounderStyle.makeStripeStyleList = function (data) {
+            if ("transparent" === data.foregroundColor) {
+                throw new Error("foregroundColor must be other than \"transparent\".");
+            }
+            var plain = flounderStyle.makePlainStyleListOrNull(data);
+            if (null !== plain) {
+                return plain;
+            }
+            else if (flounderStyle.getActualReverseRate(data) < data.depth) {
+                if ("transparent" === flounderStyle.getBackgroundColor(data)) {
+                    throw new Error("When using reverseRate, backgroundColor must be other than \"transparent\".");
+                }
+                return flounderStyle.makeDilineStyleList(flounderStyle.reverseArguments(data));
+            }
+            else {
+                var backgroundColor = flounderStyle.getBackgroundColor(data);
+                var angleOffset = flounderStyle.getActualLayoutAngle(data);
+                var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), data.depth * (flounderStyle.getIntervalSize(data) / 2.0)), intervalSize = _a.intervalSize, radius = _a.radius;
+                return makeResult({
+                    backgroundColor: backgroundColor,
+                    backgroundImage: makeLinearGradientString(data, radius, intervalSize, angleOffset)
+                });
             }
         };
         flounderStyle.makeDilineStyleList = function (data) {
