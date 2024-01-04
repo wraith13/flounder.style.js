@@ -24,6 +24,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                     element.style.removeProperty(style.key.dom);
                 }
             }
+            return element;
         };
         flounderStyle.setStyleList = function (element, styleList) {
             styleList.forEach(function (i) { return flounderStyle.setStyle(element, i); });
@@ -54,9 +55,15 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             return "number" === typeof data.reverseRate ? data.reverseRate :
                 ("auto" === data.reverseRate && "trispot" === flounderStyle.getPatternType(data)) ? triPatternHalfRadiusSpotArea :
                     ("auto" === data.reverseRate && "tetraspot" === flounderStyle.getPatternType(data)) ? TetraPatternHalfRadiusSpotArea :
-                        ("auto" === data.reverseRate && "diline" === flounderStyle.getPatternType(data)) ? 0.0 :
-                            ("auto" === data.reverseRate && "triline" === flounderStyle.getPatternType(data)) ? 0.0 :
-                                999;
+                        ("auto" === data.reverseRate && "stripe" === flounderStyle.getPatternType(data)) ? 0.0 :
+                            ("auto" === data.reverseRate && "diline" === flounderStyle.getPatternType(data)) ? 0.0 :
+                                ("auto" === data.reverseRate && "triline" === flounderStyle.getPatternType(data)) ? 0.0 :
+                                    999;
+        };
+        flounderStyle.getAbsoulteReverseRate = function (data) {
+            return "number" === typeof data.reverseRate && data.reverseRate < 0.0 ? Math.abs(data.reverseRate) :
+                "-auto" === data.reverseRate ? "auto" :
+                    data.reverseRate;
         };
         var numberToString = function (data, value) { var _a; return value.toLocaleString("en-US", { maximumFractionDigits: (_a = data.maximumFractionDigits) !== null && _a !== void 0 ? _a : config_json_1.default.defaultMaximumFractionDigits, }); };
         var makeResult = function (_a) {
@@ -122,7 +129,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             }
             return { intervalSize: intervalSize, radius: radius, };
         };
-        var calculateSize = function (data, halfRadiusSpotArea, maxRadiusRate) {
+        var calculateSpotSize = function (data, halfRadiusSpotArea, maxRadiusRate) {
             var radius;
             var intervalSize = flounderStyle.getIntervalSize(data);
             if (data.depth <= halfRadiusSpotArea) {
@@ -149,7 +156,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             delete result.reverseRate;
             return result;
         };
-        flounderStyle.makeTrispotStyleList = function (data) {
+        var makeStyleListCommon = function (data, maker) {
             if ("transparent" === data.foregroundColor) {
                 throw new Error("foregroundColor must be other than \"transparent\".");
             }
@@ -157,155 +164,107 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             if (null !== plain) {
                 return plain;
             }
-            else if (flounderStyle.getActualReverseRate(data) < data.depth) {
+            var reverseRate = flounderStyle.getAbsoulteReverseRate(data);
+            if (reverseRate !== data.reverseRate) {
                 if ("transparent" === flounderStyle.getBackgroundColor(data)) {
                     throw new Error("When using reverseRate, backgroundColor must be other than \"transparent\".");
                 }
-                return flounderStyle.makeTrispotStyleList(flounderStyle.reverseArguments(data));
-            }
-            else {
-                var _a = calculateSize(data, triPatternHalfRadiusSpotArea, 1.0 / root3), intervalSize = _a.intervalSize, radius = _a.radius;
-                var radialGradient_1 = makeRadialGradientString(data, radius);
-                var backgroundColor = flounderStyle.getBackgroundColor(data);
-                var backgroundImage = Array.from({ length: 4 }).map(function (_) { return radialGradient_1; }).join(", ");
-                switch (flounderStyle.getLayoutAngle(data)) {
-                    case "regular": // horizontal
-                        return makeResult({
-                            backgroundColor: backgroundColor,
-                            backgroundImage: backgroundImage,
-                            backgroundSize: "".concat(numberToString(data, intervalSize * 2.0), "px ").concat(numberToString(data, intervalSize * root3), "px"),
-                            backgroundPosition: "0px 0px, ".concat(numberToString(data, intervalSize), "px 0px, ").concat(numberToString(data, intervalSize * 0.5), "px ").concat(numberToString(data, intervalSize * root3 * 0.5), "px, ").concat(numberToString(data, intervalSize * 1.5), "px ").concat(numberToString(data, intervalSize * root3 * 0.5), "px")
-                        });
-                    case "alternative": // vertical
-                        return makeResult({
-                            backgroundColor: backgroundColor,
-                            backgroundImage: backgroundImage,
-                            backgroundSize: " ".concat(numberToString(data, intervalSize * root3), "px ").concat(numberToString(data, intervalSize * 2.0), "px"),
-                            backgroundPosition: "0px 0px, 0px ".concat(numberToString(data, intervalSize), "px, ").concat(numberToString(data, intervalSize * root3 * 0.5), "px ").concat(numberToString(data, intervalSize * 0.5), "px, ").concat(numberToString(data, intervalSize * root3 * 0.5), "px ").concat(numberToString(data, intervalSize * 1.5), "px")
-                        });
-                    default:
-                        throw new Error("Unknown LayoutAngle: ".concat(data.layoutAngle));
-                }
-            }
-        };
-        flounderStyle.makeTetraspotStyleList = function (data) {
-            if ("transparent" === data.foregroundColor) {
-                throw new Error("foregroundColor must be other than \"transparent\".");
-            }
-            var plain = flounderStyle.makePlainStyleListOrNull(data);
-            if (null !== plain) {
-                return plain;
+                var absoulteData = flounderStyle.reverseArguments(data);
+                absoulteData.reverseRate = reverseRate;
+                return maker(absoulteData);
             }
             else if (flounderStyle.getActualReverseRate(data) < data.depth) {
                 if ("transparent" === flounderStyle.getBackgroundColor(data)) {
                     throw new Error("When using reverseRate, backgroundColor must be other than \"transparent\".");
                 }
-                return flounderStyle.makeTetraspotStyleList(flounderStyle.reverseArguments(data));
+                return maker(flounderStyle.reverseArguments(data));
             }
             else {
-                var _a = calculateSize(data, TetraPatternHalfRadiusSpotArea, 0.5 * root2), intervalSize = _a.intervalSize, radius = _a.radius;
-                var radialGradient_2 = makeRadialGradientString(data, radius);
-                var backgroundColor = flounderStyle.getBackgroundColor(data);
-                switch (flounderStyle.getLayoutAngle(data)) {
-                    case "regular": // straight
-                        return makeResult({
-                            backgroundColor: backgroundColor,
-                            backgroundImage: radialGradient_2,
-                            backgroundSize: "".concat(numberToString(data, intervalSize), "px ").concat(numberToString(data, intervalSize), "px"),
-                        });
-                    case "alternative": // slant
-                        return makeResult({
-                            backgroundColor: backgroundColor,
-                            backgroundImage: Array.from({ length: 2 }).map(function (_) { return radialGradient_2; }).join(", "),
-                            backgroundSize: "".concat(numberToString(data, (intervalSize * 2.0) / root2), "px ").concat(numberToString(data, (intervalSize * 2.0) / root2), "px"),
-                            backgroundPosition: "0px 0px, ".concat(numberToString(data, intervalSize / root2), "px ").concat(numberToString(data, intervalSize / root2), "px")
-                        });
-                    default:
-                        throw new Error("Unknown LayoutAngle: ".concat(data.layoutAngle));
-                }
+                return maker(data);
             }
         };
-        flounderStyle.makeStripeStyleList = function (data) {
-            if ("transparent" === data.foregroundColor) {
-                throw new Error("foregroundColor must be other than \"transparent\".");
+        flounderStyle.makeTrispotStyleList = function (data) { return makeStyleListCommon(data, function (data) {
+            var _a = calculateSpotSize(data, triPatternHalfRadiusSpotArea, 1.0 / root3), intervalSize = _a.intervalSize, radius = _a.radius;
+            var radialGradient = makeRadialGradientString(data, radius);
+            var backgroundColor = flounderStyle.getBackgroundColor(data);
+            var backgroundImage = Array.from({ length: 4 }).map(function (_) { return radialGradient; }).join(", ");
+            switch (flounderStyle.getLayoutAngle(data)) {
+                case "regular": // horizontal
+                    return makeResult({
+                        backgroundColor: backgroundColor,
+                        backgroundImage: backgroundImage,
+                        backgroundSize: "".concat(numberToString(data, intervalSize * 2.0), "px ").concat(numberToString(data, intervalSize * root3), "px"),
+                        backgroundPosition: "0px 0px, ".concat(numberToString(data, intervalSize), "px 0px, ").concat(numberToString(data, intervalSize * 0.5), "px ").concat(numberToString(data, intervalSize * root3 * 0.5), "px, ").concat(numberToString(data, intervalSize * 1.5), "px ").concat(numberToString(data, intervalSize * root3 * 0.5), "px")
+                    });
+                case "alternative": // vertical
+                    return makeResult({
+                        backgroundColor: backgroundColor,
+                        backgroundImage: backgroundImage,
+                        backgroundSize: " ".concat(numberToString(data, intervalSize * root3), "px ").concat(numberToString(data, intervalSize * 2.0), "px"),
+                        backgroundPosition: "0px 0px, 0px ".concat(numberToString(data, intervalSize), "px, ").concat(numberToString(data, intervalSize * root3 * 0.5), "px ").concat(numberToString(data, intervalSize * 0.5), "px, ").concat(numberToString(data, intervalSize * root3 * 0.5), "px ").concat(numberToString(data, intervalSize * 1.5), "px")
+                    });
+                default:
+                    throw new Error("Unknown LayoutAngle: ".concat(data.layoutAngle));
             }
-            var plain = flounderStyle.makePlainStyleListOrNull(data);
-            if (null !== plain) {
-                return plain;
+        }); };
+        flounderStyle.makeTetraspotStyleList = function (data) { return makeStyleListCommon(data, function (data) {
+            var _a = calculateSpotSize(data, TetraPatternHalfRadiusSpotArea, 0.5 * root2), intervalSize = _a.intervalSize, radius = _a.radius;
+            var radialGradient = makeRadialGradientString(data, radius);
+            var backgroundColor = flounderStyle.getBackgroundColor(data);
+            switch (flounderStyle.getLayoutAngle(data)) {
+                case "regular": // straight
+                    return makeResult({
+                        backgroundColor: backgroundColor,
+                        backgroundImage: radialGradient,
+                        backgroundSize: "".concat(numberToString(data, intervalSize), "px ").concat(numberToString(data, intervalSize), "px"),
+                    });
+                case "alternative": // slant
+                    return makeResult({
+                        backgroundColor: backgroundColor,
+                        backgroundImage: Array.from({ length: 2 }).map(function (_) { return radialGradient; }).join(", "),
+                        backgroundSize: "".concat(numberToString(data, (intervalSize * 2.0) / root2), "px ").concat(numberToString(data, (intervalSize * 2.0) / root2), "px"),
+                        backgroundPosition: "0px 0px, ".concat(numberToString(data, intervalSize / root2), "px ").concat(numberToString(data, intervalSize / root2), "px")
+                    });
+                default:
+                    throw new Error("Unknown LayoutAngle: ".concat(data.layoutAngle));
             }
-            else if (flounderStyle.getActualReverseRate(data) < data.depth) {
-                if ("transparent" === flounderStyle.getBackgroundColor(data)) {
-                    throw new Error("When using reverseRate, backgroundColor must be other than \"transparent\".");
-                }
-                return flounderStyle.makeDilineStyleList(flounderStyle.reverseArguments(data));
-            }
-            else {
-                var backgroundColor = flounderStyle.getBackgroundColor(data);
-                var angleOffset = flounderStyle.getActualLayoutAngle(data);
-                var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), data.depth * (flounderStyle.getIntervalSize(data) / 2.0)), intervalSize = _a.intervalSize, radius = _a.radius;
-                return makeResult({
-                    backgroundColor: backgroundColor,
-                    backgroundImage: makeLinearGradientString(data, radius, intervalSize, angleOffset)
-                });
-            }
-        };
-        flounderStyle.makeDilineStyleList = function (data) {
-            if ("transparent" === data.foregroundColor) {
-                throw new Error("foregroundColor must be other than \"transparent\".");
-            }
-            var plain = flounderStyle.makePlainStyleListOrNull(data);
-            if (null !== plain) {
-                return plain;
-            }
-            else if (flounderStyle.getActualReverseRate(data) < data.depth) {
-                if ("transparent" === flounderStyle.getBackgroundColor(data)) {
-                    throw new Error("When using reverseRate, backgroundColor must be other than \"transparent\".");
-                }
-                return flounderStyle.makeDilineStyleList(flounderStyle.reverseArguments(data));
-            }
-            else {
-                var backgroundColor = flounderStyle.getBackgroundColor(data);
-                var angleOffset = flounderStyle.getActualLayoutAngle(data);
-                var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (flounderStyle.getIntervalSize(data) / 2.0)), intervalSize = _a.intervalSize, radius = _a.radius;
-                return makeResult({
-                    backgroundColor: backgroundColor,
-                    backgroundImage: [
-                        makeLinearGradientString(data, radius, intervalSize, (0.0 / 4.0) + angleOffset),
-                        makeLinearGradientString(data, radius, intervalSize, (1.0 / 4.0) + angleOffset),
-                    ]
-                        .join(", ")
-                });
-            }
-        };
-        flounderStyle.makeTrilineStyleList = function (data) {
-            if ("transparent" === data.foregroundColor) {
-                throw new Error("foregroundColor must be other than \"transparent\".");
-            }
-            var plain = flounderStyle.makePlainStyleListOrNull(data);
-            if (null !== plain) {
-                return plain;
-            }
-            else if (flounderStyle.getActualReverseRate(data) < data.depth) {
-                if ("transparent" === flounderStyle.getBackgroundColor(data)) {
-                    throw new Error("When using reverseRate, backgroundColor must be other than \"transparent\".");
-                }
-                return flounderStyle.makeTrilineStyleList(flounderStyle.reverseArguments(data));
-            }
-            else {
-                var backgroundColor = flounderStyle.getBackgroundColor(data);
-                var angleOffset = flounderStyle.getActualLayoutAngle(data);
-                var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (flounderStyle.getIntervalSize(data) / 3.0)), intervalSize = _a.intervalSize, radius = _a.radius;
-                return makeResult({
-                    backgroundColor: backgroundColor,
-                    backgroundImage: [
-                        makeLinearGradientString(data, radius, intervalSize, (0.0 / 6.0) + angleOffset),
-                        makeLinearGradientString(data, radius, intervalSize, (1.0 / 6.0) + angleOffset),
-                        makeLinearGradientString(data, radius, intervalSize, (2.0 / 6.0) + angleOffset),
-                    ]
-                        .join(", ")
-                });
-            }
-        };
+        }); };
+        flounderStyle.makeStripeStyleList = function (data) { return makeStyleListCommon(data, function (data) {
+            var backgroundColor = flounderStyle.getBackgroundColor(data);
+            var angleOffset = flounderStyle.getActualLayoutAngle(data);
+            var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), data.depth * (flounderStyle.getIntervalSize(data) / 2.0)), intervalSize = _a.intervalSize, radius = _a.radius;
+            return makeResult({
+                backgroundColor: backgroundColor,
+                backgroundImage: makeLinearGradientString(data, radius, intervalSize, angleOffset)
+            });
+        }); };
+        flounderStyle.makeDilineStyleList = function (data) { return makeStyleListCommon(data, function (data) {
+            var backgroundColor = flounderStyle.getBackgroundColor(data);
+            var angleOffset = flounderStyle.getActualLayoutAngle(data);
+            var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (flounderStyle.getIntervalSize(data) / 2.0)), intervalSize = _a.intervalSize, radius = _a.radius;
+            return makeResult({
+                backgroundColor: backgroundColor,
+                backgroundImage: [
+                    makeLinearGradientString(data, radius, intervalSize, (0.0 / 4.0) + angleOffset),
+                    makeLinearGradientString(data, radius, intervalSize, (1.0 / 4.0) + angleOffset),
+                ]
+                    .join(", ")
+            });
+        }); };
+        flounderStyle.makeTrilineStyleList = function (data) { return makeStyleListCommon(data, function (data) {
+            var backgroundColor = flounderStyle.getBackgroundColor(data);
+            var angleOffset = flounderStyle.getActualLayoutAngle(data);
+            var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (flounderStyle.getIntervalSize(data) / 3.0)), intervalSize = _a.intervalSize, radius = _a.radius;
+            return makeResult({
+                backgroundColor: backgroundColor,
+                backgroundImage: [
+                    makeLinearGradientString(data, radius, intervalSize, (0.0 / 6.0) + angleOffset),
+                    makeLinearGradientString(data, radius, intervalSize, (1.0 / 6.0) + angleOffset),
+                    makeLinearGradientString(data, radius, intervalSize, (2.0 / 6.0) + angleOffset),
+                ]
+                    .join(", ")
+            });
+        }); };
     })(flounderStyle || (exports.flounderStyle = flounderStyle = {}));
 });
 //# sourceMappingURL=index.js.map

@@ -9,7 +9,7 @@ declare module "index" {
             key: StyleKey;
             value: StyleValue;
         };
-        const setStyle: (element: HTMLElement, style: StyleProperty) => void;
+        const setStyle: (element: HTMLElement, style: StyleProperty) => HTMLElement;
         const setStyleList: (element: HTMLElement, styleList: StyleProperty[]) => HTMLElement;
         const styleToString: (style: StyleProperty) => string;
         const styleListToString: (styleList: StyleProperty[], separator?: string) => string;
@@ -29,7 +29,7 @@ declare module "index" {
             depth: number;
             blur?: number;
             maxPatternSize?: number;
-            reverseRate?: number | "auto";
+            reverseRate?: number | "auto" | "-auto";
             maximumFractionDigits?: number;
         }
         interface SpotArguments extends ArgumentsBase {
@@ -47,6 +47,7 @@ declare module "index" {
         const getIntervalSize: (data: Arguments) => number;
         const getBlur: (data: Arguments) => number;
         const getActualReverseRate: (data: Arguments) => number;
+        const getAbsoulteReverseRate: (data: Arguments) => undefined | number | "auto";
         const makePatternStyleList: (data: Arguments) => StyleProperty[];
         const makePlainStyleListOrNull: (data: Arguments) => StyleProperty[] | null;
         const reverseArguments: (data: Arguments) => Arguments;

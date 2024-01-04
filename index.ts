@@ -22,6 +22,7 @@ export module flounderStyle
                 element.style.removeProperty(style.key.dom);
             }
         }
+        return element;
     };
     export const setStyleList = (element: HTMLElement, styleList: StyleProperty[]) =>
     {
@@ -45,7 +46,7 @@ export module flounderStyle
         depth: number; // must be 0.0 <= depth and depth <= 1.0
         blur?: number; // must be 0.0 <= blur
         maxPatternSize?: number; // must be 1 <= maxPatternSize and maxPatternSize <= (intervalSize *0.5);
-        reverseRate?: number | "auto"; // must be 0.0 <= depth and depth <= 1.0
+        reverseRate?: number | "auto" | "-auto"; // must be -1.0 <= depth and depth <= 1.0
         maximumFractionDigits?: number;
     }
     export interface SpotArguments extends ArgumentsBase
@@ -78,9 +79,14 @@ export module flounderStyle
         "number" === typeof data.reverseRate ? data.reverseRate:
         ("auto" === data.reverseRate && "trispot" === getPatternType(data)) ? triPatternHalfRadiusSpotArea:
         ("auto" === data.reverseRate && "tetraspot" === getPatternType(data)) ? TetraPatternHalfRadiusSpotArea:
+        ("auto" === data.reverseRate && "stripe" === getPatternType(data)) ? 0.0:
         ("auto" === data.reverseRate && "diline" === getPatternType(data)) ? 0.0:
         ("auto" === data.reverseRate && "triline" === getPatternType(data)) ? 0.0:
         999;
+    export const getAbsoulteReverseRate = (data: Arguments): undefined | number | "auto" =>
+        "number" === typeof data.reverseRate && data.reverseRate < 0.0 ? Math.abs(data.reverseRate):
+        "-auto" === data.reverseRate ? "auto":
+        data.reverseRate;
     const numberToString = (data: Arguments, value: number) =>
         value.toLocaleString("en-US", { maximumFractionDigits: data.maximumFractionDigits ?? config.defaultMaximumFractionDigits, });
     const makeResult = ({ backgroundColor = undefined as StyleValue, backgroundImage = undefined as StyleValue, backgroundSize = undefined as StyleValue, backgroundPosition = undefined as StyleValue}): StyleProperty[] =>
@@ -150,7 +156,7 @@ export module flounderStyle
         }
         return { intervalSize, radius, };
     };
-    const calculateSize = (data: Arguments, halfRadiusSpotArea: number, maxRadiusRate: number) =>
+    const calculateSpotSize = (data: Arguments, halfRadiusSpotArea: number, maxRadiusRate: number) =>
     {
         var radius: number;
         const intervalSize = getIntervalSize(data);
@@ -181,7 +187,7 @@ export module flounderStyle
         delete result.reverseRate;
         return result;
     };
-    export const makeTrispotStyleList = (data: Arguments): StyleProperty[] =>
+    const makeStyleListCommon = (data: Arguments, maker: (data: Arguments) => StyleProperty[]): StyleProperty[] =>
     {
         if ("transparent" === data.foregroundColor)
         {
@@ -192,6 +198,17 @@ export module flounderStyle
         {
             return plain;
         }
+        const reverseRate = getAbsoulteReverseRate(data);
+        if (reverseRate !== data.reverseRate)
+        {
+            if ("transparent" === getBackgroundColor(data))
+            {
+                throw new Error(`When using reverseRate, backgroundColor must be other than "transparent".`);
+            }
+            const absoulteData = reverseArguments(data);
+            absoulteData.reverseRate = reverseRate;
+            return maker(absoulteData);
+        }
         else
         if (getActualReverseRate(data) < data.depth)
         {
@@ -199,11 +216,18 @@ export module flounderStyle
             {
                 throw new Error(`When using reverseRate, backgroundColor must be other than "transparent".`);
             }
-            return makeTrispotStyleList(reverseArguments(data));
+            return maker(reverseArguments(data));
         }
         else
         {
-            const { intervalSize, radius, } = calculateSize(data, triPatternHalfRadiusSpotArea, 1.0 /root3);
+            return maker(data);
+        }
+    }
+    export const makeTrispotStyleList = (data: Arguments): StyleProperty[] => makeStyleListCommon
+    (
+        data, data =>
+        {
+            const { intervalSize, radius, } = calculateSpotSize(data, triPatternHalfRadiusSpotArea, 1.0 /root3);
             const radialGradient = makeRadialGradientString(data, radius);
             const backgroundColor: StyleValue = getBackgroundColor(data);
             const backgroundImage: StyleValue = Array.from({ length: 4 }).map(_ => radialGradient).join(", ");
@@ -229,30 +253,12 @@ export module flounderStyle
                 throw new Error(`Unknown LayoutAngle: ${data.layoutAngle}`);
             }
         }
-    };
-    export const makeTetraspotStyleList = (data: Arguments): StyleProperty[] =>
-    {
-        if ("transparent" === data.foregroundColor)
+    );
+    export const makeTetraspotStyleList = (data: Arguments): StyleProperty[] => makeStyleListCommon
+    (
+        data, data =>
         {
-            throw new Error(`foregroundColor must be other than "transparent".`);
-        }
-        const plain = makePlainStyleListOrNull(data);
-        if (null !== plain)
-        {
-            return plain;
-        }
-        else
-        if (getActualReverseRate(data) < data.depth)
-        {
-            if ("transparent" === getBackgroundColor(data))
-            {
-                throw new Error(`When using reverseRate, backgroundColor must be other than "transparent".`);
-            }
-            return makeTetraspotStyleList(reverseArguments(data));
-        }
-        else
-        {
-            const { intervalSize, radius, } = calculateSize(data, TetraPatternHalfRadiusSpotArea, 0.5 *root2);
+            const { intervalSize, radius, } = calculateSpotSize(data, TetraPatternHalfRadiusSpotArea, 0.5 *root2);
             const radialGradient = makeRadialGradientString(data, radius);
             const backgroundColor: StyleValue = getBackgroundColor(data);
             switch(getLayoutAngle(data))
@@ -276,28 +282,10 @@ export module flounderStyle
                 throw new Error(`Unknown LayoutAngle: ${data.layoutAngle}`);
             }
         }
-    };
-    export const makeStripeStyleList = (data: Arguments): StyleProperty[] =>
-    {
-        if ("transparent" === data.foregroundColor)
-        {
-            throw new Error(`foregroundColor must be other than "transparent".`);
-        }
-        const plain = makePlainStyleListOrNull(data);
-        if (null !== plain)
-        {
-            return plain;
-        }
-        else
-        if (getActualReverseRate(data) < data.depth)
-        {
-            if ("transparent" === getBackgroundColor(data))
-            {
-                throw new Error(`When using reverseRate, backgroundColor must be other than "transparent".`);
-            }
-            return makeDilineStyleList(reverseArguments(data));
-        }
-        else
+    );
+    export const makeStripeStyleList = (data: Arguments): StyleProperty[] => makeStyleListCommon
+    (
+        data, data =>
         {
             const backgroundColor: StyleValue = getBackgroundColor(data);
             const angleOffset = getActualLayoutAngle(data);
@@ -313,28 +301,10 @@ export module flounderStyle
                 backgroundImage: makeLinearGradientString(data, radius, intervalSize, angleOffset)
             });
         }
-    };
-    export const makeDilineStyleList = (data: Arguments): StyleProperty[] =>
-    {
-        if ("transparent" === data.foregroundColor)
-        {
-            throw new Error(`foregroundColor must be other than "transparent".`);
-        }
-        const plain = makePlainStyleListOrNull(data);
-        if (null !== plain)
-        {
-            return plain;
-        }
-        else
-        if (getActualReverseRate(data) < data.depth)
-        {
-            if ("transparent" === getBackgroundColor(data))
-            {
-                throw new Error(`When using reverseRate, backgroundColor must be other than "transparent".`);
-            }
-            return makeDilineStyleList(reverseArguments(data));
-        }
-        else
+    );
+    export const makeDilineStyleList = (data: Arguments): StyleProperty[] => makeStyleListCommon
+    (
+        data, data =>
         {
             const backgroundColor: StyleValue = getBackgroundColor(data);
             const angleOffset = getActualLayoutAngle(data);
@@ -355,28 +325,10 @@ export module flounderStyle
                 .join(", ")
             });
         }
-    };
-    export const makeTrilineStyleList = (data: Arguments): StyleProperty[] =>
-    {
-        if ("transparent" === data.foregroundColor)
-        {
-            throw new Error(`foregroundColor must be other than "transparent".`);
-        }
-        const plain = makePlainStyleListOrNull(data);
-        if (null !== plain)
-        {
-            return plain;
-        }
-        else
-        if (getActualReverseRate(data) < data.depth)
-        {
-            if ("transparent" === getBackgroundColor(data))
-            {
-                throw new Error(`When using reverseRate, backgroundColor must be other than "transparent".`);
-            }
-            return makeTrilineStyleList(reverseArguments(data));
-        }
-        else
+    );
+    export const makeTrilineStyleList = (data: Arguments): StyleProperty[] => makeStyleListCommon
+    (
+        data, data =>
         {
             const backgroundColor: StyleValue = getBackgroundColor(data);
             const angleOffset = getActualLayoutAngle(data);
@@ -398,5 +350,5 @@ export module flounderStyle
                 .join(", ")
             });
         }
-    };
+    );
 }

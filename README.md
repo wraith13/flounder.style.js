@@ -73,8 +73,15 @@ console.log(`CSS: ${flounderStyle.styleListToString(styleList)}`);
 |depth|number(rate)|`NOT OPTIONAL`|Rate of area occupied by foreground color pattern|
 |blur|number(pixel)|0.0|If you want to improve the visibility of overlapping text, increase this value to blur the pattern.|
 |maxPatternSize|number(pixel)|`undefined`|If maxPatternSize is specified, instead of increasing the spot size beyond this value, intervalSize will be decreased.|
-|reverseRate|number(rate) \| "auto" |`undefined`|To avoid pixel collapse, when depth is greater than reverseRate, the foreground color, background color, and depth are reversed. When using reverseRate, backgroundColor must be other than "transparent". If "auto" is specified, it will be set to the same value as the depth at which the spots touch each other.|
+|reverseRate|number(±rate) \| "auto" \| "-auto" |`undefined`|To avoid pixel collapse, when depth is greater than reverseRate, the foreground color, background color, and depth are reversed. When using reverseRate, backgroundColor must be other than "transparent". If "auto" is specified, it will be set to the same value as the depth at which the spots touch each other. If a negative value is specified, the process will be reversed from the beginning and processed regularly with a depth greater than the absolute value of reverseRate.|
 |maximumFractionDigits|number(count)|3|The maximum number of digits after the decimal point for numbers used in the generated CSS.|
+
+#### number types
+
+- The range of number(rate) is 0.0 to 1.0.
+- The range of number(±rate) is -1.0 to 1.0.
+- The range of number(pixel) is 0.0 or greater.
+- The range of number(count) is an integer value greater than or equal to 0.
 
 ## Development environment construction
 
