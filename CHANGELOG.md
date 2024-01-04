@@ -8,6 +8,7 @@
 - "diline"
 - "triline"
 - Negative value support for reverseRate argument
+- anglePerDepth argument
 
 ### Changed
 

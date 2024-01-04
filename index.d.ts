@@ -20,21 +20,29 @@ declare module "index" {
         };
         type Color = string;
         type LayoutAngle = "regular" | "alternative";
+        type Real = number;
+        type Rate = Real;
+        type SignedRate = Real;
+        type Pixel = Real;
+        type Integer = number;
+        type Count = Integer;
         interface ArgumentsBase {
             type: FlounderType;
-            layoutAngle?: LayoutAngle | number;
+            layoutAngle?: LayoutAngle | SignedRate;
             foregroundColor: Color;
             backgroundColor?: Color;
-            intervalSize?: number;
-            depth: number;
-            blur?: number;
-            maxPatternSize?: number;
-            reverseRate?: number | "auto" | "-auto";
-            maximumFractionDigits?: number;
+            intervalSize?: Pixel;
+            depth: Rate;
+            blur?: Pixel;
+            maxPatternSize?: Pixel;
+            reverseRate?: SignedRate | "auto" | "-auto";
+            anglePerDepth?: SignedRate | "auto" | "-auto";
+            maximumFractionDigits?: Count;
         }
         interface SpotArguments extends ArgumentsBase {
             type: "trispot" | "tetraspot";
-            layoutAngle?: LayoutAngle;
+            layoutAngle?: LayoutAngle | 0;
+            anglePerDepth?: never | 0;
         }
         interface LineArguments extends ArgumentsBase {
             type: "stripe" | "diline" | "triline";
@@ -43,6 +51,9 @@ declare module "index" {
         const getPatternType: (data: Arguments) => FlounderType;
         const getLayoutAngle: (data: Arguments) => LayoutAngle;
         const getActualLayoutAngle: (data: Arguments) => number;
+        const getActualAnglePerDepth: (data: Arguments) => number;
+        const getAngleOffsetByDepth: (data: Arguments) => number;
+        const getAngleOffset: (data: Arguments) => number;
         const getBackgroundColor: (data: Arguments) => Color;
         const getIntervalSize: (data: Arguments) => number;
         const getBlur: (data: Arguments) => number;

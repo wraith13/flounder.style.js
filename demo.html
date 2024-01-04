@@ -65,7 +65,7 @@ window.module.sequentialLoad
         const $div = $tag("div");
         const valueToString = (value) => undefined === value ? "undefined": JSON.stringify(value);
         const makeTitle = (data) =>
-            $div("sample title")(`type:${valueToString(data.type)}, layoutAngle:${valueToString(data.layoutAngle)}, blur:${valueToString(data.blur)}, maxPatternSize:${valueToString(data.maxPatternSize)}, reverseRate:${valueToString(data.reverseRate)}`);
+            $div("sample title")(`type:${valueToString(data.type)}, layoutAngle:${valueToString(data.layoutAngle)}, blur:${valueToString(data.blur)}, maxPatternSize:${valueToString(data.maxPatternSize)}, reverseRate:${valueToString(data.reverseRate)}, anglePerDepth:${valueToString(data.anglePerDepth)}`);
         const makeArguments = (data, depth) =>
         {
             const result = structuredClone(data);
@@ -125,6 +125,10 @@ window.module.sequentialLoad
                 { type: "triline", layoutAngle: 0.2, foregroundColor: "#AAFFDD", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
                 { type: "diline", layoutAngle: 0.2, foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, intervalSize: 24, },
                 { type: "triline", layoutAngle: 0.2, foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, intervalSize: 24, },
+                { type: "stripe", layoutAngle: "regular", foregroundColor: "#AAFFDD", depth: 0, maxPatternSize: undefined, intervalSize: 24, anglePerDepth: "auto", },
+                { type: "stripe", layoutAngle: "alternative", foregroundColor: "#AAFFDD", depth: 0, maxPatternSize: undefined, intervalSize: 24, anglePerDepth: "auto", },
+                { type: "diline", layoutAngle: 0.0, foregroundColor: "#AAFFDD", depth: 0, maxPatternSize: undefined, intervalSize: 24, anglePerDepth: "auto", },
+                { type: "triline", layoutAngle: 0.0, foregroundColor: "#AAFFDD", depth: 0, maxPatternSize: undefined, intervalSize: 24, anglePerDepth: "auto", },
                 { type: "trispot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, blur: 1.0, maxPatternSize: undefined, intervalSize: 24, },
                 { type: "triline", layoutAngle: 0.2, foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, blur: 1.0, maxPatternSize: undefined, intervalSize: 24, },
             ]

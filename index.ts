@@ -36,23 +36,31 @@ export module flounderStyle
     export type Style = { key: StyleKey; value: StyleValue; };
     export type Color = string; // https://developer.mozilla.org/en-US/docs/Web/CSS/color_value
     export type LayoutAngle = "regular" | "alternative";
+    export type Real = number;
+    export type Rate = Real;
+    export type SignedRate = Real;
+    export type Pixel = Real;
+    export type Integer = number;
+    export type Count = Integer;
     export interface ArgumentsBase
     {
         type: FlounderType;
-        layoutAngle?: LayoutAngle | number;
+        layoutAngle?: LayoutAngle | SignedRate;
         foregroundColor: Color;
-        backgroundColor?: Color; // default is "transparent"
-        intervalSize?: number;
-        depth: number; // must be 0.0 <= depth and depth <= 1.0
-        blur?: number; // must be 0.0 <= blur
-        maxPatternSize?: number; // must be 1 <= maxPatternSize and maxPatternSize <= (intervalSize *0.5);
-        reverseRate?: number | "auto" | "-auto"; // must be -1.0 <= depth and depth <= 1.0
-        maximumFractionDigits?: number;
+        backgroundColor?: Color;
+        intervalSize?: Pixel;
+        depth: Rate;
+        blur?: Pixel;
+        maxPatternSize?: Pixel;
+        reverseRate?: SignedRate | "auto" | "-auto";
+        anglePerDepth?: SignedRate | "auto" | "-auto";
+        maximumFractionDigits?: Count;
     }
     export interface SpotArguments extends ArgumentsBase
     {
         type: "trispot" | "tetraspot";
-        layoutAngle?: LayoutAngle;
+        layoutAngle?: LayoutAngle | 0;
+        anglePerDepth?: never | 0;
     }
     export interface LineArguments extends ArgumentsBase
     {
@@ -70,7 +78,21 @@ export module flounderStyle
     };
     export const getActualLayoutAngle = (data: Arguments): number =>
         "number" === typeof data.layoutAngle ? data.layoutAngle:
-        ("regular" === (data.layoutAngle ?? "regular") ? 0.0: ("diline" === data.type ? 0.125: 0.25));
+        "regular" === (data.layoutAngle ?? "regular") ? 0.0:
+        "stripe" === data.type ? 0.25:
+        "diline" === data.type ? 0.125:
+        "triline" === data.type ? 0.25:
+        0.5;
+    export const getActualAnglePerDepth = (data: Arguments): number =>
+        "number" === typeof data.anglePerDepth ? data.anglePerDepth:
+        ("auto" === data.anglePerDepth && "stripe" === getPatternType(data)) ? (1.0 / 2.0):
+        ("auto" === data.anglePerDepth && "diline" === getPatternType(data)) ? (1.0 / 4.0):
+        ("auto" === data.anglePerDepth && "triline" === getPatternType(data)) ? (1.0 / 6.0):
+        "auto" === data.anglePerDepth ? 1.0: 0.0;
+    export const getAngleOffsetByDepth = (data: Arguments): number =>
+        getActualAnglePerDepth(data) *data.depth;
+    export const getAngleOffset = (data: Arguments): number =>
+        getActualLayoutAngle(data) +getAngleOffsetByDepth(data);
     export const getBackgroundColor = (data: Arguments): Color => data.backgroundColor ?? "transparent";
     export const getIntervalSize = (data: Arguments) =>
         data.intervalSize ?? config.defaultSpotIntervalSize;
@@ -118,7 +140,7 @@ export module flounderStyle
         `radial-gradient(circle at center, ${data.foregroundColor} ${numberToString(data, radius -blur)}px, transparent ${numberToString(data, radius +blur)}px)`;
     const makeLinearGradientString = (data: Arguments, radius: number, intervalSize: number, angle: number, blur = Math.min(intervalSize -radius, radius, getBlur(data)) /0.5) =>
     {
-        const deg = numberToString(data, 360.0 *angle);
+        const deg = numberToString(data, 360.0 *(angle %1.0));
         const patternStart = numberToString(data, 0);
         const a = numberToString(data, Math.max(0, radius -blur));
         const b = numberToString(data, Math.min(intervalSize *0.5, radius +blur));
@@ -288,7 +310,7 @@ export module flounderStyle
         data, data =>
         {
             const backgroundColor: StyleValue = getBackgroundColor(data);
-            const angleOffset = getActualLayoutAngle(data);
+            const angleOffset = getAngleOffset(data);
             const { intervalSize, radius, } = calculateMaxPatternSize
             (
                 data,
@@ -307,7 +329,7 @@ export module flounderStyle
         data, data =>
         {
             const backgroundColor: StyleValue = getBackgroundColor(data);
-            const angleOffset = getActualLayoutAngle(data);
+            const angleOffset = getAngleOffset(data);
             const { intervalSize, radius, } = calculateMaxPatternSize
             (
                 data,
@@ -331,7 +353,7 @@ export module flounderStyle
         data, data =>
         {
             const backgroundColor: StyleValue = getBackgroundColor(data);
-            const angleOffset = getActualLayoutAngle(data);
+            const angleOffset = getAngleOffset(data);
             const { intervalSize, radius, } = calculateMaxPatternSize
             (
                 data,

@@ -66,7 +66,7 @@ console.log(`CSS: ${flounderStyle.styleListToString(styleList)}`);
 |key|type|default|description|
 |---|---|---|---|
 |type|"trispot" \| "tetraspot" \| "stripe" \| "diline" \| "tryline"|`NOT OPTIONAL`|see [demo](https://wraith13.github.io/flounder.style.js/demo.html).|
-|layoutAngle|"regular" \| "alternative" \| number(rate)|"regular"|see [demo](https://wraith13.github.io/flounder.style.js/demo.html). number can only be specified when type is "stripe" or "diline" or "triline".|
+|layoutAngle|"regular" \| "alternative" \| number(±rate)|"regular"|see [demo](https://wraith13.github.io/flounder.style.js/demo.html). number can only be specified when type is "stripe" or "diline" or "triline".|
 |foregroundColor|[CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)|`NOT OPTIONAL`|Foreground pattern color. foregroundColor must be other than "transparent".|
 |backgroundColor|[CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)|"transparent"|Background pattern color. When using reverseRate, backgroundColor must be other than "transparent".|
 |intervalSize|number(pixel)|24|Number of pixels from the center of a spot to the center of the next spot.|
@@ -74,6 +74,7 @@ console.log(`CSS: ${flounderStyle.styleListToString(styleList)}`);
 |blur|number(pixel)|0.0|If you want to improve the visibility of overlapping text, increase this value to blur the pattern.|
 |maxPatternSize|number(pixel)|`undefined`|If maxPatternSize is specified, instead of increasing the spot size beyond this value, intervalSize will be decreased.|
 |reverseRate|number(±rate) \| "auto" \| "-auto" |`undefined`|To avoid pixel collapse, when depth is greater than reverseRate, the foreground color, background color, and depth are reversed. When using reverseRate, backgroundColor must be other than "transparent". If "auto" is specified, it will be set to the same value as the depth at which the spots touch each other. If a negative value is specified, the process will be reversed from the beginning and processed regularly with a depth greater than the absolute value of reverseRate.|
+|anglePerDepth|number(±rate) \| "auto" \| "-auto" |`undefined`|...|
 |maximumFractionDigits|number(count)|3|The maximum number of digits after the decimal point for numbers used in the generated CSS.|
 
 #### number types

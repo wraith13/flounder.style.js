@@ -46,7 +46,24 @@ define("index", ["require", "exports", "config"], function (require, exports, co
         flounderStyle.getActualLayoutAngle = function (data) {
             var _a;
             return "number" === typeof data.layoutAngle ? data.layoutAngle :
-                ("regular" === ((_a = data.layoutAngle) !== null && _a !== void 0 ? _a : "regular") ? 0.0 : ("diline" === data.type ? 0.125 : 0.25));
+                "regular" === ((_a = data.layoutAngle) !== null && _a !== void 0 ? _a : "regular") ? 0.0 :
+                    "stripe" === data.type ? 0.25 :
+                        "diline" === data.type ? 0.125 :
+                            "triline" === data.type ? 0.25 :
+                                0.5;
+        };
+        flounderStyle.getActualAnglePerDepth = function (data) {
+            return "number" === typeof data.anglePerDepth ? data.anglePerDepth :
+                ("auto" === data.anglePerDepth && "stripe" === flounderStyle.getPatternType(data)) ? (1.0 / 2.0) :
+                    ("auto" === data.anglePerDepth && "diline" === flounderStyle.getPatternType(data)) ? (1.0 / 4.0) :
+                        ("auto" === data.anglePerDepth && "triline" === flounderStyle.getPatternType(data)) ? (1.0 / 6.0) :
+                            "auto" === data.anglePerDepth ? 1.0 : 0.0;
+        };
+        flounderStyle.getAngleOffsetByDepth = function (data) {
+            return flounderStyle.getActualAnglePerDepth(data) * data.depth;
+        };
+        flounderStyle.getAngleOffset = function (data) {
+            return flounderStyle.getActualLayoutAngle(data) + flounderStyle.getAngleOffsetByDepth(data);
         };
         flounderStyle.getBackgroundColor = function (data) { var _a; return (_a = data.backgroundColor) !== null && _a !== void 0 ? _a : "transparent"; };
         flounderStyle.getIntervalSize = function (data) { var _a; return (_a = data.intervalSize) !== null && _a !== void 0 ? _a : config_json_1.default.defaultSpotIntervalSize; };
@@ -97,7 +114,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
         };
         var makeLinearGradientString = function (data, radius, intervalSize, angle, blur) {
             if (blur === void 0) { blur = Math.min(intervalSize - radius, radius, flounderStyle.getBlur(data)) / 0.5; }
-            var deg = numberToString(data, 360.0 * angle);
+            var deg = numberToString(data, 360.0 * (angle % 1.0));
             var patternStart = numberToString(data, 0);
             var a = numberToString(data, Math.max(0, radius - blur));
             var b = numberToString(data, Math.min(intervalSize * 0.5, radius + blur));
@@ -231,7 +248,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
         }); };
         flounderStyle.makeStripeStyleList = function (data) { return makeStyleListCommon(data, function (data) {
             var backgroundColor = flounderStyle.getBackgroundColor(data);
-            var angleOffset = flounderStyle.getActualLayoutAngle(data);
+            var angleOffset = flounderStyle.getAngleOffset(data);
             var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), data.depth * (flounderStyle.getIntervalSize(data) / 2.0)), intervalSize = _a.intervalSize, radius = _a.radius;
             return makeResult({
                 backgroundColor: backgroundColor,
@@ -240,7 +257,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
         }); };
         flounderStyle.makeDilineStyleList = function (data) { return makeStyleListCommon(data, function (data) {
             var backgroundColor = flounderStyle.getBackgroundColor(data);
-            var angleOffset = flounderStyle.getActualLayoutAngle(data);
+            var angleOffset = flounderStyle.getAngleOffset(data);
             var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (flounderStyle.getIntervalSize(data) / 2.0)), intervalSize = _a.intervalSize, radius = _a.radius;
             return makeResult({
                 backgroundColor: backgroundColor,
@@ -253,7 +270,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
         }); };
         flounderStyle.makeTrilineStyleList = function (data) { return makeStyleListCommon(data, function (data) {
             var backgroundColor = flounderStyle.getBackgroundColor(data);
-            var angleOffset = flounderStyle.getActualLayoutAngle(data);
+            var angleOffset = flounderStyle.getAngleOffset(data);
             var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (flounderStyle.getIntervalSize(data) / 3.0)), intervalSize = _a.intervalSize, radius = _a.radius;
             return makeResult({
                 backgroundColor: backgroundColor,
