@@ -84,6 +84,13 @@ console.log(`CSS: ${flounderStyle.styleListToString(styleList)}`);
 - The range of number(pixel) is 0.0 or greater.
 - The range of number(count) is an integer value greater than or equal to 0.
 
+#### ⚠️ About translucent color
+
+Using translucent colors for `foregroundColor` and `backgroundColor` often does not work well due to overlapping patterns.
+This is the same reason why you can't use "transparent" for `foregroundColor`, and why you can't use "transparent" for `backgroundColor` when using reverseRate.
+
+If you want to use a translucent color pattern, instead of directly specifying a translucent color to `foregroundColor` or `backgroundColor`, instead specify `opacity` in the Style (CSS) of that HTML Element to make the entire HTML Element translucent.
+
 ## Development environment construction
 
 0. Install [Visual Studio Code](https://code.visualstudio.com/) ( Not required, but recommended. )

@@ -17,6 +17,7 @@
 - "spotIntervalSize" -> "intervalSize"
 - "maxSpotSize" -> "maxPatternSize"
 - Improved the expression at high depth.
+- Changed the anchor position of "trispot" and "tetraspot" patterns from top left to center.
 
 ## 1.1.0 - 2024-01-01
 

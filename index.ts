@@ -72,7 +72,18 @@ export module flounderStyle
     {
         if ("number" === typeof data.layoutAngle)
         {
-            throw new Error(`When using ${data.type}, number cannot be used for layoutAngle.`);
+            if (0 === data.layoutAngle)
+            {
+                return "regular";
+            }
+            else
+            {
+                throw new Error(`When using ${data.type}, number cannot be used for layoutAngle.`);
+            }
+        }
+        if (undefined !== data.anglePerDepth && null !== data.anglePerDepth && 0 !== data.anglePerDepth)
+        {
+            throw new Error(`anglePerDepth cannot be used when using ${data.type}.`);
         }
         return data.layoutAngle ?? "regular"
     };
@@ -261,7 +272,7 @@ export module flounderStyle
                     backgroundColor,
                     backgroundImage,
                     backgroundSize: `${numberToString(data, intervalSize *2.0)}px ${numberToString(data, intervalSize *root3)}px`,
-                    backgroundPosition: `0px 0px, ${numberToString(data, intervalSize)}px 0px, ${numberToString(data, intervalSize *0.5)}px ${numberToString(data, intervalSize *root3 *0.5)}px, ${numberToString(data, intervalSize *1.5)}px ${numberToString(data, intervalSize * root3 * 0.5)}px`
+                    backgroundPosition: `calc(0px + 50%) calc(0px + 50%), calc(${numberToString(data, intervalSize)}px + 50%) calc(0px + 50%), calc(${numberToString(data, intervalSize *0.5)}px + 50%) calc(${numberToString(data, intervalSize *root3 *0.5)}px + 50%), calc(${numberToString(data, intervalSize *1.5)}px + 50%) calc(${numberToString(data, intervalSize * root3 * 0.5)}px + 50%)`
                 });
             case "alternative": // vertical
                 return makeResult
@@ -269,7 +280,7 @@ export module flounderStyle
                     backgroundColor,
                     backgroundImage,
                     backgroundSize: ` ${numberToString(data, intervalSize *root3)}px ${numberToString(data, intervalSize *2.0)}px`,
-                    backgroundPosition: `0px 0px, 0px ${numberToString(data, intervalSize)}px, ${numberToString(data, intervalSize *root3 *0.5)}px ${numberToString(data, intervalSize *0.5)}px, ${numberToString(data, intervalSize *root3 *0.5)}px ${numberToString(data, intervalSize *1.5)}px`
+                    backgroundPosition: `calc(0px + 50%) calc(0px + 50%), calc(0px + 50%) calc(${numberToString(data, intervalSize)}px + 50%), calc(${numberToString(data, intervalSize *root3 *0.5)}px + 50%) calc(${numberToString(data, intervalSize *0.5)}px + 50%), calc(${numberToString(data, intervalSize *root3 *0.5)}px + 50%) calc(${numberToString(data, intervalSize *1.5)}px + 50%)`
                 });
             default:
                 throw new Error(`Unknown LayoutAngle: ${data.layoutAngle}`);
@@ -291,6 +302,7 @@ export module flounderStyle
                     backgroundColor,
                     backgroundImage: radialGradient,
                     backgroundSize: `${numberToString(data, intervalSize)}px ${numberToString(data, intervalSize)}px`,
+                    backgroundPosition: `calc(0px + 50%) calc(0px + 50%)`
                 });
             case "alternative": // slant
                 return makeResult
@@ -298,7 +310,7 @@ export module flounderStyle
                     backgroundColor,
                     backgroundImage: Array.from({ length: 2 }).map(_ => radialGradient).join(", "),
                     backgroundSize: `${numberToString(data, (intervalSize *2.0) /root2)}px ${numberToString(data, (intervalSize *2.0) /root2)}px`,
-                    backgroundPosition: `0px 0px, ${numberToString(data, intervalSize /root2)}px ${numberToString(data, intervalSize /root2)}px`
+                    backgroundPosition: `calc(0px + 50%) calc(0px + 50%), calc(${numberToString(data, intervalSize /root2)}px + 50%) calc(${numberToString(data, intervalSize /root2)}px + 50%)`
                 });
             default:
                 throw new Error(`Unknown LayoutAngle: ${data.layoutAngle}`);
