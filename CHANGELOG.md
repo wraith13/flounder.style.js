@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.0.1 - 2024-01-05
+
+### Fixed
+
+- README.md: Link mistake
+
 ## 2.0.0 - 2024-01-05
 
 ### Added

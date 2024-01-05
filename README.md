@@ -31,7 +31,7 @@ background-position:
 
 ## Redering Samples
 
-See [samples](https://wraith13.github.io/flounder.style.js/demo.html).
+See [samples](https://wraith13.github.io/flounder.style.js/samples.html).
 
 ![](./image/sample0.png)
 ![](./image/sample1.png)
