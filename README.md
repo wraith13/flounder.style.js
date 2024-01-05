@@ -13,20 +13,25 @@ These problems can be avoided by using color pattern expressions.
 ## Redering CSS Sample
 
 ```css
+background-color: white;
 background-image:
-    radial-gradient(circle, rgb(170, 255, 221) 8px, transparent 8px),
-    radial-gradient(circle, rgb(170, 255, 221) 8px, transparent 8px),
-    radial-gradient(circle, rgb(170, 255, 221) 8px, transparent 8px),
-    radial-gradient(circle, rgb(170, 255, 221) 8px, transparent 8px);
-background-size: 43.1px 37.32px;
-background-position: 0px 0px, 21.55px 0px, 10.77px 18.66px, 32.32px 18.66px;
+    radial-gradient(circle, rgb(170, 255, 221) 8.91px, transparent 8.91px),
+    radial-gradient(circle, rgb(170, 255, 221) 8.91px, transparent 8.91px),
+    radial-gradient(circle, rgb(170, 255, 221) 8.91px, transparent 8.91px),
+    radial-gradient(circle, rgb(170, 255, 221) 8.91px, transparent 8.91px);
+background-size: 41.569px 48px;
+background-position:
+    calc(0px + 50%) calc(0px + 50%),
+    calc(0px + 50%) calc(24px + 50%),
+    calc(20.785px + 50%) calc(12px + 50%),
+    calc(20.785px + 50%) calc(36px + 50%);
 ```
 
 ( Line breaks and indentation have been adjusted for ease of viewing, and the CSS that is actually created will not have line breaks and indentation adjusted like this. )
 
 ## Redering Samples
 
-See [all samples on the demo page](https://wraith13.github.io/flounder.style.js/demo.html).
+See [samples](https://wraith13.github.io/flounder.style.js/demo.html).
 
 ![](./image/sample0.png)
 ![](./image/sample1.png)
@@ -45,7 +50,7 @@ import { flounderStyle } from "flounder.style.js";
 // make style list
 const data: flounderStyle.Arguments =
 {
-    type: "tri",
+    type: "trispot",
     layoutAngle: "regular",
     foregroundColor: "#AAFFDD",
     intervalSize: 24,
@@ -65,8 +70,8 @@ console.log(`CSS: ${flounderStyle.styleListToString(styleList)}`);
 
 |key|type|default|description|
 |---|---|---|---|
-|type|"trispot" \| "tetraspot" \| "stripe" \| "diline" \| "tryline"|`NOT OPTIONAL`|see [demo](https://wraith13.github.io/flounder.style.js/demo.html).|
-|layoutAngle|"regular" \| "alternative" \| number(±rate)|"regular"|see [demo](https://wraith13.github.io/flounder.style.js/demo.html). number can only be specified when type is "stripe" or "diline" or "triline".|
+|type|"trispot" \| "tetraspot" \| "stripe" \| "diline" \| "tryline"|`NOT OPTIONAL`|see [samples](https://wraith13.github.io/flounder.style.js/samples.html).|
+|layoutAngle|"regular" \| "alternative" \| number(±rate)|"regular"|see [samples](https://wraith13.github.io/flounder.style.js/samples.html). number can only be specified when type is "stripe" or "diline" or "triline".|
 |foregroundColor|[CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)|`NOT OPTIONAL`|Foreground pattern color. foregroundColor must be other than "transparent".|
 |backgroundColor|[CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)|"transparent"|Background pattern color. When using reverseRate, backgroundColor must be other than "transparent".|
 |intervalSize|number(pixel)|24|Number of pixels from the center of a spot to the center of the next spot.|
