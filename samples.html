@@ -76,8 +76,35 @@ window.module.sequentialLoad
         const $tag = minamo.dom.tag;
         const $div = $tag("div");
         const valueToString = (value) => undefined === value ? "undefined": JSON.stringify(value);
+        const stringify = (value) =>
+        {
+            if (null !== value && undefined !== value)
+            {
+                if (Array.isArray(value))
+                {
+                    return "[ " +value.map(i => stringify(i)).join(", ") +" ]";
+                }
+                if ("object" === typeof value)
+                {
+                    var result = [];
+                    Object.keys(value).forEach
+                    (
+                        key =>
+                        {
+                            var v = value[key];
+                            if (undefined !== v)
+                            {
+                                result.push(`${key}:${stringify(v)}`);
+                            }
+                        }
+                    )
+                    return "{ " +result.join(", ") +" }";
+                }
+            }
+            return valueToString(value);
+        };
         const makeTitle = (data) =>
-            $div("sample title")(`{ type:${valueToString(data.type)}, layoutAngle:${valueToString(data.layoutAngle)}, blur:${valueToString(data.blur)}, maxPatternSize:${valueToString(data.maxPatternSize)}, reverseRate:${valueToString(data.reverseRate)}, anglePerDepth:${valueToString(data.anglePerDepth)}, }`);
+            $div("sample title")(stringify(data));
         const makeArguments = (data, depth) =>
         {
             const result = structuredClone(data);
@@ -97,52 +124,52 @@ window.module.sequentialLoad
         (
             document.getElementById("screen-body"),
             [
-                { type: "trispot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "trispot", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "tetraspot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "tetraspot", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "diline", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "diline", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "triline", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "triline", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "trispot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: 4, intervalSize: 24, },
-                { type: "trispot", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: 4, intervalSize: 24, },
-                { type: "tetraspot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: 4, intervalSize: 24, },
-                { type: "tetraspot", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: 4, intervalSize: 24, },
-                { type: "diline", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: 4, intervalSize: 24, },
-                { type: "diline", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: 4, intervalSize: 24, },
-                { type: "triline", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: 4, intervalSize: 24, },
-                { type: "triline", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: 4, intervalSize: 24, },
-                { type: "trispot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "trispot", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "tetraspot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "tetraspot", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "diline", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "diline", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "triline", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "triline", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "trispot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, intervalSize: 24, },
-                { type: "trispot", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, intervalSize: 24, },
-                { type: "tetraspot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, intervalSize: 24, },
-                { type: "tetraspot", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, intervalSize: 24, },
-                { type: "diline", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, intervalSize: 24, },
-                { type: "diline", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, intervalSize: 24, },
-                { type: "triline", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, intervalSize: 24, },
-                { type: "triline", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, intervalSize: 24, },
-                { type: "trispot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"-auto", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "tetraspot", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"-auto", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "stripe", layoutAngle: 0.2, foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "stripe", layoutAngle: 0.2, foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: 4, intervalSize: 24, },
-                { type: "diline", layoutAngle: 0.2, foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "triline", layoutAngle: 0.2, foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "diline", layoutAngle: 0.2, foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, intervalSize: 24, },
-                { type: "triline", layoutAngle: 0.2, foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, intervalSize: 24, },
-                { type: "stripe", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: undefined, intervalSize: 24, anglePerDepth: "auto", },
-                { type: "stripe", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: undefined, intervalSize: 24, anglePerDepth: "auto", },
-                { type: "diline", layoutAngle: 0.0, foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: undefined, intervalSize: 24, anglePerDepth: "auto", },
-                { type: "triline", layoutAngle: 0.0, foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: undefined, intervalSize: 24, anglePerDepth: "auto", },
-                { type: "trispot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, blur: 1.0, maxPatternSize: undefined, intervalSize: 24, },
-                { type: "triline", layoutAngle: 0.2, foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, blur: 1.0, maxPatternSize: undefined, intervalSize: 24, },
+                { type: "trispot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, },
+                { type: "trispot", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, },
+                { type: "tetraspot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, },
+                { type: "tetraspot", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, },
+                { type: "diline", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, },
+                { type: "diline", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, },
+                { type: "triline", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, },
+                { type: "triline", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, },
+                { type: "trispot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: 4, },
+                { type: "trispot", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: 4, },
+                { type: "tetraspot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: 4, },
+                { type: "tetraspot", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: 4, },
+                { type: "diline", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: 4, },
+                { type: "diline", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: 4, },
+                { type: "triline", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: 4, },
+                { type: "triline", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: 4, },
+                { type: "trispot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, },
+                { type: "trispot", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, },
+                { type: "tetraspot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, },
+                { type: "tetraspot", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, },
+                { type: "diline", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, },
+                { type: "diline", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, },
+                { type: "triline", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, },
+                { type: "triline", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, },
+                { type: "trispot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, },
+                { type: "trispot", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, },
+                { type: "tetraspot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, },
+                { type: "tetraspot", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, },
+                { type: "diline", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, },
+                { type: "diline", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, },
+                { type: "triline", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, },
+                { type: "triline", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, },
+                { type: "trispot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"-auto", depth: 0, },
+                { type: "tetraspot", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"-auto", depth: 0, },
+                { type: "stripe", layoutAngle: 0.2, foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, },
+                { type: "stripe", layoutAngle: 0.2, foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, maxPatternSize: 4, },
+                { type: "diline", layoutAngle: 0.2, foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, },
+                { type: "triline", layoutAngle: 0.2, foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, },
+                { type: "diline", layoutAngle: 0.2, foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, },
+                { type: "triline", layoutAngle: 0.2, foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, maxPatternSize: 4, },
+                { type: "stripe", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, anglePerDepth: "auto", },
+                { type: "stripe", layoutAngle: "alternative", foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, anglePerDepth: "auto", },
+                { type: "diline", layoutAngle: 0.0, foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, anglePerDepth: "auto", },
+                { type: "triline", layoutAngle: 0.0, foregroundColor: "#AAFFDD", backgroundColor: "white", depth: 0, anglePerDepth: "auto", },
+                { type: "trispot", layoutAngle: "regular", foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, blur: 1.0, },
+                { type: "triline", layoutAngle: 0.2, foregroundColor: "#AAFFDD", backgroundColor: "white", reverseRate:"auto", depth: 0, blur: 1.0, },
             ]
             .map
             (
