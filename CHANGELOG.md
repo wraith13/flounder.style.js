@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.1.0 - 2024-01-??
+
+### Fixed
+
+- Improved style application processing
+
 ## 2.0.1 - 2024-01-05
 
 ### Fixed

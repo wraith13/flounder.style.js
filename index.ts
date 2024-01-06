@@ -1,25 +1,21 @@
 import config from "./config.json";
 export module flounderStyle
 {
-    export interface StyleKey
-    {
-        css: string;
-        dom: string;
-    }
+    export type StyleKey = string;
     export type StyleValue = string | undefined;
     export type StyleProperty = { key: StyleKey; value: StyleValue; };
     export const setStyle = (element: HTMLElement, style: StyleProperty) =>
     {
-        const current = element.style.getPropertyValue(style.key.dom);
+        const current = element.style.getPropertyValue(style.key);
         if (current !== style.value) // for DOM rendering performance
         {
             if (undefined !== style.value)
             {
-                (element.style as any)[style.key.dom] = style.value;
+                element.style.setProperty(style.key, style.value);
             }
             else
             {
-                element.style.removeProperty(style.key.dom);
+                element.style.removeProperty(style.key);
             }
         }
         return element;
@@ -29,7 +25,7 @@ export module flounderStyle
         styleList.forEach(i => setStyle(element, i));
         return element;
     }
-    export const styleToString = (style: StyleProperty) => `${style.key.css}: ${style.value ?? "inherit"};`;
+    export const styleToString = (style: StyleProperty) => `${style.key}: ${style.value ?? "inherit"};`;
     export const styleListToString = (styleList: StyleProperty[], separator: string = " ") =>
         styleList.filter(i => undefined !== i.value).map(i => styleToString(i)).join(separator);
     export type FlounderType = Arguments["type"];
@@ -124,10 +120,10 @@ export module flounderStyle
         value.toLocaleString("en-US", { maximumFractionDigits: data.maximumFractionDigits ?? config.defaultMaximumFractionDigits, });
     const makeResult = ({ backgroundColor = undefined as StyleValue, backgroundImage = undefined as StyleValue, backgroundSize = undefined as StyleValue, backgroundPosition = undefined as StyleValue}): StyleProperty[] =>
     [
-        { key: { css: "background-color", dom: "backgroundColor", }, value:backgroundColor, },
-        { key: { css: "background-image", dom: "backgroundImage", }, value:backgroundImage, },
-        { key: { css: "background-size", dom: "backgroundSize", }, value:backgroundSize, },
-        { key: { css: "background-position", dom: "backgroundPosition", }, value:backgroundPosition, },
+        { key: "background-color", value:backgroundColor, },
+        { key: "background-image", value:backgroundImage, },
+        { key: "background-size", value:backgroundSize, },
+        { key: "background-position", value:backgroundPosition, },
     ];
     export const makePatternStyleList = (data: Arguments): StyleProperty[] =>
     {
@@ -191,7 +187,7 @@ export module flounderStyle
     };
     const calculateSpotSize = (data: Arguments, halfRadiusSpotArea: number, maxRadiusRate: number) =>
     {
-        var radius: number;
+        let radius: number;
         const intervalSize = getIntervalSize(data);
         if (data.depth <= halfRadiusSpotArea)
         {

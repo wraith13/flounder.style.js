@@ -14,14 +14,14 @@ define("index", ["require", "exports", "config"], function (require, exports, co
     var flounderStyle;
     (function (flounderStyle) {
         flounderStyle.setStyle = function (element, style) {
-            var current = element.style.getPropertyValue(style.key.dom);
+            var current = element.style.getPropertyValue(style.key);
             if (current !== style.value) // for DOM rendering performance
              {
                 if (undefined !== style.value) {
-                    element.style[style.key.dom] = style.value;
+                    element.style.setProperty(style.key, style.value);
                 }
                 else {
-                    element.style.removeProperty(style.key.dom);
+                    element.style.removeProperty(style.key);
                 }
             }
             return element;
@@ -30,7 +30,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             styleList.forEach(function (i) { return flounderStyle.setStyle(element, i); });
             return element;
         };
-        flounderStyle.styleToString = function (style) { var _a; return "".concat(style.key.css, ": ").concat((_a = style.value) !== null && _a !== void 0 ? _a : "inherit", ";"); };
+        flounderStyle.styleToString = function (style) { var _a; return "".concat(style.key, ": ").concat((_a = style.value) !== null && _a !== void 0 ? _a : "inherit", ";"); };
         flounderStyle.styleListToString = function (styleList, separator) {
             if (separator === void 0) { separator = " "; }
             return styleList.filter(function (i) { return undefined !== i.value; }).map(function (i) { return flounderStyle.styleToString(i); }).join(separator);
@@ -94,10 +94,10 @@ define("index", ["require", "exports", "config"], function (require, exports, co
         var makeResult = function (_a) {
             var _b = _a.backgroundColor, backgroundColor = _b === void 0 ? undefined : _b, _c = _a.backgroundImage, backgroundImage = _c === void 0 ? undefined : _c, _d = _a.backgroundSize, backgroundSize = _d === void 0 ? undefined : _d, _e = _a.backgroundPosition, backgroundPosition = _e === void 0 ? undefined : _e;
             return [
-                { key: { css: "background-color", dom: "backgroundColor", }, value: backgroundColor, },
-                { key: { css: "background-image", dom: "backgroundImage", }, value: backgroundImage, },
-                { key: { css: "background-size", dom: "backgroundSize", }, value: backgroundSize, },
-                { key: { css: "background-position", dom: "backgroundPosition", }, value: backgroundPosition, },
+                { key: "background-color", value: backgroundColor, },
+                { key: "background-image", value: backgroundImage, },
+                { key: "background-size", value: backgroundSize, },
+                { key: "background-position", value: backgroundPosition, },
             ];
         };
         flounderStyle.makePatternStyleList = function (data) {

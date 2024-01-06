@@ -1,9 +1,6 @@
 declare module "index" {
     export namespace flounderStyle {
-        interface StyleKey {
-            css: string;
-            dom: string;
-        }
+        type StyleKey = string;
         type StyleValue = string | undefined;
         type StyleProperty = {
             key: StyleKey;
