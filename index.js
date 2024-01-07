@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 define("config", [], {
     "defaultSpotIntervalSize": 24,
     "defaultBlur": 0.0,
-    "defaultMaximumFractionDigits": 3
+    "defaultMaximumFractionDigits": 4
 });
 define("index", ["require", "exports", "config"], function (require, exports, config_json_1) {
     "use strict";

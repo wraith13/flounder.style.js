@@ -1,0 +1,513 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>flounder.style.js demo</title>
+<meta name="theme-color" content="rgb(1,4,9)">
+<style>
+body
+{
+    margin: 0px;
+    padding: 0px;
+    background-color: rgb(230,237,243);
+}
+button
+{
+    background-color: transparent;
+    border-style: none;
+    border-width: 0px;
+    cursor: pointer;
+}
+#screen-header
+{
+    margin: 0px;
+    padding: 0px;
+    color: rgb(230,237,243);
+    background-color: rgb(1,4,9, 0.8);
+    position: fixed;
+    width: 100%;
+    z-index: 900;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    transition: margin-top 500ms;
+}
+#screen-header a
+{
+    color: rgb(230, 237, 243);
+}
+#screen-header .segment
+{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    font-size: 1.2rem;
+    padding: 0.75rem 1.0rem;
+    overflow-x: hidden;
+    transform: skewX(150deg);
+    text-decoration: none !important;
+    min-width: 2.25rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    font-weight: 400;
+    font-size: 1.5rem;
+    line-height: 100%;
+}
+#screen-header .segment:first-child
+{
+    padding-left: 1.25rem;
+    margin-left: -0.75rem;
+}
+#screen-header .segment + .segment
+{
+    margin-left: 0rem;
+    border-left-style: solid;
+    border-left-width: 1px;
+    border-left-color: rgb(230,237,243) !important;
+}
+#screen-header .segment > *
+{
+    transform: skewX(-150deg);
+}
+@media (hover: hover)
+{
+    #screen-header a.segment:hover
+    {
+        background-color: rgb(70,80,90);
+    }
+}
+#screen-body
+{
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#screen-body button
+{
+    background-color: rgba(1,4, 9, 0.6);
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    transition: opacity 500ms;
+}
+#screen-body button svg
+{
+    width: 8rem;
+    height: 8rem;
+    color: rgba(230, 237, 243, 0.7);
+    fill: rgba(230, 237, 243, 0.7);
+}
+@media (hover: hover)
+{
+    #screen-body button:hover
+    {
+        background-color: rgba(1,4, 9, 0.8);
+    }
+    #screen-body button:hover svg
+    {
+        color: rgba(230, 237, 243, 0.9);
+        fill: rgba(230, 237, 243, 0.9);
+    }
+}
+#screen-body #option-panel
+{
+    margin-top: 1rem;
+    color: rgb(230, 237, 243);
+    background-color: rgba(1,4, 9, 0.6);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    transition: opacity 500ms;
+}
+#screen-footer
+{
+    position: fixed;
+    /* top: 0px; */
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    z-index: 100;
+    margin: 0px;
+    color: rgb(230,237,243);
+    background-color: rgba(1,4,9,0.6);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    font-size: 1.0rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    transition: margin-bottom 500ms;
+}
+#screen-footer #arguments
+{
+    padding: 0.75rem;
+    line-height: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+}
+#screen-footer #arguments:empty
+{
+    display: none;
+}
+#screen-footer #arguments:empty + button
+{
+    display: none;
+}
+#screen-footer button
+{
+    background-color: rgba(1,4, 9, 0.3);
+    border-radius: 0.25rem;
+    padding: 0.25rem;
+}
+#screen-footer button svg
+{
+    width: 1rem;
+    height: 1rem;
+    color: rgb(230, 237, 243);
+    fill: rgb(230, 237, 243);
+}
+@media (hover: hover)
+{
+    #screen-footer button:hover
+    {
+        background-color: rgba(1,4, 9, 0.9);
+    }
+}
+#screen-footer #copied
+{
+    position: absolute;
+    bottom: 3rem;
+    color: rgb(230,237,243);
+    background-color: rgba(1,4,9,0.7);
+    border-radius: 0.25rem;
+    padding: 0.25rem;
+    transition: opacity 500ms;
+}
+#screen-footer:not(.copied) #copied
+{
+    opacity: 0;
+}
+body.immersive #screen-header
+{
+    margin-top: -4.0rem;
+}
+body.immersive:not(.mousemove) #screen-body
+{
+    cursor: none;
+}
+body.immersive.mousemove #screen-body
+{
+    cursor: pointer;
+}
+body.immersive #screen-body button,
+body.immersive #screen-body #option-panel
+{
+    opacity: 0;
+    pointer-events: none;
+}
+body.immersive #screen-footer
+{
+    margin-bottom: -2.5rem;
+}
+#pause
+{
+    position: absolute;
+    margin: auto;
+    color: rgb(230,237,243);
+    background-color: rgba(1,4,9,0.7);
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    transition: opacity 500ms;
+    pointer-events: none;
+}
+body:not(.immersive) #pause,
+body:not(.mousemove) #pause
+{
+    opacity: 0;
+}
+</style>
+</head>
+<body>
+<h1 id="screen-header"><a class="segment" href="https://github.com/"><span>GitHub</span></a><a class="segment" href="https://github.com/wraith13"><span>wraith13</span></a><a class="segment" href="https://github.com/wraith13/flounder.style.js"><span>flounder.style.js</span></a><div class="segment"><span>demo</span></div></h1>
+<div id="screen-body">
+    <div id="pause">Click on the screen to pause</div>
+    <button id="play-button" title="Play fullscreen animation">
+        <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+            <g transform="matrix(1,0,0,1,-20.52,-0.152764)">
+                <path d="M277.128,192.306L277.129,192C277.294,169.198 295.857,150.737 318.698,150.737C326.626,150.737 334.038,152.961 340.345,156.819L893.467,476.149L893.46,476.161C906.034,483.312 914.523,496.833 914.523,512.321C914.523,529.423 904.173,544.126 889.4,550.504L340.335,867.492C339.741,867.855 339.138,868.203 338.526,868.537L336.016,869.985L335.929,869.834C330.678,872.232 324.842,873.568 318.697,873.568C295.755,873.568 277.128,854.942 277.128,832L277.128,192.306Z"/>
+            </g>
+        </svg>
+    </button>
+    <div id="option-panel"><input id="with-fullscreen" type="checkbox"><label for="with-fullscreen">fullscreen</label></div>
+</div>
+<div id="screen-footer">
+    <div id="arguments"></div>
+    <button id="copy-button" title="Copy arguments">
+        <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+            <g transform="matrix(1.0084,0,0,1.0084,-283.765,246.924)">
+                <path d="M924,445.333L924,535.773C924,573.428 893.428,604 855.773,604L516.227,604C478.572,604 448,573.428 448,535.773L448,196.227C448,158.572 478.572,128 516.227,128L606.667,128L606.667,191.467L536,191.467C522.46,191.467 511.467,202.46 511.467,216L511.467,516.014C511.467,529.554 522.46,540.547 536,540.547L836,540.547C849.54,540.547 860.533,529.554 860.533,516.014L860.533,445.333L924,445.333ZM1130.27,-10.039L1130.27,329.506C1130.27,367.162 1099.69,397.733 1062.04,397.733L722.494,397.733C684.838,397.733 654.267,367.162 654.267,329.506L654.267,-10.039C654.267,-47.695 684.838,-78.267 722.494,-78.267L1062.04,-78.267C1099.69,-78.267 1130.27,-47.695 1130.27,-10.039ZM1066.8,9.733C1066.8,-3.807 1055.81,-14.8 1042.27,-14.8L742.267,-14.8C728.726,-14.8 717.733,-3.807 717.733,9.733L717.733,309.747C717.733,323.287 728.726,334.28 742.267,334.28L1042.27,334.28C1055.81,334.28 1066.8,323.287 1066.8,309.747L1066.8,9.733Z"/>
+            </g>
+        </svg>
+    </button>
+    <div id="copied">Copied!</div>
+</div>
+<script src="https://wraith13.github.io/evil-commonjs/index.js"></script>
+<script>
+window.module.sequentialLoad
+([
+    { path:"https://wraith13.github.io/evil-timer.js/index.js", mapping:["evil-timer.js"] },
+    // { path:"https://wraith13.github.io/flounder.style.js/index.js", mapping:["flounder.style.js"] },
+    { path:"./index.js", mapping:["flounder.style.js"] },
+]).then
+(
+    map =>
+    {
+        const { flounderStyle } = require("flounder.style.js");
+        const valueToString = (value) => undefined === value ? "undefined": JSON.stringify(value);
+        const stringify = (value) =>
+        {
+            if (null !== value && undefined !== value)
+            {
+                if (Array.isArray(value))
+                {
+                    return "[ " +value.map(i => stringify(i)).join(", ") +" ]";
+                }
+                if ("object" === typeof value)
+                {
+                    var result = [];
+                    Object.keys(value).forEach
+                    (
+                        key =>
+                        {
+                            var v = value[key];
+                            if (undefined !== v)
+                            {
+                                result.push(`${key}:${stringify(v)}`);
+                            }
+                        }
+                    )
+                    return "{ " +result.join(", ") +" }";
+                }
+            }
+            return valueToString(value);
+        };
+        const makeRandomInteger = (size) => Math.floor(Math.random() *size);
+        const randomSelect = (list) => list[makeRandomInteger(list.length)];
+        const makeRandomSpotArguments = (type, foregroundColor, backgroundColor, intervalSize) =>
+        ({
+            type,
+            layoutAngle: randomSelect([ "regular", "alternative", ]),
+            foregroundColor,
+            backgroundColor,
+            intervalSize,
+            depth: 0.0,
+            maxPatternSize: randomSelect([ undefined, intervalSize /4, ]),
+            reverseRate: randomSelect([ undefined, 0.0, ]),
+        });
+        const makeRandomTrispotArguments = (foregroundColor, backgroundColor, intervalSize) =>
+            makeRandomSpotArguments("trispot", foregroundColor, backgroundColor, intervalSize);
+        const makeRandomTetraspotArguments = (foregroundColor, backgroundColor, intervalSize) =>
+            makeRandomSpotArguments("tetraspot", foregroundColor, backgroundColor, intervalSize);
+        const makeRandomLineArguments = (type, foregroundColor, backgroundColor, intervalSize) =>
+        ({
+            type,
+            layoutAngle: Math.random(),
+            foregroundColor,
+            backgroundColor,
+            intervalSize,
+            depth: 0.0,
+            maxPatternSize: randomSelect([ undefined, intervalSize /(2 +makeRandomInteger(9)), ]),
+            reverseRate: randomSelect([ undefined, 0.0, ]),
+            anglePerDepth: randomSelect([ undefined, randomSelect([ "auto", "-auto", ]), ]),
+        });
+        const makeRandomStripeArguments = (foregroundColor, backgroundColor, intervalSize) =>
+            makeRandomLineArguments("stripe", foregroundColor, backgroundColor, intervalSize);
+        const makeRandomDilineArguments = (foregroundColor, backgroundColor, intervalSize) =>
+            makeRandomLineArguments("diline", foregroundColor, backgroundColor, intervalSize);
+        const makeRandomTrilineArguments = (foregroundColor, backgroundColor, intervalSize) =>
+            makeRandomLineArguments("triline", foregroundColor, backgroundColor, intervalSize);
+        const makeRandomArguments = (foregroundColor, backgroundColor) => randomSelect
+            ([
+                makeRandomTrispotArguments,
+                makeRandomTetraspotArguments,
+                makeRandomStripeArguments,
+                makeRandomDilineArguments,
+                makeRandomTrilineArguments,
+            ])
+            (foregroundColor, backgroundColor, 16 +makeRandomInteger(256));
+        const screenBody = document.getElementById("screen-body");
+        const withFullscreen = document.getElementById("with-fullscreen");
+        const fullscreenEnabled = document.fullscreenEnabled ?? document.webkitFullscreenEnabled;
+        if ( ! fullscreenEnabled)
+        {
+            withFullscreen.parentElement.style.setProperty("display", "none");
+        }
+        const phi = 1.618033988749895;
+        let startAt = 0;
+        let offsetAt = -1;
+        let color = { r: Math.random(), g: Math.random(), b: Math.random() };
+        const nextColor = ({ r, g, b}) =>
+        {
+            r = (r +(1.0 / phi));
+            g = (g +(1.0 / phi));
+            b = (b +(1.0 / phi));
+            if (1.0 <= r && g <= r && b <= r)
+            {
+                g += 0.3;
+            }
+            else
+            if (1.0 <= b && r <= g && b <= g)
+            {
+                b += 0.3;
+            }
+            else
+            if (1.0 <= g)
+            {
+                r += 0.3;
+            }
+            r %= 1;
+            g %= 1;
+            b %= 1;
+            return { r, g, b, };
+        };
+        const makeColor = ({ r, g, b}) => `rgb(${Math.floor(r *256)},${Math.floor(g *256)},${Math.floor(b *256)})`;
+        screenBody.style.setProperty("background-color", makeColor(color));
+        let arguments;
+        const span = 5000;
+        const animation = () =>
+        {
+            const now = new Date().getTime();
+            if (document.body.classList.contains("immersive"))
+            {
+                if (startAt +span <= now)
+                {
+                    startAt = now;
+                    const backgroundColor = makeColor(color);
+                    color = nextColor(color);
+                    const foregroundColor = makeColor(color);
+                    arguments = makeRandomArguments(foregroundColor, backgroundColor);
+                }
+                else
+                {
+                    arguments.depth = (now -startAt) /span;
+                }
+                flounderStyle.setStyle(screenBody, arguments);
+                window.requestAnimationFrame(animation);
+            }
+            else
+            {
+                if (arguments)
+                {
+                    document.getElementById("arguments").innerText = stringify(arguments);
+                    const now = new Date().getTime();
+                    offsetAt = now -startAt;
+                }
+            }
+        };
+        screenBody.addEventListener
+        (
+            "click",
+            event =>
+            {
+                event.stopPropagation();
+                if (event.target === event.currentTarget)
+                {
+                    document.body.classList.toggle("immersive", false);
+                    if (document.fullscreenElement || document.webkitFullscreenElement)
+                    {
+                        if (document.exitFullscreen)
+                        {
+                            document.exitFullscreen();
+                        }
+                        else
+                        if (document.webkitCancelFullScreen)
+                        {
+                            document.webkitCancelFullScreen();
+                        }
+                    }
+                }
+            }
+        );
+        let mousemoveTimer;
+        screenBody.addEventListener
+        (
+            "mousemove",
+            () =>
+            {
+                if (undefined !== mousemoveTimer)
+                {
+                    clearTimeout(mousemoveTimer);
+                }
+                document.body.classList.toggle("mousemove", true);
+                mousemoveTimer = setTimeout
+                (
+                    () =>
+                    {
+                        mousemoveTimer = undefined;
+                        document.body.classList.toggle("mousemove", false);
+                    },
+                    1000
+                );
+            }
+        )
+        document.getElementById("play-button").addEventListener
+        (
+            "click",
+            event =>
+            {
+                event.stopPropagation();
+                document.body.classList.toggle("immersive", true);
+                if (fullscreenEnabled && withFullscreen.checked)
+                {
+                    if (document.body.requestFullscreen)
+                    {
+                        document.body.requestFullscreen();
+                    }
+                    else
+                    if (document.body.webkitRequestFullscreen)
+                    {
+                        document.body.webkitRequestFullscreen();
+                    }
+                }
+                if (arguments)
+                {
+                    const now = new Date().getTime();
+                    startAt = now -offsetAt;
+                }
+                window.requestAnimationFrame(animation);
+            }
+        );
+        document.getElementById("copy-button").addEventListener
+        (
+            "click",
+            event =>
+            {
+                event.stopPropagation();
+                navigator.clipboard.writeText(document.getElementById("arguments").innerText).then
+                (
+                    () =>
+                    {
+                        const screenFooter = document.getElementById("screen-footer");
+                        screenFooter.classList.toggle("copied", true);
+                        setTimeout
+                        (
+                            () => screenFooter.classList.toggle("copied", false),
+                            1000
+                        );
+                    },
+                    () => { },
+                );
+                ;
+            }
+        );
+    }
+);
+</script>
+</body>
+</html>

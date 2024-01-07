@@ -10,6 +10,9 @@ Expressions based on color density can be difficult to recognize, not only for c
 
 These problems can be avoided by using color pattern expressions.
 
+- [samples](https://wraith13.github.io/flounder.style.js/samples.html)
+- [demo](https://wraith13.github.io/flounder.style.js/demo.html)
+
 ## Redering CSS Sample
 
 ```css
