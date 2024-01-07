@@ -1,10 +1,14 @@
 # Change Log
 
-## 2.1.0 - 2024-01-??
+## 3.0.0 - 2024-01-??
+
+### Changed
+
+- InterfaceThe interface has been renewed.
 
 ### Fixed
 
-- Improved style application processing
+- Improved style application processing.
 
 ## 2.0.1 - 2024-01-05
 

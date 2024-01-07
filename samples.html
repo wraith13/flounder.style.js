@@ -1,34 +1,78 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>flounder.style.js demo page</title>
+<title>flounder.style.js samples</title>
 <style>
 body
 {
     margin: 0px;
     padding: 0px;
-    background-color: rgb(230, 237, 243);
+    background-color: rgb(230,237,243);
 }
-h1
+#screen-header
 {
     margin: 0px;
-    padding: 1.0rem;
-    color: rgb(230, 237, 243);
-    background-color: rgb(1,4, 9);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-    font-size: 1.5rem;
-    line-height: 100%;
+    padding: 0px;
+    color: rgb(230,237,243);
+    background-color: rgb(1,4,9);
     position: fixed;
     width: 100%;
+    z-index: 900;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    transition: margin-top 500ms;
 }
-h1 a
+#screen-header a
 {
     color: rgb(230, 237, 243);
+}
+#screen-header .segment
+{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    font-size: 1.2rem;
+    padding: 0.75rem 1.0rem;
+    overflow-x: hidden;
+    transform: skewX(150deg);
+    text-decoration: none !important;
+    min-width: 2.25rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    font-weight: 400;
+    font-size: 1.5rem;
+    line-height: 100%;
+}
+#screen-header .segment:first-child
+{
+    padding-left: 1.25rem;
+    margin-left: -0.75rem;
+}
+#screen-header .segment + .segment
+{
+    margin-left: 0rem;
+    border-left-style: solid;
+    border-left-width: 1px;
+    border-left-color: rgb(230,237,243) !important;
+}
+#screen-header .segment > *
+{
+    transform: skewX(-150deg);
+}
+@media (hover: hover)
+{
+    #screen-header a.segment:hover
+    {
+        background-color: rgb(70,80,90);
+    }
 }
 #screen-body
 {
     padding: 1rem;
-    padding-top: 3.5rem;
+    padding-top: 4.0rem;
 }
 .sample.title
 {
@@ -58,7 +102,7 @@ h1 a
 </style>
 </head>
 <body>
-<h1><a href="https://github.com/">GitHub</a> / <a href="https://github.com/wraith13">wraith13</a> / <a href="https://github.com/wraith13/flounder.style.js">flounder.style.js</a> / samples</h1>
+<h1 id="screen-header"><a class="segment" href="https://github.com/"><span>GitHub</span></a><a class="segment" href="https://github.com/wraith13"><span>wraith13</span></a><a class="segment" href="https://github.com/wraith13/flounder.style.js"><span>flounder.style.js</span></a><div class="segment"><span>samples</span></div></h1>
 <div id="screen-body"></div>
 <script src="https://wraith13.github.io/evil-commonjs/index.js"></script>
 <script>
@@ -111,13 +155,13 @@ window.module.sequentialLoad
             result.depth = depth;
             return result;
         };
-        const makeSample = (data) => flounderStyle.setStyleList
+        const makeSample = (data) => flounderStyle.setStyle
         (
             $make(HTMLDivElement)
             (
                 $div("sample")(`depth:${(data.depth).toLocaleString("en-US", { minimumFractionDigits:2, maximumFractionDigits:2, })}`)
             ),
-            flounderStyle.makePatternStyleList(data)
+            data
         );
         const resolution = 20;
         minamo.dom.replaceChildren

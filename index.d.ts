@@ -6,15 +6,16 @@ declare module "index" {
             key: StyleKey;
             value: StyleValue;
         };
-        const setStyle: (element: HTMLElement, style: StyleProperty) => HTMLElement;
-        const setStyleList: (element: HTMLElement, styleList: StyleProperty[]) => HTMLElement;
-        const styleToString: (style: StyleProperty) => string;
-        const styleListToString: (styleList: StyleProperty[], separator?: string) => string;
-        type FlounderType = Arguments["type"];
         type Style = {
-            key: StyleKey;
-            value: StyleValue;
+            [key: StyleKey]: StyleValue;
         };
+        const styleToStylePropertyList: (style: Style) => StyleProperty[];
+        const setStyleProperty: (element: HTMLElement, style: StyleProperty) => HTMLElement;
+        const makeSureStyle: (styleOrArguments: Style | Arguments) => Style;
+        const setStyle: (element: HTMLElement, styleOrArguments: Style | Arguments) => HTMLElement;
+        const stylePropertyToString: (style: StyleProperty) => string;
+        const styleToString: (styleOrArguments: Style | Arguments, separator?: string) => string;
+        type FlounderType = Arguments["type"];
         type Color = string;
         type LayoutAngle = "regular" | "alternative";
         type Real = number;
@@ -45,6 +46,7 @@ declare module "index" {
             type: "stripe" | "diline" | "triline";
         }
         type Arguments = SpotArguments | LineArguments;
+        const isArguments: (value: unknown) => value is Arguments;
         const getPatternType: (data: Arguments) => FlounderType;
         const getLayoutAngle: (data: Arguments) => LayoutAngle;
         const getActualLayoutAngle: (data: Arguments) => number;
@@ -56,13 +58,13 @@ declare module "index" {
         const getBlur: (data: Arguments) => number;
         const getActualReverseRate: (data: Arguments) => number;
         const getAbsoulteReverseRate: (data: Arguments) => undefined | number | "auto";
-        const makePatternStyleList: (data: Arguments) => StyleProperty[];
-        const makePlainStyleListOrNull: (data: Arguments) => StyleProperty[] | null;
+        const makeStyle: (data: Arguments) => Style;
+        const makePlainStyleOrNull: (data: Arguments) => Style | null;
         const reverseArguments: (data: Arguments) => Arguments;
-        const makeTrispotStyleList: (data: Arguments) => StyleProperty[];
-        const makeTetraspotStyleList: (data: Arguments) => StyleProperty[];
-        const makeStripeStyleList: (data: Arguments) => StyleProperty[];
-        const makeDilineStyleList: (data: Arguments) => StyleProperty[];
-        const makeTrilineStyleList: (data: Arguments) => StyleProperty[];
+        const makeTrispotStyle: (data: Arguments) => Style;
+        const makeTetraspotStyle: (data: Arguments) => Style;
+        const makeStripeStyle: (data: Arguments) => Style;
+        const makeDilineStyle: (data: Arguments) => Style;
+        const makeTrilineStyle: (data: Arguments) => Style;
     }
 }

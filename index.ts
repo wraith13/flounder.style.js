@@ -4,7 +4,10 @@ export module flounderStyle
     export type StyleKey = string;
     export type StyleValue = string | undefined;
     export type StyleProperty = { key: StyleKey; value: StyleValue; };
-    export const setStyle = (element: HTMLElement, style: StyleProperty) =>
+    export type Style = { [key: StyleKey]: StyleValue };
+    export const styleToStylePropertyList = (style: Style): StyleProperty[] =>
+        Object.keys(style).map(key => ({ key, value: style[key], }));
+    export const setStyleProperty = (element: HTMLElement, style: StyleProperty) =>
     {
         const current = element.style.getPropertyValue(style.key);
         if (current !== style.value) // for DOM rendering performance
@@ -20,16 +23,20 @@ export module flounderStyle
         }
         return element;
     };
-    export const setStyleList = (element: HTMLElement, styleList: StyleProperty[]) =>
+    export const makeSureStyle = (styleOrArguments: Style | Arguments): Style =>
+        isArguments(styleOrArguments) ? makeStyle(styleOrArguments): styleOrArguments;
+    export const setStyle = (element: HTMLElement, styleOrArguments: Style | Arguments) =>
     {
-        styleList.forEach(i => setStyle(element, i));
+        styleToStylePropertyList(makeSureStyle(styleOrArguments)).forEach(i => setStyleProperty(element, i));
         return element;
     }
-    export const styleToString = (style: StyleProperty) => `${style.key}: ${style.value ?? "inherit"};`;
-    export const styleListToString = (styleList: StyleProperty[], separator: string = " ") =>
-        styleList.filter(i => undefined !== i.value).map(i => styleToString(i)).join(separator);
+    export const stylePropertyToString = (style: StyleProperty) => `${style.key}: ${style.value ?? "inherit"};`;
+    export const styleToString = (styleOrArguments: Style | Arguments, separator: string = " ") =>
+        styleToStylePropertyList(makeSureStyle(styleOrArguments))
+            .filter(i => undefined !== i.value)
+            .map(i => stylePropertyToString(i))
+            .join(separator);
     export type FlounderType = Arguments["type"];
-    export type Style = { key: StyleKey; value: StyleValue; };
     export type Color = string; // https://developer.mozilla.org/en-US/docs/Web/CSS/color_value
     export type LayoutAngle = "regular" | "alternative";
     export type Real = number;
@@ -63,6 +70,12 @@ export module flounderStyle
         type: "stripe" | "diline" | "triline";
     }
     export type Arguments = SpotArguments | LineArguments;
+    export const isArguments = (value: unknown): value is Arguments =>
+        null !== value &&
+        "object" === typeof value &&
+        "type" in value && "string" === typeof value.type &&
+        "foregroundColor" in value && "string" === typeof value.foregroundColor &&
+        "depth" in value && "number" === typeof value.depth;
     export const getPatternType = (data: Arguments): FlounderType => data.type ?? "trispot";
     export const getLayoutAngle = (data: Arguments) =>
     {
@@ -118,27 +131,27 @@ export module flounderStyle
         data.reverseRate;
     const numberToString = (data: Arguments, value: number) =>
         value.toLocaleString("en-US", { maximumFractionDigits: data.maximumFractionDigits ?? config.defaultMaximumFractionDigits, });
-    const makeResult = ({ backgroundColor = undefined as StyleValue, backgroundImage = undefined as StyleValue, backgroundSize = undefined as StyleValue, backgroundPosition = undefined as StyleValue}): StyleProperty[] =>
-    [
-        { key: "background-color", value:backgroundColor, },
-        { key: "background-image", value:backgroundImage, },
-        { key: "background-size", value:backgroundSize, },
-        { key: "background-position", value:backgroundPosition, },
-    ];
-    export const makePatternStyleList = (data: Arguments): StyleProperty[] =>
+    const makeResult = ({ backgroundColor = undefined as StyleValue, backgroundImage = undefined as StyleValue, backgroundSize = undefined as StyleValue, backgroundPosition = undefined as StyleValue}): Style =>
+    ({
+        "background-color": backgroundColor,
+        "background-image": backgroundImage,
+        "background-size":backgroundSize,
+        "background-position": backgroundPosition,
+    });
+    export const makeStyle = (data: Arguments): Style =>
     {
         switch(getPatternType(data))
         {
         case "trispot":
-            return makeTrispotStyleList(data);
+            return makeTrispotStyle(data);
         case "tetraspot":
-            return makeTetraspotStyleList(data);
+            return makeTetraspotStyle(data);
         case "stripe":
-            return makeStripeStyleList(data);
+            return makeStripeStyle(data);
         case "diline":
-            return makeDilineStyleList(data);
+            return makeDilineStyle(data);
         case "triline":
-            return makeTrilineStyleList(data);
+            return makeTrilineStyle(data);
         default:
             throw new Error(`Unknown FlounderType: ${data.type}`);
         }
@@ -160,7 +173,7 @@ export module flounderStyle
     const root3 = Math.sqrt(3.0);
     const triPatternHalfRadiusSpotArea = Math.PI / (2 *root3);
     const TetraPatternHalfRadiusSpotArea = Math.PI / 4;
-    export const makePlainStyleListOrNull = (data: Arguments): StyleProperty[] | null =>
+    export const makePlainStyleOrNull = (data: Arguments): Style | null =>
     {
         if (data.depth <= 0.0)
         {
@@ -216,13 +229,13 @@ export module flounderStyle
         delete result.reverseRate;
         return result;
     };
-    const makeStyleListCommon = (data: Arguments, maker: (data: Arguments) => StyleProperty[]): StyleProperty[] =>
+    const makeStyleCommon = (data: Arguments, maker: (data: Arguments) => Style): Style =>
     {
         if ("transparent" === data.foregroundColor)
         {
             throw new Error(`foregroundColor must be other than "transparent".`);
         }
-        const plain = makePlainStyleListOrNull(data);
+        const plain = makePlainStyleOrNull(data);
         if (null !== plain)
         {
             return plain;
@@ -252,7 +265,7 @@ export module flounderStyle
             return maker(data);
         }
     }
-    export const makeTrispotStyleList = (data: Arguments): StyleProperty[] => makeStyleListCommon
+    export const makeTrispotStyle = (data: Arguments): Style => makeStyleCommon
     (
         data, data =>
         {
@@ -283,7 +296,7 @@ export module flounderStyle
             }
         }
     );
-    export const makeTetraspotStyleList = (data: Arguments): StyleProperty[] => makeStyleListCommon
+    export const makeTetraspotStyle = (data: Arguments): Style => makeStyleCommon
     (
         data, data =>
         {
@@ -313,7 +326,7 @@ export module flounderStyle
             }
         }
     );
-    export const makeStripeStyleList = (data: Arguments): StyleProperty[] => makeStyleListCommon
+    export const makeStripeStyle = (data: Arguments): Style => makeStyleCommon
     (
         data, data =>
         {
@@ -332,7 +345,7 @@ export module flounderStyle
             });
         }
     );
-    export const makeDilineStyleList = (data: Arguments): StyleProperty[] => makeStyleListCommon
+    export const makeDilineStyle = (data: Arguments): Style => makeStyleCommon
     (
         data, data =>
         {
@@ -356,7 +369,7 @@ export module flounderStyle
             });
         }
     );
-    export const makeTrilineStyleList = (data: Arguments): StyleProperty[] => makeStyleListCommon
+    export const makeTrilineStyle = (data: Arguments): Style => makeStyleCommon
     (
         data, data =>
         {

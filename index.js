@@ -13,7 +13,10 @@ define("index", ["require", "exports", "config"], function (require, exports, co
     config_json_1 = __importDefault(config_json_1);
     var flounderStyle;
     (function (flounderStyle) {
-        flounderStyle.setStyle = function (element, style) {
+        flounderStyle.styleToStylePropertyList = function (style) {
+            return Object.keys(style).map(function (key) { return ({ key: key, value: style[key], }); });
+        };
+        flounderStyle.setStyleProperty = function (element, style) {
             var current = element.style.getPropertyValue(style.key);
             if (current !== style.value) // for DOM rendering performance
              {
@@ -26,14 +29,27 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             }
             return element;
         };
-        flounderStyle.setStyleList = function (element, styleList) {
-            styleList.forEach(function (i) { return flounderStyle.setStyle(element, i); });
+        flounderStyle.makeSureStyle = function (styleOrArguments) {
+            return flounderStyle.isArguments(styleOrArguments) ? flounderStyle.makeStyle(styleOrArguments) : styleOrArguments;
+        };
+        flounderStyle.setStyle = function (element, styleOrArguments) {
+            flounderStyle.styleToStylePropertyList(flounderStyle.makeSureStyle(styleOrArguments)).forEach(function (i) { return flounderStyle.setStyleProperty(element, i); });
             return element;
         };
-        flounderStyle.styleToString = function (style) { var _a; return "".concat(style.key, ": ").concat((_a = style.value) !== null && _a !== void 0 ? _a : "inherit", ";"); };
-        flounderStyle.styleListToString = function (styleList, separator) {
+        flounderStyle.stylePropertyToString = function (style) { var _a; return "".concat(style.key, ": ").concat((_a = style.value) !== null && _a !== void 0 ? _a : "inherit", ";"); };
+        flounderStyle.styleToString = function (styleOrArguments, separator) {
             if (separator === void 0) { separator = " "; }
-            return styleList.filter(function (i) { return undefined !== i.value; }).map(function (i) { return flounderStyle.styleToString(i); }).join(separator);
+            return flounderStyle.styleToStylePropertyList(flounderStyle.makeSureStyle(styleOrArguments))
+                .filter(function (i) { return undefined !== i.value; })
+                .map(function (i) { return flounderStyle.stylePropertyToString(i); })
+                .join(separator);
+        };
+        flounderStyle.isArguments = function (value) {
+            return null !== value &&
+                "object" === typeof value &&
+                "type" in value && "string" === typeof value.type &&
+                "foregroundColor" in value && "string" === typeof value.foregroundColor &&
+                "depth" in value && "number" === typeof value.depth;
         };
         flounderStyle.getPatternType = function (data) { var _a; return (_a = data.type) !== null && _a !== void 0 ? _a : "trispot"; };
         flounderStyle.getLayoutAngle = function (data) {
@@ -93,25 +109,25 @@ define("index", ["require", "exports", "config"], function (require, exports, co
         var numberToString = function (data, value) { var _a; return value.toLocaleString("en-US", { maximumFractionDigits: (_a = data.maximumFractionDigits) !== null && _a !== void 0 ? _a : config_json_1.default.defaultMaximumFractionDigits, }); };
         var makeResult = function (_a) {
             var _b = _a.backgroundColor, backgroundColor = _b === void 0 ? undefined : _b, _c = _a.backgroundImage, backgroundImage = _c === void 0 ? undefined : _c, _d = _a.backgroundSize, backgroundSize = _d === void 0 ? undefined : _d, _e = _a.backgroundPosition, backgroundPosition = _e === void 0 ? undefined : _e;
-            return [
-                { key: "background-color", value: backgroundColor, },
-                { key: "background-image", value: backgroundImage, },
-                { key: "background-size", value: backgroundSize, },
-                { key: "background-position", value: backgroundPosition, },
-            ];
+            return ({
+                "background-color": backgroundColor,
+                "background-image": backgroundImage,
+                "background-size": backgroundSize,
+                "background-position": backgroundPosition,
+            });
         };
-        flounderStyle.makePatternStyleList = function (data) {
+        flounderStyle.makeStyle = function (data) {
             switch (flounderStyle.getPatternType(data)) {
                 case "trispot":
-                    return flounderStyle.makeTrispotStyleList(data);
+                    return flounderStyle.makeTrispotStyle(data);
                 case "tetraspot":
-                    return flounderStyle.makeTetraspotStyleList(data);
+                    return flounderStyle.makeTetraspotStyle(data);
                 case "stripe":
-                    return flounderStyle.makeStripeStyleList(data);
+                    return flounderStyle.makeStripeStyle(data);
                 case "diline":
-                    return flounderStyle.makeDilineStyleList(data);
+                    return flounderStyle.makeDilineStyle(data);
                 case "triline":
-                    return flounderStyle.makeTrilineStyleList(data);
+                    return flounderStyle.makeTrilineStyle(data);
                 default:
                     throw new Error("Unknown FlounderType: ".concat(data.type));
             }
@@ -135,7 +151,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
         var root3 = Math.sqrt(3.0);
         var triPatternHalfRadiusSpotArea = Math.PI / (2 * root3);
         var TetraPatternHalfRadiusSpotArea = Math.PI / 4;
-        flounderStyle.makePlainStyleListOrNull = function (data) {
+        flounderStyle.makePlainStyleOrNull = function (data) {
             var _a;
             if (data.depth <= 0.0) {
                 return makeResult({ backgroundColor: (_a = data.backgroundColor) !== null && _a !== void 0 ? _a : "transparent" });
@@ -181,11 +197,11 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             delete result.reverseRate;
             return result;
         };
-        var makeStyleListCommon = function (data, maker) {
+        var makeStyleCommon = function (data, maker) {
             if ("transparent" === data.foregroundColor) {
                 throw new Error("foregroundColor must be other than \"transparent\".");
             }
-            var plain = flounderStyle.makePlainStyleListOrNull(data);
+            var plain = flounderStyle.makePlainStyleOrNull(data);
             if (null !== plain) {
                 return plain;
             }
@@ -208,7 +224,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                 return maker(data);
             }
         };
-        flounderStyle.makeTrispotStyleList = function (data) { return makeStyleListCommon(data, function (data) {
+        flounderStyle.makeTrispotStyle = function (data) { return makeStyleCommon(data, function (data) {
             var _a = calculateSpotSize(data, triPatternHalfRadiusSpotArea, 1.0 / root3), intervalSize = _a.intervalSize, radius = _a.radius;
             var radialGradient = makeRadialGradientString(data, radius);
             var backgroundColor = flounderStyle.getBackgroundColor(data);
@@ -232,7 +248,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                     throw new Error("Unknown LayoutAngle: ".concat(data.layoutAngle));
             }
         }); };
-        flounderStyle.makeTetraspotStyleList = function (data) { return makeStyleListCommon(data, function (data) {
+        flounderStyle.makeTetraspotStyle = function (data) { return makeStyleCommon(data, function (data) {
             var _a = calculateSpotSize(data, TetraPatternHalfRadiusSpotArea, 0.5 * root2), intervalSize = _a.intervalSize, radius = _a.radius;
             var radialGradient = makeRadialGradientString(data, radius);
             var backgroundColor = flounderStyle.getBackgroundColor(data);
@@ -255,7 +271,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                     throw new Error("Unknown LayoutAngle: ".concat(data.layoutAngle));
             }
         }); };
-        flounderStyle.makeStripeStyleList = function (data) { return makeStyleListCommon(data, function (data) {
+        flounderStyle.makeStripeStyle = function (data) { return makeStyleCommon(data, function (data) {
             var backgroundColor = flounderStyle.getBackgroundColor(data);
             var angleOffset = flounderStyle.getAngleOffset(data);
             var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), data.depth * (flounderStyle.getIntervalSize(data) / 2.0)), intervalSize = _a.intervalSize, radius = _a.radius;
@@ -264,7 +280,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                 backgroundImage: makeLinearGradientString(data, radius, intervalSize, angleOffset)
             });
         }); };
-        flounderStyle.makeDilineStyleList = function (data) { return makeStyleListCommon(data, function (data) {
+        flounderStyle.makeDilineStyle = function (data) { return makeStyleCommon(data, function (data) {
             var backgroundColor = flounderStyle.getBackgroundColor(data);
             var angleOffset = flounderStyle.getAngleOffset(data);
             var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (flounderStyle.getIntervalSize(data) / 2.0)), intervalSize = _a.intervalSize, radius = _a.radius;
@@ -277,7 +293,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                     .join(", ")
             });
         }); };
-        flounderStyle.makeTrilineStyleList = function (data) { return makeStyleListCommon(data, function (data) {
+        flounderStyle.makeTrilineStyle = function (data) { return makeStyleCommon(data, function (data) {
             var backgroundColor = flounderStyle.getBackgroundColor(data);
             var angleOffset = flounderStyle.getAngleOffset(data);
             var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (flounderStyle.getIntervalSize(data) / 3.0)), intervalSize = _a.intervalSize, radius = _a.radius;

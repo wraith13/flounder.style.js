@@ -47,7 +47,7 @@ npm install @wraith13/flounder.style.js --save
 ```typescript
 import { flounderStyle } from "flounder.style.js";
 
-// make style list
+// make style
 const data: flounderStyle.Arguments =
 {
     type: "trispot",
@@ -56,14 +56,16 @@ const data: flounderStyle.Arguments =
     intervalSize: 24,
     depth: 0.5,
 };
-const styleList = flounderStyle.makePatternStyleList(data);
+const style = flounderStyle.makeStyle(data);
 
-// apply style list
+// apply style
 const element = document.getElementById("YOUR-ELEMENT");
-flounderStyle.setStyleList(element, styleList);
+flounderStyle.setStyle(element, style);
+// You can also: flounderStyle.setStyle(element, data);
 
 // get CSS string
-console.log(`CSS: ${flounderStyle.styleListToString(styleList)}`);
+console.log(`CSS: ${flounderStyle.styleToString(style)}`);
+// You can also: console.log(`CSS: ${flounderStyle.styleToString(data)}`);
 ```
 
 ### flounderStyle.Arguments
