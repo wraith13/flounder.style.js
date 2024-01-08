@@ -4,7 +4,7 @@
 
 ### Changed
 
-- InterfaceThe interface has been renewed.
+- The interface has been renewed.
 
 ### Fixed
 

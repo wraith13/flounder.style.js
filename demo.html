@@ -93,9 +93,9 @@ button
 #screen-body button
 {
     background-color: rgba(1,4, 9, 0.6);
-    border-radius: 1.25rem;
+    border-radius: 1.5rem;
     padding: 1.5rem;
-    transition: opacity 500ms;
+    transition: opacity 1000ms;
 }
 #screen-body button svg
 {
@@ -123,7 +123,18 @@ button
     background-color: rgba(1,4, 9, 0.6);
     border-radius: 0.5rem;
     padding: 0.5rem;
-    transition: opacity 500ms;
+    padding-right: 1.0rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: opacity 1000ms;
+}
+#screen-body #option-panel input
+{
+    margin: 0.5rem;
+    padding: 0px;
 }
 #screen-footer
 {
@@ -144,31 +155,39 @@ button
     align-items: center;
     transition: margin-bottom 500ms;
 }
-#screen-footer #arguments
+#screen-footer:not(.show-arguments):not(.show-style)
 {
-    padding: 0.75rem;
+    display: none;
+}
+#screen-footer.show-style #arguments
+{
+    display: none;
+}
+#screen-footer.show-arguments #style
+{
+    display: none;
+}
+#screen-footer #arguments,
+#screen-footer #style
+{
+    padding: 0rem;
     line-height: 100%;
     white-space: nowrap;
     overflow: hidden;
-}
-#screen-footer #arguments:empty
-{
-    display: none;
-}
-#screen-footer #arguments:empty + button
-{
-    display: none;
+    text-overflow: ellipsis;
+    max-width: 720px;
 }
 #screen-footer button
 {
     background-color: rgba(1,4, 9, 0.3);
     border-radius: 0.25rem;
     padding: 0.25rem;
+    margin: 0.25rem;
 }
 #screen-footer button svg
 {
-    width: 1rem;
-    height: 1rem;
+    width: 1.5rem;
+    height: 1.5rem;
     color: rgb(230, 237, 243);
     fill: rgb(230, 237, 243);
 }
@@ -205,7 +224,19 @@ body.immersive.mousemove #screen-body
 {
     cursor: pointer;
 }
-body.immersive #screen-body button,
+body.immersive:not(.mousemove) #screen-body button
+{
+    opacity: 0;
+    cursor: none;
+}
+body.immersive #screen-body button svg:first-child
+{
+    display: none;
+}
+body:not(.immersive) #screen-body button svg:last-child
+{
+    display: none;
+}
 body.immersive #screen-body #option-panel
 {
     opacity: 0;
@@ -215,40 +246,36 @@ body.immersive #screen-footer
 {
     margin-bottom: -2.5rem;
 }
-#pause
-{
-    position: absolute;
-    margin: auto;
-    color: rgb(230,237,243);
-    background-color: rgba(1,4,9,0.7);
-    border-radius: 0.25rem;
-    padding: 0.25rem 0.75rem;
-    transition: opacity 500ms;
-    pointer-events: none;
-}
-body:not(.immersive) #pause,
-body:not(.mousemove) #pause
-{
-    opacity: 0;
-}
 </style>
 </head>
 <body>
 <h1 id="screen-header"><a class="segment" href="https://github.com/"><span>GitHub</span></a><a class="segment" href="https://github.com/wraith13"><span>wraith13</span></a><a class="segment" href="https://github.com/wraith13/flounder.style.js"><span>flounder.style.js</span></a><div class="segment"><span>demo</span></div></h1>
 <div id="screen-body">
-    <div id="pause">Click on the screen to pause</div>
-    <button id="play-button" title="Play fullscreen animation">
+    <button id="play-button">
         <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
             <g transform="matrix(1,0,0,1,-20.52,-0.152764)">
                 <path d="M277.128,192.306L277.129,192C277.294,169.198 295.857,150.737 318.698,150.737C326.626,150.737 334.038,152.961 340.345,156.819L893.467,476.149L893.46,476.161C906.034,483.312 914.523,496.833 914.523,512.321C914.523,529.423 904.173,544.126 889.4,550.504L340.335,867.492C339.741,867.855 339.138,868.203 338.526,868.537L336.016,869.985L335.929,869.834C330.678,872.232 324.842,873.568 318.697,873.568C295.755,873.568 277.128,854.942 277.128,832L277.128,192.306Z"/>
             </g>
         </svg>
+        <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+            <g transform="matrix(1.17021,0,0,1.125,-75.5745,-64)">
+                <path d="M444,291.176L444,732.824C444,752.238 428.847,768 410.183,768L289.817,768C271.153,768 256,752.238 256,732.824L256,291.176C256,271.762 271.153,256 289.817,256L410.183,256C428.847,256 444,271.762 444,291.176ZM748.218,291.176L748.218,732.824C748.218,752.238 733.065,768 714.401,768L594.035,768C575.371,768 560.218,752.238 560.218,732.824L560.218,291.176C560.218,271.762 575.371,256 594.035,256L714.401,256C733.065,256 748.218,271.762 748.218,291.176Z"/>
+            </g>
+        </svg>
     </button>
-    <div id="option-panel"><input id="with-fullscreen" type="checkbox"><label for="with-fullscreen">fullscreen</label></div>
+    <label id="option-panel" for="with-fullscreen"><input id="with-fullscreen" type="checkbox">fullscreen</label>
 </div>
 <div id="screen-footer">
+    <button id="toggle-button">
+        <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+            <g transform="matrix(2.78261,0,0,2.78261,-317.217,-317.217)">
+                <path d="M390,298.106C390,298.071 390,298.035 390,298C390,247.224 348.776,206 298,206C266.006,206 237.804,222.367 221.318,247.178L195.945,205.148C221.193,177.416 257.579,160 298,160C374.164,160 436,221.836 436,298C436,298.035 436,298.071 436,298.106L459,298.106L413,374.373L367,298.106L390,298.106ZM160,298.106L137,298.106L183,221.733L229,298.106L206,298.106C206.058,348.834 247.259,390 298,390C329.972,390 358.157,373.655 374.648,348.873L400.017,390.895C374.77,418.601 338.401,436 298,436C221.871,436 160.058,374.222 160,298.106Z"/>
+            </g>
+        </svg>
+    </button>
     <div id="arguments"></div>
-    <button id="copy-button" title="Copy arguments">
+    <div id="style"></div>
+    <button id="copy-button">
         <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
             <g transform="matrix(1.0084,0,0,1.0084,-283.765,246.924)">
                 <path d="M924,445.333L924,535.773C924,573.428 893.428,604 855.773,604L516.227,604C478.572,604 448,573.428 448,535.773L448,196.227C448,158.572 478.572,128 516.227,128L606.667,128L606.667,191.467L536,191.467C522.46,191.467 511.467,202.46 511.467,216L511.467,516.014C511.467,529.554 522.46,540.547 536,540.547L836,540.547C849.54,540.547 860.533,529.554 860.533,516.014L860.533,445.333L924,445.333ZM1130.27,-10.039L1130.27,329.506C1130.27,367.162 1099.69,397.733 1062.04,397.733L722.494,397.733C684.838,397.733 654.267,367.162 654.267,329.506L654.267,-10.039C654.267,-47.695 684.838,-78.267 722.494,-78.267L1062.04,-78.267C1099.69,-78.267 1130.27,-47.695 1130.27,-10.039ZM1066.8,9.733C1066.8,-3.807 1055.81,-14.8 1042.27,-14.8L742.267,-14.8C728.726,-14.8 717.733,-3.807 717.733,9.733L717.733,309.747C717.733,323.287 728.726,334.28 742.267,334.28L1042.27,334.28C1055.81,334.28 1066.8,323.287 1066.8,309.747L1066.8,9.733Z"/>
@@ -294,6 +321,10 @@ window.module.sequentialLoad
                     )
                     return "{ " +result.join(", ") +" }";
                 }
+            }
+            if ("number" === typeof value)
+            {
+                return value.toLocaleString("en-US", { maximumFractionDigits: 4, });
             }
             return valueToString(value);
         };
@@ -342,6 +373,7 @@ window.module.sequentialLoad
             ])
             (foregroundColor, backgroundColor, 16 +makeRandomInteger(256));
         const screenBody = document.getElementById("screen-body");
+        const screenFooter = document.getElementById("screen-footer");
         const withFullscreen = document.getElementById("with-fullscreen");
         const fullscreenEnabled = document.fullscreenEnabled ?? document.webkitFullscreenEnabled;
         if ( ! fullscreenEnabled)
@@ -392,6 +424,7 @@ window.module.sequentialLoad
                     color = nextColor(color);
                     const foregroundColor = makeColor(color);
                     arguments = makeRandomArguments(foregroundColor, backgroundColor);
+                    console.log(stringify(arguments));
                 }
                 else
                 {
@@ -404,9 +437,33 @@ window.module.sequentialLoad
             {
                 if (arguments)
                 {
-                    document.getElementById("arguments").innerText = stringify(arguments);
+                    if (navigator.clipboard)
+                    {
+                        document.getElementById("arguments").innerText = stringify(arguments);
+                        document.getElementById("style").innerText = flounderStyle.styleToString(arguments);
+                        if ( ! screenFooter.classList.contains("show-arguments") && ! screenFooter.classList.contains("show-style"))
+                        {
+                            screenFooter.classList.toggle("show-arguments", true);
+                        }
+                    }
                     const now = new Date().getTime();
                     offsetAt = now -startAt;
+                }
+            }
+        };
+        const pause = () =>
+        {
+            document.body.classList.toggle("immersive", false);
+            if (document.fullscreenElement || document.webkitFullscreenElement)
+            {
+                if (document.exitFullscreen)
+                {
+                    document.exitFullscreen();
+                }
+                else
+                if (document.webkitCancelFullScreen)
+                {
+                    document.webkitCancelFullScreen();
                 }
             }
         };
@@ -418,19 +475,7 @@ window.module.sequentialLoad
                 event.stopPropagation();
                 if (event.target === event.currentTarget)
                 {
-                    document.body.classList.toggle("immersive", false);
-                    if (document.fullscreenElement || document.webkitFullscreenElement)
-                    {
-                        if (document.exitFullscreen)
-                        {
-                            document.exitFullscreen();
-                        }
-                        else
-                        if (document.webkitCancelFullScreen)
-                        {
-                            document.webkitCancelFullScreen();
-                        }
-                    }
+                    pause();
                 }
             }
         );
@@ -461,26 +506,45 @@ window.module.sequentialLoad
             "click",
             event =>
             {
+                if ( ! document.body.classList.contains("immersive"))
+                {
+                    event.stopPropagation();
+                    document.body.classList.toggle("immersive", true);
+                    document.body.classList.toggle("mousemove", false);
+                    if (fullscreenEnabled && withFullscreen.checked)
+                    {
+                        if (document.body.requestFullscreen)
+                        {
+                            document.body.requestFullscreen();
+                        }
+                        else
+                        if (document.body.webkitRequestFullscreen)
+                        {
+                            document.body.webkitRequestFullscreen();
+                        }
+                    }
+                    if (arguments)
+                    {
+                        const now = new Date().getTime();
+                        startAt = now -offsetAt;
+                    }
+                    window.requestAnimationFrame(animation);
+                }
+                else
+                {
+                    pause();
+                }
+            }
+        );
+        document.getElementById("toggle-button").addEventListener
+        (
+            "click",
+            event =>
+            {
                 event.stopPropagation();
-                document.body.classList.toggle("immersive", true);
-                if (fullscreenEnabled && withFullscreen.checked)
-                {
-                    if (document.body.requestFullscreen)
-                    {
-                        document.body.requestFullscreen();
-                    }
-                    else
-                    if (document.body.webkitRequestFullscreen)
-                    {
-                        document.body.webkitRequestFullscreen();
-                    }
-                }
-                if (arguments)
-                {
-                    const now = new Date().getTime();
-                    startAt = now -offsetAt;
-                }
-                window.requestAnimationFrame(animation);
+                const isShowArgument = ! screenFooter.classList.contains("show-arguments");
+                screenFooter.classList.toggle("show-arguments", isShowArgument);
+                screenFooter.classList.toggle("show-style", ! isShowArgument);
             }
         );
         document.getElementById("copy-button").addEventListener
@@ -489,11 +553,13 @@ window.module.sequentialLoad
             event =>
             {
                 event.stopPropagation();
-                navigator.clipboard.writeText(document.getElementById("arguments").innerText).then
+                const text = screenFooter.classList.contains("show-arguments") ?
+                    document.getElementById("arguments").innerText:
+                    document.getElementById("style").innerText;
+                navigator.clipboard.writeText(text).then
                 (
                     () =>
                     {
-                        const screenFooter = document.getElementById("screen-footer");
                         screenFooter.classList.toggle("copied", true);
                         setTimeout
                         (
