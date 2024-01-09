@@ -412,12 +412,11 @@ window.module.sequentialLoad
         screenBody.style.setProperty("background-color", makeColor(color));
         let arguments;
         const span = 5000;
-        const animation = () =>
+        const animation = (now) =>
         {
-            const now = new Date().getTime();
             if (document.body.classList.contains("immersive"))
             {
-                if (startAt +span <= now)
+                if (undefined === arguments || startAt +span <= now)
                 {
                     startAt = now;
                     const backgroundColor = makeColor(color);
@@ -435,7 +434,7 @@ window.module.sequentialLoad
             }
             else
             {
-                if (arguments)
+                if (undefined !== arguments)
                 {
                     if (navigator.clipboard)
                     {
@@ -446,7 +445,6 @@ window.module.sequentialLoad
                             screenFooter.classList.toggle("show-arguments", true);
                         }
                     }
-                    const now = new Date().getTime();
                     offsetAt = now -startAt;
                 }
             }
@@ -528,12 +526,17 @@ window.module.sequentialLoad
                             document.body.webkitRequestFullscreen();
                         }
                     }
-                    if (arguments)
-                    {
-                        const now = new Date().getTime();
-                        startAt = now -offsetAt;
-                    }
-                    window.requestAnimationFrame(animation);
+                    window.requestAnimationFrame
+                    (
+                        now =>
+                        {
+                            if (undefined !== arguments)
+                            {
+                                startAt = now -offsetAt;
+                            }
+                            animation(now);
+                        }
+                    );
                 }
                 else
                 {
