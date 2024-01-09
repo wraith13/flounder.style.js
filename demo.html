@@ -467,6 +467,27 @@ window.module.sequentialLoad
                 }
             }
         };
+        class ToggleClassForWhileTimer
+        {
+            timer;
+            start = (element, token, span) =>
+            {
+                if (undefined !== this.timer)
+                {
+                    clearTimeout(this.timer);
+                }
+                element.classList.toggle(token, true);
+                this.timer = setTimeout
+                (
+                    () =>
+                    {
+                        this.timer = undefined;
+                        element.classList.toggle(token, false);
+                    },
+                    span
+                );
+            }
+        }
         screenBody.addEventListener
         (
             "click",
@@ -479,27 +500,11 @@ window.module.sequentialLoad
                 }
             }
         );
-        let mousemoveTimer;
+        const mousemoveTimer = new ToggleClassForWhileTimer();
         screenBody.addEventListener
         (
             "mousemove",
-            () =>
-            {
-                if (undefined !== mousemoveTimer)
-                {
-                    clearTimeout(mousemoveTimer);
-                }
-                document.body.classList.toggle("mousemove", true);
-                mousemoveTimer = setTimeout
-                (
-                    () =>
-                    {
-                        mousemoveTimer = undefined;
-                        document.body.classList.toggle("mousemove", false);
-                    },
-                    1000
-                );
-            }
+            () => mousemoveTimer.start(document.body, "mousemove", 1000)
         )
         document.getElementById("play-button").addEventListener
         (
@@ -547,6 +552,7 @@ window.module.sequentialLoad
                 screenFooter.classList.toggle("show-style", ! isShowArgument);
             }
         );
+        const copiedTimer = new ToggleClassForWhileTimer();
         document.getElementById("copy-button").addEventListener
         (
             "click",
@@ -558,15 +564,7 @@ window.module.sequentialLoad
                     document.getElementById("style").innerText;
                 navigator.clipboard.writeText(text).then
                 (
-                    () =>
-                    {
-                        screenFooter.classList.toggle("copied", true);
-                        setTimeout
-                        (
-                            () => screenFooter.classList.toggle("copied", false),
-                            1000
-                        );
-                    },
+                    () => copiedTimer.start(screenFooter, "copied", 1000),
                     () => { },
                 );
                 ;
