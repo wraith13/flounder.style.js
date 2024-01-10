@@ -76,12 +76,17 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                             "triline" === data.type ? 0.25 :
                                 0.5;
         };
+        flounderStyle.getAutoAnglePerDepth = function (data) {
+            return "stripe" === flounderStyle.getPatternType(data) ? (1.0 / 2.0) :
+                "diline" === flounderStyle.getPatternType(data) ? (1.0 / 4.0) :
+                    "triline" === flounderStyle.getPatternType(data) ? (1.0 / 6.0) :
+                        1.0;
+        };
         flounderStyle.getActualAnglePerDepth = function (data) {
             return "number" === typeof data.anglePerDepth ? data.anglePerDepth :
-                ("auto" === data.anglePerDepth && "stripe" === flounderStyle.getPatternType(data)) ? (1.0 / 2.0) :
-                    ("auto" === data.anglePerDepth && "diline" === flounderStyle.getPatternType(data)) ? (1.0 / 4.0) :
-                        ("auto" === data.anglePerDepth && "triline" === flounderStyle.getPatternType(data)) ? (1.0 / 6.0) :
-                            "auto" === data.anglePerDepth ? 1.0 : 0.0;
+                "auto" === data.anglePerDepth ? flounderStyle.getAutoAnglePerDepth(data) :
+                    "-auto" === data.anglePerDepth ? -flounderStyle.getAutoAnglePerDepth(data) :
+                        0.0;
         };
         flounderStyle.getAngleOffsetByDepth = function (data) {
             return flounderStyle.getActualAnglePerDepth(data) * data.depth;

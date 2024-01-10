@@ -103,12 +103,16 @@ export module flounderStyle
         "diline" === data.type ? 0.125:
         "triline" === data.type ? 0.25:
         0.5;
+    export const getAutoAnglePerDepth = (data: Arguments): number =>
+        "stripe" === getPatternType(data) ? (1.0 / 2.0):
+        "diline" === getPatternType(data) ? (1.0 / 4.0):
+        "triline" === getPatternType(data) ? (1.0 / 6.0):
+        1.0;
     export const getActualAnglePerDepth = (data: Arguments): number =>
         "number" === typeof data.anglePerDepth ? data.anglePerDepth:
-        ("auto" === data.anglePerDepth && "stripe" === getPatternType(data)) ? (1.0 / 2.0):
-        ("auto" === data.anglePerDepth && "diline" === getPatternType(data)) ? (1.0 / 4.0):
-        ("auto" === data.anglePerDepth && "triline" === getPatternType(data)) ? (1.0 / 6.0):
-        "auto" === data.anglePerDepth ? 1.0: 0.0;
+        "auto" === data.anglePerDepth ? getAutoAnglePerDepth(data):
+        "-auto" === data.anglePerDepth ? -getAutoAnglePerDepth(data):
+        0.0;
     export const getAngleOffsetByDepth = (data: Arguments): number =>
         getActualAnglePerDepth(data) *data.depth;
     export const getAngleOffset = (data: Arguments): number =>

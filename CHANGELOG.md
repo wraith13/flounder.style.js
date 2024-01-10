@@ -1,5 +1,11 @@
 # Change Log
 
+## 3.1.0 - 2024-01-??
+
+### Fixed
+
+- Fixed an issue where the "-auto" specification for anglePerDepth was not working.
+
 ## 3.0.0 - 2024-01-08
 
 ### Changed

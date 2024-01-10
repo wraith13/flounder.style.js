@@ -50,6 +50,7 @@ declare module "index" {
         const getPatternType: (data: Arguments) => FlounderType;
         const getLayoutAngle: (data: Arguments) => LayoutAngle;
         const getActualLayoutAngle: (data: Arguments) => number;
+        const getAutoAnglePerDepth: (data: Arguments) => number;
         const getActualAnglePerDepth: (data: Arguments) => number;
         const getAngleOffsetByDepth: (data: Arguments) => number;
         const getAngleOffset: (data: Arguments) => number;
