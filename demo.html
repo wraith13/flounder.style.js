@@ -355,7 +355,7 @@ window.module.sequentialLoad
             depth: 0.0,
             maxPatternSize: randomSelect([ undefined, intervalSize /(2 +makeRandomInteger(9)), ]),
             reverseRate: randomSelect([ undefined, 0.0, ]),
-            anglePerDepth: randomSelect([ undefined, randomSelect([ "auto", "-auto", ]), ]),
+            anglePerDepth: randomSelect([ undefined, "auto", "-auto", 1,0, -1.0, ]),
         });
         const makeRandomStripeArguments = (foregroundColor, backgroundColor, intervalSize) =>
             makeRandomLineArguments("stripe", foregroundColor, backgroundColor, intervalSize);
