@@ -229,8 +229,26 @@ export module flounderStyle
         const result = structuredClone(data);
         result.foregroundColor = getBackgroundColor(data);
         result.backgroundColor = data.foregroundColor;
+        if ("number" === typeof data.layoutAngle)
+        {
+            result.layoutAngle = getActualLayoutAngle(data) +getActualAnglePerDepth(data);
+        }
         result.depth = 1.0 -data.depth;
         delete result.reverseRate;
+        if ("number" === typeof data.anglePerDepth)
+        {
+            result.anglePerDepth = -data.anglePerDepth;
+        }
+        else
+        if ("auto" === data.anglePerDepth)
+        {
+            result.anglePerDepth = "-auto";
+        }
+        else
+        if ("-auto" === data.anglePerDepth)
+        {
+            result.anglePerDepth = "auto";
+        }
         return result;
     };
     const makeStyleCommon = (data: Arguments, maker: (data: Arguments) => Style): Style =>

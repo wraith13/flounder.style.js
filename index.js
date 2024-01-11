@@ -198,8 +198,20 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             var result = structuredClone(data);
             result.foregroundColor = flounderStyle.getBackgroundColor(data);
             result.backgroundColor = data.foregroundColor;
+            if ("number" === typeof data.layoutAngle) {
+                result.layoutAngle = flounderStyle.getActualLayoutAngle(data) + flounderStyle.getActualAnglePerDepth(data);
+            }
             result.depth = 1.0 - data.depth;
             delete result.reverseRate;
+            if ("number" === typeof data.anglePerDepth) {
+                result.anglePerDepth = -data.anglePerDepth;
+            }
+            else if ("auto" === data.anglePerDepth) {
+                result.anglePerDepth = "-auto";
+            }
+            else if ("-auto" === data.anglePerDepth) {
+                result.anglePerDepth = "auto";
+            }
             return result;
         };
         var makeStyleCommon = function (data, maker) {

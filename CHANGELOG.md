@@ -2,6 +2,10 @@
 
 ## 3.1.0 - 2024-01-??
 
+### Changed
+
+- Adjusted the angle when reversed.
+
 ### Fixed
 
 - Fixed an issue where the "-auto" specification for anglePerDepth was not working.
