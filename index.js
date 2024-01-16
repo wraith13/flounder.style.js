@@ -195,21 +195,21 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             }
             return calculateMaxPatternSize(data, intervalSize, radius);
         };
-        flounderStyle.structuredClone = (_a = window.structuredClone) !== null && _a !== void 0 ? _a : (function (value) {
+        flounderStyle.simpleStructuredClone = (_a = window.structuredClone) !== null && _a !== void 0 ? _a : (function (value) {
             if (undefined !== value && null !== value) {
                 if (Array.isArray(value)) {
-                    return value.map(function (i) { return flounderStyle.structuredClone(i); });
+                    return value.map(function (i) { return structuredClone(i); });
                 }
                 if ("object" === typeof value) {
                     var result_1 = {};
-                    Object.keys(value).forEach(function (key) { return result_1[key] = flounderStyle.structuredClone(value[key]); });
+                    Object.keys(value).forEach(function (key) { return result_1[key] = structuredClone(value[key]); });
                     return result_1;
                 }
             }
             return value;
         });
         flounderStyle.reverseArguments = function (data) {
-            var result = flounderStyle.structuredClone(data);
+            var result = flounderStyle.simpleStructuredClone(data);
             result.foregroundColor = flounderStyle.getBackgroundColor(data);
             result.backgroundColor = data.foregroundColor;
             if ("number" === typeof data.layoutAngle) {

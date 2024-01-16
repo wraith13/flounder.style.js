@@ -224,7 +224,7 @@ export module flounderStyle
         }
         return calculateMaxPatternSize(data, intervalSize, radius);
     };
-    export const structuredClone = window.structuredClone ??
+    export const simpleStructuredClone = window.structuredClone ??
     (
         <T>(value: T): T =>
         {
@@ -249,7 +249,7 @@ export module flounderStyle
     );
     export const reverseArguments = (data: Arguments): Arguments =>
     {
-        const result = structuredClone(data);
+        const result = simpleStructuredClone(data);
         result.foregroundColor = getBackgroundColor(data);
         result.backgroundColor = data.foregroundColor;
         if ("number" === typeof data.layoutAngle)

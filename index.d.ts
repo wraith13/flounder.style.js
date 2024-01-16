@@ -61,7 +61,7 @@ declare module "index" {
         const getAbsoulteReverseRate: (data: Arguments) => undefined | number | "auto";
         const makeStyle: (data: Arguments) => Style;
         const makePlainStyleOrNull: (data: Arguments) => Style | null;
-        const structuredClone: (<T = any>(value: T, options?: StructuredSerializeOptions | undefined) => T) & typeof globalThis.structuredClone;
+        const simpleStructuredClone: (<T = any>(value: T, options?: StructuredSerializeOptions | undefined) => T) & typeof structuredClone;
         const reverseArguments: (data: Arguments) => Arguments;
         const makeTrispotStyle: (data: Arguments) => Style;
         const makeTetraspotStyle: (data: Arguments) => Style;
