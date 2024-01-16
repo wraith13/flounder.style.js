@@ -224,7 +224,7 @@ export module flounderStyle
         }
         return calculateMaxPatternSize(data, intervalSize, radius);
     };
-    export const simpleStructuredClone = window.structuredClone ??
+    export const simpleStructuredClone = //window.structuredClone ??
     (
         <T>(value: T): T =>
         {

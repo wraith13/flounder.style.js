@@ -13,7 +13,6 @@ define("index", ["require", "exports", "config"], function (require, exports, co
     config_json_1 = __importDefault(config_json_1);
     var flounderStyle;
     (function (flounderStyle) {
-        var _a;
         flounderStyle.styleToStylePropertyList = function (style) {
             return Object.keys(style).map(function (key) { return ({ key: key, value: style[key], }); });
         };
@@ -195,7 +194,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             }
             return calculateMaxPatternSize(data, intervalSize, radius);
         };
-        flounderStyle.simpleStructuredClone = (_a = window.structuredClone) !== null && _a !== void 0 ? _a : (function (value) {
+        flounderStyle.simpleStructuredClone = (function (value) {
             if (undefined !== value && null !== value) {
                 if (Array.isArray(value)) {
                     return value.map(function (i) { return structuredClone(i); });
