@@ -224,6 +224,29 @@ export module flounderStyle
         }
         return calculateMaxPatternSize(data, intervalSize, radius);
     };
+    export const structuredClone = window.structuredClone ??
+    (
+        <T>(value: T): T =>
+        {
+            if (undefined !== value && null !== value)
+            {
+                if (Array.isArray(value))
+                {
+                    return value.map(i => structuredClone(i)) as T;
+                }
+                if ("object" === typeof value)
+                {
+                    const result = <{ [key:string]: unknown }>{ };
+                    Object.keys(value).forEach
+                    (
+                        key => result[key] = structuredClone((value as any)[key])
+                    )
+                    return result as T;
+                }
+            }
+            return value;
+        }
+    );
     export const reverseArguments = (data: Arguments): Arguments =>
     {
         const result = structuredClone(data);

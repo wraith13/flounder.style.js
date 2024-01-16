@@ -1,5 +1,11 @@
 # Change Log
 
+## 3.1.1 - 2024-01-??
+
+### Changed
+
+- Removed dependence on structuredClone.
+
 ## 3.1.0 - 2024-01-13
 
 ### Changed
