@@ -197,11 +197,11 @@ define("index", ["require", "exports", "config"], function (require, exports, co
         flounderStyle.simpleStructuredClone = (function (value) {
             if (undefined !== value && null !== value) {
                 if (Array.isArray(value)) {
-                    return value.map(function (i) { return structuredClone(i); });
+                    return value.map(function (i) { return flounderStyle.simpleStructuredClone(i); });
                 }
                 if ("object" === typeof value) {
                     var result_1 = {};
-                    Object.keys(value).forEach(function (key) { return result_1[key] = structuredClone(value[key]); });
+                    Object.keys(value).forEach(function (key) { return result_1[key] = flounderStyle.simpleStructuredClone(value[key]); });
                     return result_1;
                 }
             }

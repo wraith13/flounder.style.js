@@ -232,14 +232,14 @@ export module flounderStyle
             {
                 if (Array.isArray(value))
                 {
-                    return value.map(i => structuredClone(i)) as T;
+                    return value.map(i => simpleStructuredClone(i)) as T;
                 }
                 if ("object" === typeof value)
                 {
                     const result = <{ [key:string]: unknown }>{ };
                     Object.keys(value).forEach
                     (
-                        key => result[key] = structuredClone((value as any)[key])
+                        key => result[key] = simpleStructuredClone((value as any)[key])
                     )
                     return result as T;
                 }
