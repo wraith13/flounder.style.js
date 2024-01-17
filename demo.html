@@ -375,7 +375,7 @@ window.module.sequentialLoad
         const screenBody = document.getElementById("screen-body");
         const screenFooter = document.getElementById("screen-footer");
         const withFullscreen = document.getElementById("with-fullscreen");
-        const fullscreenEnabled = document.fullscreenEnabled ?? document.webkitFullscreenEnabled;
+        const fullscreenEnabled = document.fullscreenEnabled || document.webkitFullscreenEnabled;
         if ( ! fullscreenEnabled)
         {
             withFullscreen.parentElement.style.setProperty("display", "none");
@@ -467,8 +467,11 @@ window.module.sequentialLoad
         };
         class ToggleClassForWhileTimer
         {
-            timer;
-            start = (element, token, span) =>
+            constructor()
+            {
+                this.timer = undefined;
+            }
+            start(element, token, span)
             {
                 if (undefined !== this.timer)
                 {
