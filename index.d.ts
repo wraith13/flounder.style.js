@@ -27,6 +27,8 @@ declare module "index" {
         interface ArgumentsBase {
             type: FlounderType;
             layoutAngle?: LayoutAngle | SignedRate;
+            offsetX?: number;
+            offsetY?: number;
             foregroundColor: Color;
             backgroundColor?: Color;
             intervalSize?: Pixel;

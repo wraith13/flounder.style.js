@@ -77,6 +77,8 @@ console.log(`CSS: ${flounderStyle.styleToString(style)}`);
 |---|---|---|---|
 |type|"trispot" \| "tetraspot" \| "stripe" \| "diline" \| "tryline"|`NOT OPTIONAL`|see [samples](https://wraith13.github.io/flounder.style.js/samples.html).|
 |layoutAngle|"regular" \| "alternative" \| number(±rate)|"regular"|see [samples](https://wraith13.github.io/flounder.style.js/samples.html). number can only be specified when type is "stripe" or "diline" or "triline".|
+|offsetX|number(±rate)|0.0|...|
+|offsetY|number(±rate)|0.0|...|
 |foregroundColor|[CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)|`NOT OPTIONAL`|Foreground pattern color. foregroundColor must be other than "transparent".|
 |backgroundColor|[CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)|"transparent"|Background pattern color. When using reverseRate, backgroundColor must be other than "transparent".|
 |intervalSize|number(pixel)|24|Number of pixels from the center of a spot to the center of the next spot.|

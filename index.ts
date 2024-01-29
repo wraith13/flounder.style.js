@@ -49,6 +49,8 @@ export module flounderStyle
     {
         type: FlounderType;
         layoutAngle?: LayoutAngle | SignedRate;
+        offsetX?: number;
+        offsetY?: number;
         foregroundColor: Color;
         backgroundColor?: Color;
         intervalSize?: Pixel;
@@ -142,6 +144,12 @@ export module flounderStyle
         "background-size":backgroundSize,
         "background-position": backgroundPosition,
     });
+    const makeAxis = (data: Arguments, value:number) =>
+        `calc(${numberToString(data, value)}px + 50%)`;
+    const makeOffsetAxis = (data: Arguments, unit: number, offset: number, value:number) =>
+        makeAxis(data, value +(offset *unit));
+    const makeOffsetPosition = (data: Arguments, xUnit: number, yUnit:number, x: number, y:number) =>
+        `${makeOffsetAxis(data, xUnit, data.offsetX ?? 0.0, x)} ${makeOffsetAxis(data, yUnit, data.offsetY ?? 0.0, y)}`;
     export const makeStyle = (data: Arguments): Style =>
     {
         switch(getPatternType(data))
@@ -164,14 +172,18 @@ export module flounderStyle
         `radial-gradient(circle at center, ${data.foregroundColor} ${numberToString(data, radius -blur)}px, transparent ${numberToString(data, radius +blur)}px)`;
     const makeLinearGradientString = (data: Arguments, radius: number, intervalSize: number, angle: number, blur = Math.min(intervalSize -radius, radius, getBlur(data)) /0.5) =>
     {
-        const deg = numberToString(data, 360.0 *(angle %1.0));
-        const patternStart = numberToString(data, 0);
-        const a = numberToString(data, Math.max(0, radius -blur));
-        const b = numberToString(data, Math.min(intervalSize *0.5, radius +blur));
-        const c = numberToString(data, Math.max(intervalSize *0.5, intervalSize -radius -blur));
-        const d = numberToString(data, Math.min(intervalSize, intervalSize -radius +blur));
-        const patternEnd = numberToString(data, intervalSize);
-        return `repeating-linear-gradient(${deg}deg, ${data.foregroundColor} calc(${patternStart}px + 50%), ${data.foregroundColor} calc(${a}px + 50%), transparent calc(${b}px + 50%), transparent calc(${c}px + 50%), ${data.foregroundColor} calc(${d}px + 50%), ${data.foregroundColor} calc(${patternEnd}px + 50%))`;
+        const regulatedAngle = angle %1.0;
+        const deg = numberToString(data, 360.0 *regulatedAngle);
+        const offset =
+            (Math.sin(Math.PI *2.0 *regulatedAngle) *(data.offsetX ?? 0.0) *intervalSize *2.0 /root3)
+            -(Math.cos(Math.PI *2.0 *regulatedAngle) *(data.offsetY ?? 0.0) *intervalSize *2.0);
+        const patternStart = 0 +offset;
+        const a = Math.max(0, radius -blur) +offset;
+        const b = Math.min(intervalSize *0.5, radius +blur) +offset;
+        const c = Math.max(intervalSize *0.5, intervalSize -radius -blur) +offset;
+        const d = Math.min(intervalSize, intervalSize -radius +blur) +offset;
+        const patternEnd = intervalSize +offset;
+        return `repeating-linear-gradient(${deg}deg, ${data.foregroundColor} ${makeAxis(data, patternStart)}, ${data.foregroundColor} ${makeAxis(data, a)}, transparent ${makeAxis(data, b)}, transparent ${makeAxis(data, c)}, ${data.foregroundColor} ${makeAxis(data, d)}, ${data.foregroundColor} ${makeAxis(data, patternEnd)})`;
     }
     const root2 = Math.sqrt(2.0);
     const root3 = Math.sqrt(3.0);
@@ -321,21 +333,29 @@ export module flounderStyle
             switch(getLayoutAngle(data))
             {
             case "regular": // horizontal
+            {
+                const xUnit = intervalSize *2.0;
+                const yUnit = intervalSize *root3;
                 return makeResult
                 ({
                     backgroundColor,
                     backgroundImage,
-                    backgroundSize: `${numberToString(data, intervalSize *2.0)}px ${numberToString(data, intervalSize *root3)}px`,
-                    backgroundPosition: `calc(0px + 50%) calc(0px + 50%), calc(${numberToString(data, intervalSize)}px + 50%) calc(0px + 50%), calc(${numberToString(data, intervalSize *0.5)}px + 50%) calc(${numberToString(data, intervalSize *root3 *0.5)}px + 50%), calc(${numberToString(data, intervalSize *1.5)}px + 50%) calc(${numberToString(data, intervalSize * root3 * 0.5)}px + 50%)`
+                    backgroundSize: `${numberToString(data, xUnit)}px ${numberToString(data, yUnit)}px`,
+                    backgroundPosition: `${makeOffsetPosition(data, xUnit, yUnit, 0, 0)}, ${makeOffsetPosition(data, xUnit, yUnit, intervalSize, 0)}, ${makeOffsetPosition(data, xUnit, yUnit, intervalSize *0.5, intervalSize *root3 *0.5)}, ${makeOffsetPosition(data, xUnit, yUnit, intervalSize *1.5, intervalSize * root3 * 0.5)}`,
                 });
+            }
             case "alternative": // vertical
+            {
+                const xUnit = intervalSize *root3;
+                const yUnit = intervalSize *2.0;
                 return makeResult
                 ({
                     backgroundColor,
                     backgroundImage,
-                    backgroundSize: ` ${numberToString(data, intervalSize *root3)}px ${numberToString(data, intervalSize *2.0)}px`,
-                    backgroundPosition: `calc(0px + 50%) calc(0px + 50%), calc(0px + 50%) calc(${numberToString(data, intervalSize)}px + 50%), calc(${numberToString(data, intervalSize *root3 *0.5)}px + 50%) calc(${numberToString(data, intervalSize *0.5)}px + 50%), calc(${numberToString(data, intervalSize *root3 *0.5)}px + 50%) calc(${numberToString(data, intervalSize *1.5)}px + 50%)`
+                    backgroundSize: `${numberToString(data, xUnit)}px ${numberToString(data, yUnit)}px`,
+                    backgroundPosition: `${makeOffsetPosition(data, xUnit, yUnit, 0, 0)}, ${makeOffsetPosition(data, xUnit, yUnit, 0, intervalSize)}, ${makeOffsetPosition(data, xUnit, yUnit, intervalSize *root3 *0.5, intervalSize *0.5)}, ${makeOffsetPosition(data, xUnit, yUnit, intervalSize *root3 *0.5, intervalSize *1.5)}`,
                 });
+            }
             default:
                 throw new Error(`Unknown LayoutAngle: ${data.layoutAngle}`);
             }
@@ -351,21 +371,29 @@ export module flounderStyle
             switch(getLayoutAngle(data))
             {
             case "regular": // straight
+            {
+                const xUnit = intervalSize;
+                const yUnit = intervalSize;
                 return makeResult
                 ({
                     backgroundColor,
                     backgroundImage: radialGradient,
-                    backgroundSize: `${numberToString(data, intervalSize)}px ${numberToString(data, intervalSize)}px`,
-                    backgroundPosition: `calc(0px + 50%) calc(0px + 50%)`
+                    backgroundSize: `${numberToString(data, xUnit)}px ${numberToString(data, yUnit)}px`,
+                    backgroundPosition: makeOffsetPosition(data, xUnit, yUnit, 0, 0),
                 });
+            }
             case "alternative": // slant
+            {
+                const xUnit = (intervalSize *2.0) /root2;
+                const yUnit = (intervalSize *2.0) /root2;
                 return makeResult
                 ({
                     backgroundColor,
                     backgroundImage: Array.from({ length: 2 }).map(_ => radialGradient).join(", "),
-                    backgroundSize: `${numberToString(data, (intervalSize *2.0) /root2)}px ${numberToString(data, (intervalSize *2.0) /root2)}px`,
-                    backgroundPosition: `calc(0px + 50%) calc(0px + 50%), calc(${numberToString(data, intervalSize /root2)}px + 50%) calc(${numberToString(data, intervalSize /root2)}px + 50%)`
+                    backgroundSize: `${numberToString(data, xUnit)}px ${numberToString(data, yUnit)}px`,
+                    backgroundPosition: `${makeOffsetPosition(data, xUnit, yUnit, 0, 0)}, ${makeOffsetPosition(data, xUnit, yUnit, intervalSize /root2, intervalSize /root2)}`,
                 });
+            }
             default:
                 throw new Error(`Unknown LayoutAngle: ${data.layoutAngle}`);
             }

@@ -121,6 +121,13 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                 "background-position": backgroundPosition,
             });
         };
+        var makeAxis = function (data, value) {
+            return "calc(".concat(numberToString(data, value), "px + 50%)");
+        };
+        var makeOffsetAxis = function (data, unit, offset, value) {
+            return makeAxis(data, value + (offset * unit));
+        };
+        var makeOffsetPosition = function (data, xUnit, yUnit, x, y) { var _a, _b; return "".concat(makeOffsetAxis(data, xUnit, (_a = data.offsetX) !== null && _a !== void 0 ? _a : 0.0, x), " ").concat(makeOffsetAxis(data, yUnit, (_b = data.offsetY) !== null && _b !== void 0 ? _b : 0.0, y)); };
         flounderStyle.makeStyle = function (data) {
             switch (flounderStyle.getPatternType(data)) {
                 case "trispot":
@@ -142,15 +149,19 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             return "radial-gradient(circle at center, ".concat(data.foregroundColor, " ").concat(numberToString(data, radius - blur), "px, transparent ").concat(numberToString(data, radius + blur), "px)");
         };
         var makeLinearGradientString = function (data, radius, intervalSize, angle, blur) {
+            var _a, _b;
             if (blur === void 0) { blur = Math.min(intervalSize - radius, radius, flounderStyle.getBlur(data)) / 0.5; }
-            var deg = numberToString(data, 360.0 * (angle % 1.0));
-            var patternStart = numberToString(data, 0);
-            var a = numberToString(data, Math.max(0, radius - blur));
-            var b = numberToString(data, Math.min(intervalSize * 0.5, radius + blur));
-            var c = numberToString(data, Math.max(intervalSize * 0.5, intervalSize - radius - blur));
-            var d = numberToString(data, Math.min(intervalSize, intervalSize - radius + blur));
-            var patternEnd = numberToString(data, intervalSize);
-            return "repeating-linear-gradient(".concat(deg, "deg, ").concat(data.foregroundColor, " calc(").concat(patternStart, "px + 50%), ").concat(data.foregroundColor, " calc(").concat(a, "px + 50%), transparent calc(").concat(b, "px + 50%), transparent calc(").concat(c, "px + 50%), ").concat(data.foregroundColor, " calc(").concat(d, "px + 50%), ").concat(data.foregroundColor, " calc(").concat(patternEnd, "px + 50%))");
+            var regulatedAngle = angle % 1.0;
+            var deg = numberToString(data, 360.0 * regulatedAngle);
+            var offset = (Math.sin(Math.PI * 2.0 * regulatedAngle) * ((_a = data.offsetX) !== null && _a !== void 0 ? _a : 0.0) * intervalSize * 2.0 / root3)
+                - (Math.cos(Math.PI * 2.0 * regulatedAngle) * ((_b = data.offsetY) !== null && _b !== void 0 ? _b : 0.0) * intervalSize * 2.0);
+            var patternStart = 0 + offset;
+            var a = Math.max(0, radius - blur) + offset;
+            var b = Math.min(intervalSize * 0.5, radius + blur) + offset;
+            var c = Math.max(intervalSize * 0.5, intervalSize - radius - blur) + offset;
+            var d = Math.min(intervalSize, intervalSize - radius + blur) + offset;
+            var patternEnd = intervalSize + offset;
+            return "repeating-linear-gradient(".concat(deg, "deg, ").concat(data.foregroundColor, " ").concat(makeAxis(data, patternStart), ", ").concat(data.foregroundColor, " ").concat(makeAxis(data, a), ", transparent ").concat(makeAxis(data, b), ", transparent ").concat(makeAxis(data, c), ", ").concat(data.foregroundColor, " ").concat(makeAxis(data, d), ", ").concat(data.foregroundColor, " ").concat(makeAxis(data, patternEnd), ")");
         };
         var root2 = Math.sqrt(2.0);
         var root3 = Math.sqrt(3.0);
@@ -261,19 +272,27 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             var backgroundImage = Array.from({ length: 4 }).map(function (_) { return radialGradient; }).join(", ");
             switch (flounderStyle.getLayoutAngle(data)) {
                 case "regular": // horizontal
-                    return makeResult({
-                        backgroundColor: backgroundColor,
-                        backgroundImage: backgroundImage,
-                        backgroundSize: "".concat(numberToString(data, intervalSize * 2.0), "px ").concat(numberToString(data, intervalSize * root3), "px"),
-                        backgroundPosition: "calc(0px + 50%) calc(0px + 50%), calc(".concat(numberToString(data, intervalSize), "px + 50%) calc(0px + 50%), calc(").concat(numberToString(data, intervalSize * 0.5), "px + 50%) calc(").concat(numberToString(data, intervalSize * root3 * 0.5), "px + 50%), calc(").concat(numberToString(data, intervalSize * 1.5), "px + 50%) calc(").concat(numberToString(data, intervalSize * root3 * 0.5), "px + 50%)")
-                    });
+                    {
+                        var xUnit = intervalSize * 2.0;
+                        var yUnit = intervalSize * root3;
+                        return makeResult({
+                            backgroundColor: backgroundColor,
+                            backgroundImage: backgroundImage,
+                            backgroundSize: "".concat(numberToString(data, xUnit), "px ").concat(numberToString(data, yUnit), "px"),
+                            backgroundPosition: "".concat(makeOffsetPosition(data, xUnit, yUnit, 0, 0), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, intervalSize, 0), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, intervalSize * 0.5, intervalSize * root3 * 0.5), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, intervalSize * 1.5, intervalSize * root3 * 0.5)),
+                        });
+                    }
                 case "alternative": // vertical
-                    return makeResult({
-                        backgroundColor: backgroundColor,
-                        backgroundImage: backgroundImage,
-                        backgroundSize: " ".concat(numberToString(data, intervalSize * root3), "px ").concat(numberToString(data, intervalSize * 2.0), "px"),
-                        backgroundPosition: "calc(0px + 50%) calc(0px + 50%), calc(0px + 50%) calc(".concat(numberToString(data, intervalSize), "px + 50%), calc(").concat(numberToString(data, intervalSize * root3 * 0.5), "px + 50%) calc(").concat(numberToString(data, intervalSize * 0.5), "px + 50%), calc(").concat(numberToString(data, intervalSize * root3 * 0.5), "px + 50%) calc(").concat(numberToString(data, intervalSize * 1.5), "px + 50%)")
-                    });
+                    {
+                        var xUnit = intervalSize * root3;
+                        var yUnit = intervalSize * 2.0;
+                        return makeResult({
+                            backgroundColor: backgroundColor,
+                            backgroundImage: backgroundImage,
+                            backgroundSize: "".concat(numberToString(data, xUnit), "px ").concat(numberToString(data, yUnit), "px"),
+                            backgroundPosition: "".concat(makeOffsetPosition(data, xUnit, yUnit, 0, 0), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, 0, intervalSize), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, intervalSize * root3 * 0.5, intervalSize * 0.5), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, intervalSize * root3 * 0.5, intervalSize * 1.5)),
+                        });
+                    }
                 default:
                     throw new Error("Unknown LayoutAngle: ".concat(data.layoutAngle));
             }
@@ -284,19 +303,27 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             var backgroundColor = flounderStyle.getBackgroundColor(data);
             switch (flounderStyle.getLayoutAngle(data)) {
                 case "regular": // straight
-                    return makeResult({
-                        backgroundColor: backgroundColor,
-                        backgroundImage: radialGradient,
-                        backgroundSize: "".concat(numberToString(data, intervalSize), "px ").concat(numberToString(data, intervalSize), "px"),
-                        backgroundPosition: "calc(0px + 50%) calc(0px + 50%)"
-                    });
+                    {
+                        var xUnit = intervalSize;
+                        var yUnit = intervalSize;
+                        return makeResult({
+                            backgroundColor: backgroundColor,
+                            backgroundImage: radialGradient,
+                            backgroundSize: "".concat(numberToString(data, xUnit), "px ").concat(numberToString(data, yUnit), "px"),
+                            backgroundPosition: makeOffsetPosition(data, xUnit, yUnit, 0, 0),
+                        });
+                    }
                 case "alternative": // slant
-                    return makeResult({
-                        backgroundColor: backgroundColor,
-                        backgroundImage: Array.from({ length: 2 }).map(function (_) { return radialGradient; }).join(", "),
-                        backgroundSize: "".concat(numberToString(data, (intervalSize * 2.0) / root2), "px ").concat(numberToString(data, (intervalSize * 2.0) / root2), "px"),
-                        backgroundPosition: "calc(0px + 50%) calc(0px + 50%), calc(".concat(numberToString(data, intervalSize / root2), "px + 50%) calc(").concat(numberToString(data, intervalSize / root2), "px + 50%)")
-                    });
+                    {
+                        var xUnit = (intervalSize * 2.0) / root2;
+                        var yUnit = (intervalSize * 2.0) / root2;
+                        return makeResult({
+                            backgroundColor: backgroundColor,
+                            backgroundImage: Array.from({ length: 2 }).map(function (_) { return radialGradient; }).join(", "),
+                            backgroundSize: "".concat(numberToString(data, xUnit), "px ").concat(numberToString(data, yUnit), "px"),
+                            backgroundPosition: "".concat(makeOffsetPosition(data, xUnit, yUnit, 0, 0), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, intervalSize / root2, intervalSize / root2)),
+                        });
+                    }
                 default:
                     throw new Error("Unknown LayoutAngle: ".concat(data.layoutAngle));
             }

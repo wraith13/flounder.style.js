@@ -1,5 +1,12 @@
 # Change Log
 
+## 3.2.? - 2024-0?-??
+
+### Added
+
+- offsetX argument
+- offsetY argument
+
 ## 3.1.1 - 2024-01-17
 
 ### Changed
