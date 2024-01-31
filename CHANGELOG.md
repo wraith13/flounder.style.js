@@ -7,6 +7,10 @@
 - offsetX argument
 - offsetY argument
 
+### Fixed
+
+- Fixed an issue where the style would break when a number of 4 or more digits appeared.
+
 ## 3.1.1 - 2024-01-17
 
 ### Changed

@@ -136,7 +136,7 @@ export module flounderStyle
         "-auto" === data.reverseRate ? "auto":
         data.reverseRate;
     const numberToString = (data: Arguments, value: number) =>
-        value.toLocaleString("en-US", { maximumFractionDigits: data.maximumFractionDigits ?? config.defaultMaximumFractionDigits, });
+        value.toLocaleString("en-US", { useGrouping: false, maximumFractionDigits: data.maximumFractionDigits ?? config.defaultMaximumFractionDigits, });
     const makeResult = ({ backgroundColor = undefined as StyleValue, backgroundImage = undefined as StyleValue, backgroundSize = undefined as StyleValue, backgroundPosition = undefined as StyleValue}): Style =>
     ({
         "background-color": backgroundColor,
