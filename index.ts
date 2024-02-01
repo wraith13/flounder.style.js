@@ -1,6 +1,8 @@
 import config from "./config.json";
 export module flounderStyle
 {
+    export const sin = (rate: number) => Math.sin(Math.PI *2.0 *rate);
+    export const cos = (rate: number) => Math.cos(Math.PI *2.0 *rate);
     export type StyleKey = string;
     export type StyleValue = string | undefined;
     export type StyleProperty = { key: StyleKey; value: StyleValue; };
@@ -170,13 +172,18 @@ export module flounderStyle
     };
     const makeRadialGradientString = (data: Arguments, radius: number, blur = Math.min(radius, getBlur(data)) /0.5) =>
         `radial-gradient(circle at center, ${data.foregroundColor} ${numberToString(data, radius -blur)}px, transparent ${numberToString(data, radius +blur)}px)`;
-    const makeLinearGradientString = (data: Arguments, radius: number, intervalSize: number, angle: number, blur = Math.min(intervalSize -radius, radius, getBlur(data)) /0.5) =>
+    const makeLinearGradientString = (data: Arguments, radius: number, intervalSize: number, intervalSizeX: number, intervalSizeY: number, angle: number, blur = Math.min(intervalSize -radius, radius, getBlur(data)) /0.5) =>
     {
-        const regulatedAngle = angle %1.0;
-        const deg = numberToString(data, 360.0 *regulatedAngle);
+        const deg = numberToString(data, 360.0 *angle);
         const offset =
-            (Math.sin(Math.PI *2.0 *regulatedAngle) *(data.offsetX ?? 0.0) *intervalSize *2.0 /root3)
-            -(Math.cos(Math.PI *2.0 *regulatedAngle) *(data.offsetY ?? 0.0) *intervalSize *2.0);
+            (sin(angle) *(data.offsetX ?? 0.0) *intervalSizeX)
+            -(cos(angle) *(data.offsetY ?? 0.0) *intervalSizeY);
+        // const offset =
+        //     (sin(angle) *(data.offsetX ?? 0.0) *intervalSize *2.0 /root3)
+        //     -(cos(angle) *(data.offsetY ?? 0.0) *intervalSize *2.0);
+        // const offset =
+        //     (sin(angle) *(data.offsetX ?? 0.0) *intervalSize *2.0 /root2)
+        //     -(cos(angle) *(data.offsetY ?? 0.0) *intervalSize *2.0 /root2);
         const patternStart = 0 +offset;
         const a = Math.max(0, radius -blur) +offset;
         const b = Math.min(intervalSize *0.5, radius +blur) +offset;
@@ -411,10 +418,16 @@ export module flounderStyle
                 getIntervalSize(data),
                 data.depth *(getIntervalSize(data) /2.0)
             );
+            const angles =
+            [
+                angleOffset %1.0,
+            ];
+            const intervalSizeX = intervalSize *2.0 *angles.map(i => sin(i)).map(i => Math.abs(i)).reduce((a, b) => a +b, 0);
+            const intervalSizeY = intervalSize *2.0 *angles.map(i => cos(i)).map(i => Math.abs(i)).reduce((a, b) => a +b, 0);
             return makeResult
             ({
                 backgroundColor,
-                backgroundImage: makeLinearGradientString(data, radius, intervalSize, angleOffset)
+                backgroundImage: makeLinearGradientString(data, radius, intervalSize, intervalSizeX, intervalSizeY, angleOffset %1.0)
             });
         }
     );
@@ -430,15 +443,19 @@ export module flounderStyle
                 getIntervalSize(data),
                 (1.0 -Math.sqrt(1.0 -data.depth)) *(getIntervalSize(data) /2.0)
             );
+            const angles =
+            [
+                ((0.0 /4.0) +angleOffset) %1.0,
+                ((1.0 /4.0) +angleOffset) %1.0
+            ];
+            const intervalSizeX = intervalSize *2.0 *angles.map(i => sin(i)).map(i => Math.abs(i)).reduce((a, b) => a +b, 0);
+            const intervalSizeY = intervalSize *2.0 *angles.map(i => cos(i)).map(i => Math.abs(i)).reduce((a, b) => a +b, 0);
             return makeResult
             ({
                 backgroundColor,
-                backgroundImage:
-                [
-                    makeLinearGradientString(data, radius, intervalSize, (0.0 /4.0) +angleOffset),
-                    makeLinearGradientString(data, radius, intervalSize, (1.0 /4.0) +angleOffset),
-                ]
-                .join(", ")
+                backgroundImage: angles
+                    .map(angle => makeLinearGradientString(data, radius, intervalSize, intervalSizeX, intervalSizeY, angle))
+                    .join(", ")
             });
         }
     );
@@ -454,16 +471,20 @@ export module flounderStyle
                 getIntervalSize(data),
                 (1.0 -Math.sqrt(1.0 -data.depth)) *(getIntervalSize(data) /3.0)
             );
+            const angles =
+            [
+                ((0.0 /6.0) +angleOffset) %1.0,
+                ((1.0 /6.0) +angleOffset) %1.0,
+                ((2.0 /6.0) +angleOffset) %1.0
+            ];
+            const intervalSizeX = intervalSize *2.0 *angles.map(i => sin(i)).map(i => Math.abs(i)).reduce((a, b) => a +b, 0);
+            const intervalSizeY = intervalSize *2.0 *angles.map(i => cos(i)).map(i => Math.abs(i)).reduce((a, b) => a +b, 0);
             return makeResult
             ({
                 backgroundColor,
-                backgroundImage:
-                [
-                    makeLinearGradientString(data, radius, intervalSize, (0.0 /6.0) +angleOffset),
-                    makeLinearGradientString(data, radius, intervalSize, (1.0 /6.0) +angleOffset),
-                    makeLinearGradientString(data, radius, intervalSize, (2.0 /6.0) +angleOffset),
-                ]
-                .join(", ")
+                backgroundImage: angles
+                    .map(angle => makeLinearGradientString(data, radius, intervalSize, intervalSizeX, intervalSizeY, angle))
+                    .join(", ")
             });
         }
     );

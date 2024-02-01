@@ -1,5 +1,7 @@
 declare module "index" {
     export namespace flounderStyle {
+        const sin: (rate: number) => number;
+        const cos: (rate: number) => number;
         type StyleKey = string;
         type StyleValue = string | undefined;
         type StyleProperty = {

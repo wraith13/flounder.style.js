@@ -13,6 +13,8 @@ define("index", ["require", "exports", "config"], function (require, exports, co
     config_json_1 = __importDefault(config_json_1);
     var flounderStyle;
     (function (flounderStyle) {
+        flounderStyle.sin = function (rate) { return Math.sin(Math.PI * 2.0 * rate); };
+        flounderStyle.cos = function (rate) { return Math.cos(Math.PI * 2.0 * rate); };
         flounderStyle.styleToStylePropertyList = function (style) {
             return Object.keys(style).map(function (key) { return ({ key: key, value: style[key], }); });
         };
@@ -148,13 +150,18 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             if (blur === void 0) { blur = Math.min(radius, flounderStyle.getBlur(data)) / 0.5; }
             return "radial-gradient(circle at center, ".concat(data.foregroundColor, " ").concat(numberToString(data, radius - blur), "px, transparent ").concat(numberToString(data, radius + blur), "px)");
         };
-        var makeLinearGradientString = function (data, radius, intervalSize, angle, blur) {
+        var makeLinearGradientString = function (data, radius, intervalSize, intervalSizeX, intervalSizeY, angle, blur) {
             var _a, _b;
             if (blur === void 0) { blur = Math.min(intervalSize - radius, radius, flounderStyle.getBlur(data)) / 0.5; }
-            var regulatedAngle = angle % 1.0;
-            var deg = numberToString(data, 360.0 * regulatedAngle);
-            var offset = (Math.sin(Math.PI * 2.0 * regulatedAngle) * ((_a = data.offsetX) !== null && _a !== void 0 ? _a : 0.0) * intervalSize * 2.0 / root3)
-                - (Math.cos(Math.PI * 2.0 * regulatedAngle) * ((_b = data.offsetY) !== null && _b !== void 0 ? _b : 0.0) * intervalSize * 2.0);
+            var deg = numberToString(data, 360.0 * angle);
+            var offset = (flounderStyle.sin(angle) * ((_a = data.offsetX) !== null && _a !== void 0 ? _a : 0.0) * intervalSizeX)
+                - (flounderStyle.cos(angle) * ((_b = data.offsetY) !== null && _b !== void 0 ? _b : 0.0) * intervalSizeY);
+            // const offset =
+            //     (sin(angle) *(data.offsetX ?? 0.0) *intervalSize *2.0 /root3)
+            //     -(cos(angle) *(data.offsetY ?? 0.0) *intervalSize *2.0);
+            // const offset =
+            //     (sin(angle) *(data.offsetX ?? 0.0) *intervalSize *2.0 /root2)
+            //     -(cos(angle) *(data.offsetY ?? 0.0) *intervalSize *2.0 /root2);
             var patternStart = 0 + offset;
             var a = Math.max(0, radius - blur) + offset;
             var b = Math.min(intervalSize * 0.5, radius + blur) + offset;
@@ -332,21 +339,30 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             var backgroundColor = flounderStyle.getBackgroundColor(data);
             var angleOffset = flounderStyle.getAngleOffset(data);
             var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), data.depth * (flounderStyle.getIntervalSize(data) / 2.0)), intervalSize = _a.intervalSize, radius = _a.radius;
+            var angles = [
+                angleOffset % 1.0,
+            ];
+            var intervalSizeX = intervalSize * 2.0 * angles.map(function (i) { return flounderStyle.sin(i); }).map(function (i) { return Math.abs(i); }).reduce(function (a, b) { return a + b; }, 0);
+            var intervalSizeY = intervalSize * 2.0 * angles.map(function (i) { return flounderStyle.cos(i); }).map(function (i) { return Math.abs(i); }).reduce(function (a, b) { return a + b; }, 0);
             return makeResult({
                 backgroundColor: backgroundColor,
-                backgroundImage: makeLinearGradientString(data, radius, intervalSize, angleOffset)
+                backgroundImage: makeLinearGradientString(data, radius, intervalSize, intervalSizeX, intervalSizeY, angleOffset % 1.0)
             });
         }); };
         flounderStyle.makeDilineStyle = function (data) { return makeStyleCommon(data, function (data) {
             var backgroundColor = flounderStyle.getBackgroundColor(data);
             var angleOffset = flounderStyle.getAngleOffset(data);
             var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (flounderStyle.getIntervalSize(data) / 2.0)), intervalSize = _a.intervalSize, radius = _a.radius;
+            var angles = [
+                ((0.0 / 4.0) + angleOffset) % 1.0,
+                ((1.0 / 4.0) + angleOffset) % 1.0
+            ];
+            var intervalSizeX = intervalSize * 2.0 * angles.map(function (i) { return flounderStyle.sin(i); }).map(function (i) { return Math.abs(i); }).reduce(function (a, b) { return a + b; }, 0);
+            var intervalSizeY = intervalSize * 2.0 * angles.map(function (i) { return flounderStyle.cos(i); }).map(function (i) { return Math.abs(i); }).reduce(function (a, b) { return a + b; }, 0);
             return makeResult({
                 backgroundColor: backgroundColor,
-                backgroundImage: [
-                    makeLinearGradientString(data, radius, intervalSize, (0.0 / 4.0) + angleOffset),
-                    makeLinearGradientString(data, radius, intervalSize, (1.0 / 4.0) + angleOffset),
-                ]
+                backgroundImage: angles
+                    .map(function (angle) { return makeLinearGradientString(data, radius, intervalSize, intervalSizeX, intervalSizeY, angle); })
                     .join(", ")
             });
         }); };
@@ -354,13 +370,17 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             var backgroundColor = flounderStyle.getBackgroundColor(data);
             var angleOffset = flounderStyle.getAngleOffset(data);
             var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (flounderStyle.getIntervalSize(data) / 3.0)), intervalSize = _a.intervalSize, radius = _a.radius;
+            var angles = [
+                ((0.0 / 6.0) + angleOffset) % 1.0,
+                ((1.0 / 6.0) + angleOffset) % 1.0,
+                ((2.0 / 6.0) + angleOffset) % 1.0
+            ];
+            var intervalSizeX = intervalSize * 2.0 * angles.map(function (i) { return flounderStyle.sin(i); }).map(function (i) { return Math.abs(i); }).reduce(function (a, b) { return a + b; }, 0);
+            var intervalSizeY = intervalSize * 2.0 * angles.map(function (i) { return flounderStyle.cos(i); }).map(function (i) { return Math.abs(i); }).reduce(function (a, b) { return a + b; }, 0);
             return makeResult({
                 backgroundColor: backgroundColor,
-                backgroundImage: [
-                    makeLinearGradientString(data, radius, intervalSize, (0.0 / 6.0) + angleOffset),
-                    makeLinearGradientString(data, radius, intervalSize, (1.0 / 6.0) + angleOffset),
-                    makeLinearGradientString(data, radius, intervalSize, (2.0 / 6.0) + angleOffset),
-                ]
+                backgroundImage: angles
+                    .map(function (angle) { return makeLinearGradientString(data, radius, intervalSize, intervalSizeX, intervalSizeY, angle); })
                     .join(", ")
             });
         }); };
