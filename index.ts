@@ -45,14 +45,15 @@ export module flounderStyle
     export type Rate = Real;
     export type SignedRate = Real;
     export type Pixel = Real;
+    export type SignedPixel = Real;
     export type Integer = number;
     export type Count = Integer;
     export interface ArgumentsBase
     {
         type: FlounderType;
         layoutAngle?: LayoutAngle | SignedRate;
-        offsetX?: number;
-        offsetY?: number;
+        offsetX?: SignedPixel;
+        offsetY?: SignedPixel;
         foregroundColor: Color;
         backgroundColor?: Color;
         intervalSize?: Pixel;
@@ -172,18 +173,11 @@ export module flounderStyle
     };
     const makeRadialGradientString = (data: Arguments, radius: number, blur = Math.min(radius, getBlur(data)) /0.5) =>
         `radial-gradient(circle at center, ${data.foregroundColor} ${numberToString(data, radius -blur)}px, transparent ${numberToString(data, radius +blur)}px)`;
-    const makeLinearGradientString = (data: Arguments, radius: number, intervalSize: number, intervalSizeX: number, intervalSizeY: number, angle: number, blur = Math.min(intervalSize -radius, radius, getBlur(data)) /0.5) =>
+    const makeLinearGradientString = (data: Arguments, radius: number, intervalSize: number, angle: number, blur = Math.min(intervalSize -radius, radius, getBlur(data)) /0.5) =>
     {
         const deg = numberToString(data, 360.0 *angle);
-        const offset =
-            (sin(angle) *(data.offsetX ?? 0.0) *intervalSizeX)
-            -(cos(angle) *(data.offsetY ?? 0.0) *intervalSizeY);
-        // const offset =
-        //     (sin(angle) *(data.offsetX ?? 0.0) *intervalSize *2.0 /root3)
-        //     -(cos(angle) *(data.offsetY ?? 0.0) *intervalSize *2.0);
-        // const offset =
-        //     (sin(angle) *(data.offsetX ?? 0.0) *intervalSize *2.0 /root2)
-        //     -(cos(angle) *(data.offsetY ?? 0.0) *intervalSize *2.0 /root2);
+        const offset = undefined === data.offsetX && undefined === data.offsetY ?
+            0: sin(angle) *(data.offsetX ?? 0.0) -cos(angle) *(data.offsetY ?? 0.0);
         const patternStart = 0 +offset;
         const a = Math.max(0, radius -blur) +offset;
         const b = Math.min(intervalSize *0.5, radius +blur) +offset;
@@ -422,12 +416,12 @@ export module flounderStyle
             [
                 angleOffset %1.0,
             ];
-            const intervalSizeX = intervalSize *2.0 *angles.map(i => sin(i)).map(i => Math.abs(i)).reduce((a, b) => a +b, 0);
-            const intervalSizeY = intervalSize *2.0 *angles.map(i => cos(i)).map(i => Math.abs(i)).reduce((a, b) => a +b, 0);
             return makeResult
             ({
                 backgroundColor,
-                backgroundImage: makeLinearGradientString(data, radius, intervalSize, intervalSizeX, intervalSizeY, angleOffset %1.0)
+                backgroundImage: angles
+                    .map(angle => makeLinearGradientString(data, radius, intervalSize, angle))
+                    .join(", ")
             });
         }
     );
@@ -448,13 +442,11 @@ export module flounderStyle
                 ((0.0 /4.0) +angleOffset) %1.0,
                 ((1.0 /4.0) +angleOffset) %1.0
             ];
-            const intervalSizeX = intervalSize *2.0 *angles.map(i => sin(i)).map(i => Math.abs(i)).reduce((a, b) => a +b, 0);
-            const intervalSizeY = intervalSize *2.0 *angles.map(i => cos(i)).map(i => Math.abs(i)).reduce((a, b) => a +b, 0);
             return makeResult
             ({
                 backgroundColor,
                 backgroundImage: angles
-                    .map(angle => makeLinearGradientString(data, radius, intervalSize, intervalSizeX, intervalSizeY, angle))
+                    .map(angle => makeLinearGradientString(data, radius, intervalSize, angle))
                     .join(", ")
             });
         }
@@ -477,13 +469,11 @@ export module flounderStyle
                 ((1.0 /6.0) +angleOffset) %1.0,
                 ((2.0 /6.0) +angleOffset) %1.0
             ];
-            const intervalSizeX = intervalSize *2.0 *angles.map(i => sin(i)).map(i => Math.abs(i)).reduce((a, b) => a +b, 0);
-            const intervalSizeY = intervalSize *2.0 *angles.map(i => cos(i)).map(i => Math.abs(i)).reduce((a, b) => a +b, 0);
             return makeResult
             ({
                 backgroundColor,
                 backgroundImage: angles
-                    .map(angle => makeLinearGradientString(data, radius, intervalSize, intervalSizeX, intervalSizeY, angle))
+                    .map(angle => makeLinearGradientString(data, radius, intervalSize, angle))
                     .join(", ")
             });
         }

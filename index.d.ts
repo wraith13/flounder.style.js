@@ -24,13 +24,14 @@ declare module "index" {
         type Rate = Real;
         type SignedRate = Real;
         type Pixel = Real;
+        type SignedPixel = Real;
         type Integer = number;
         type Count = Integer;
         interface ArgumentsBase {
             type: FlounderType;
             layoutAngle?: LayoutAngle | SignedRate;
-            offsetX?: number;
-            offsetY?: number;
+            offsetX?: SignedPixel;
+            offsetY?: SignedPixel;
             foregroundColor: Color;
             backgroundColor?: Color;
             intervalSize?: Pixel;
