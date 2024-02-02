@@ -6,6 +6,7 @@
 
 - offsetX argument
 - offsetY argument
+- calculateOffsetCoefficient function for offsetX and offsetY arguments
 
 ### Fixed
 

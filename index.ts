@@ -478,4 +478,43 @@ export module flounderStyle
             });
         }
     );
+    export const calculateOffsetCoefficient = (data: Pick<Arguments, "type" | "layoutAngle">): { x: Pixel, y: Pixel } =>
+    {
+        let x = 0;
+        let y = 0;
+        switch(data.type)
+        {
+        case "tetraspot":
+            break;
+        case "trispot":
+            break;
+        case "stripe":
+            break;
+        case "diline":
+            switch(data.layoutAngle ?? "regular")
+            {
+            case "regular":
+                x = y = 1.0;
+                break;
+            case "alternative":
+                x = y = root2;
+                break;
+            }
+            break;
+        case "triline":
+            switch(data.layoutAngle ?? "regular")
+            {
+            case "regular":
+                x = 2.0 /root3;
+                y = 2.0;
+                break;
+            case "alternative":
+                x = 2.0;
+                y = 2.0 /root3;
+                break;
+            }
+            break;
+        }
+        return { x, y };
+    };
 }
