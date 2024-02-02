@@ -126,10 +126,10 @@ define("index", ["require", "exports", "config"], function (require, exports, co
         var makeAxis = function (data, value) {
             return "calc(".concat(numberToString(data, value), "px + 50%)");
         };
-        var makeOffsetAxis = function (data, unit, offset, value) {
-            return makeAxis(data, value + (offset * unit));
+        var makeOffsetAxis = function (data, offset, value) {
+            return makeAxis(data, value + offset);
         };
-        var makeOffsetPosition = function (data, xUnit, yUnit, x, y) { var _a, _b; return "".concat(makeOffsetAxis(data, xUnit, (_a = data.offsetX) !== null && _a !== void 0 ? _a : 0.0, x), " ").concat(makeOffsetAxis(data, yUnit, (_b = data.offsetY) !== null && _b !== void 0 ? _b : 0.0, y)); };
+        var makeOffsetPosition = function (data, x, y) { var _a, _b; return "".concat(makeOffsetAxis(data, (_a = data.offsetX) !== null && _a !== void 0 ? _a : 0.0, x), " ").concat(makeOffsetAxis(data, (_b = data.offsetY) !== null && _b !== void 0 ? _b : 0.0, y)); };
         flounderStyle.makeStyle = function (data) {
             switch (flounderStyle.getPatternType(data)) {
                 case "trispot":
@@ -280,7 +280,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                             backgroundColor: backgroundColor,
                             backgroundImage: backgroundImage,
                             backgroundSize: "".concat(numberToString(data, xUnit), "px ").concat(numberToString(data, yUnit), "px"),
-                            backgroundPosition: "".concat(makeOffsetPosition(data, xUnit, yUnit, 0, 0), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, intervalSize, 0), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, intervalSize * 0.5, intervalSize * root3 * 0.5), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, intervalSize * 1.5, intervalSize * root3 * 0.5)),
+                            backgroundPosition: "".concat(makeOffsetPosition(data, 0, 0), ", ").concat(makeOffsetPosition(data, intervalSize, 0), ", ").concat(makeOffsetPosition(data, intervalSize * 0.5, intervalSize * root3 * 0.5), ", ").concat(makeOffsetPosition(data, intervalSize * 1.5, intervalSize * root3 * 0.5)),
                         });
                     }
                 case "alternative": // vertical
@@ -291,7 +291,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                             backgroundColor: backgroundColor,
                             backgroundImage: backgroundImage,
                             backgroundSize: "".concat(numberToString(data, xUnit), "px ").concat(numberToString(data, yUnit), "px"),
-                            backgroundPosition: "".concat(makeOffsetPosition(data, xUnit, yUnit, 0, 0), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, 0, intervalSize), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, intervalSize * root3 * 0.5, intervalSize * 0.5), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, intervalSize * root3 * 0.5, intervalSize * 1.5)),
+                            backgroundPosition: "".concat(makeOffsetPosition(data, 0, 0), ", ").concat(makeOffsetPosition(data, 0, intervalSize), ", ").concat(makeOffsetPosition(data, intervalSize * root3 * 0.5, intervalSize * 0.5), ", ").concat(makeOffsetPosition(data, intervalSize * root3 * 0.5, intervalSize * 1.5)),
                         });
                     }
                 default:
@@ -311,7 +311,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                             backgroundColor: backgroundColor,
                             backgroundImage: radialGradient,
                             backgroundSize: "".concat(numberToString(data, xUnit), "px ").concat(numberToString(data, yUnit), "px"),
-                            backgroundPosition: makeOffsetPosition(data, xUnit, yUnit, 0, 0),
+                            backgroundPosition: makeOffsetPosition(data, 0, 0),
                         });
                     }
                 case "alternative": // slant
@@ -322,7 +322,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                             backgroundColor: backgroundColor,
                             backgroundImage: Array.from({ length: 2 }).map(function (_) { return radialGradient; }).join(", "),
                             backgroundSize: "".concat(numberToString(data, xUnit), "px ").concat(numberToString(data, yUnit), "px"),
-                            backgroundPosition: "".concat(makeOffsetPosition(data, xUnit, yUnit, 0, 0), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, intervalSize / root2, intervalSize / root2)),
+                            backgroundPosition: "".concat(makeOffsetPosition(data, 0, 0), ", ").concat(makeOffsetPosition(data, intervalSize / root2, intervalSize / root2)),
                         });
                     }
                 default:
@@ -374,6 +374,61 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                     .join(", ")
             });
         }); };
+        flounderStyle.calculateOffsetCoefficient = function (data) {
+            var _a, _b, _c, _d, _e, _f;
+            var makeResult = function (x, y, isMustUseBoth) { return ({ x: x, y: y, isMustUseBoth: isMustUseBoth, }); };
+            switch (data.type) {
+                case "trispot":
+                    switch ((_a = data.layoutAngle) !== null && _a !== void 0 ? _a : "regular") {
+                        case "regular":
+                            return makeResult(2.0, 2.0 * root3, false);
+                        case "alternative":
+                            return makeResult(2.0 * root3, 2.0, false);
+                    }
+                    break;
+                case "tetraspot":
+                    switch ((_b = data.layoutAngle) !== null && _b !== void 0 ? _b : "regular") {
+                        case "regular":
+                            return makeResult(1.0, 1.0, false);
+                        case "alternative":
+                            return makeResult(root2, root2, false);
+                    }
+                    break;
+                case "stripe":
+                    {
+                        var angleOffset = flounderStyle.getAngleOffset(data);
+                        return makeResult(1.0 * flounderStyle.sin(angleOffset), -1.0 * flounderStyle.cos(angleOffset), true);
+                    }
+                    break;
+                case "diline":
+                    {
+                        if (0 === ((_c = data.anglePerDepth) !== null && _c !== void 0 ? _c : 0)) {
+                            switch ((_d = data.layoutAngle) !== null && _d !== void 0 ? _d : "regular") {
+                                case "regular":
+                                    return makeResult(1.0, 1.0, false);
+                                case "alternative":
+                                    return makeResult(root2, root2, false);
+                            }
+                        }
+                        var angleOffset = flounderStyle.getAngleOffset(data);
+                        return makeResult(1.0 * flounderStyle.cos(angleOffset), 1.0 * flounderStyle.sin(angleOffset), true);
+                    }
+                case "triline":
+                    {
+                        if (0 === ((_e = data.anglePerDepth) !== null && _e !== void 0 ? _e : 0)) {
+                            switch ((_f = data.layoutAngle) !== null && _f !== void 0 ? _f : "regular") {
+                                case "regular":
+                                    return makeResult(2.0 / root3, 2.0, false);
+                                case "alternative":
+                                    return makeResult(2.0, 2.0 / root3, false);
+                            }
+                        }
+                        var angleOffset = flounderStyle.getAngleOffset(data);
+                        return makeResult((2.0 / root3) * flounderStyle.cos(angleOffset), (2.0 / root3) * flounderStyle.sin(angleOffset), true);
+                    }
+            }
+            return makeResult(0.0, 0.0, false);
+        };
     })(flounderStyle || (exports.flounderStyle = flounderStyle = {}));
 });
 //# sourceMappingURL=index.js.map

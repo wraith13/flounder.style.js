@@ -149,10 +149,10 @@ export module flounderStyle
     });
     const makeAxis = (data: Arguments, value:number) =>
         `calc(${numberToString(data, value)}px + 50%)`;
-    const makeOffsetAxis = (data: Arguments, unit: number, offset: number, value:number) =>
-        makeAxis(data, value +(offset *unit));
-    const makeOffsetPosition = (data: Arguments, xUnit: number, yUnit:number, x: number, y:number) =>
-        `${makeOffsetAxis(data, xUnit, data.offsetX ?? 0.0, x)} ${makeOffsetAxis(data, yUnit, data.offsetY ?? 0.0, y)}`;
+    const makeOffsetAxis = (data: Arguments, offset: number, value:number) =>
+        makeAxis(data, value +offset);
+    const makeOffsetPosition = (data: Arguments, x: number, y:number) =>
+        `${makeOffsetAxis(data, data.offsetX ?? 0.0, x)} ${makeOffsetAxis(data, data.offsetY ?? 0.0, y)}`;
     export const makeStyle = (data: Arguments): Style =>
     {
         switch(getPatternType(data))
@@ -342,7 +342,7 @@ export module flounderStyle
                     backgroundColor,
                     backgroundImage,
                     backgroundSize: `${numberToString(data, xUnit)}px ${numberToString(data, yUnit)}px`,
-                    backgroundPosition: `${makeOffsetPosition(data, xUnit, yUnit, 0, 0)}, ${makeOffsetPosition(data, xUnit, yUnit, intervalSize, 0)}, ${makeOffsetPosition(data, xUnit, yUnit, intervalSize *0.5, intervalSize *root3 *0.5)}, ${makeOffsetPosition(data, xUnit, yUnit, intervalSize *1.5, intervalSize * root3 * 0.5)}`,
+                    backgroundPosition: `${makeOffsetPosition(data, 0, 0)}, ${makeOffsetPosition(data, intervalSize, 0)}, ${makeOffsetPosition(data, intervalSize *0.5, intervalSize *root3 *0.5)}, ${makeOffsetPosition(data, intervalSize *1.5, intervalSize * root3 * 0.5)}`,
                 });
             }
             case "alternative": // vertical
@@ -354,7 +354,7 @@ export module flounderStyle
                     backgroundColor,
                     backgroundImage,
                     backgroundSize: `${numberToString(data, xUnit)}px ${numberToString(data, yUnit)}px`,
-                    backgroundPosition: `${makeOffsetPosition(data, xUnit, yUnit, 0, 0)}, ${makeOffsetPosition(data, xUnit, yUnit, 0, intervalSize)}, ${makeOffsetPosition(data, xUnit, yUnit, intervalSize *root3 *0.5, intervalSize *0.5)}, ${makeOffsetPosition(data, xUnit, yUnit, intervalSize *root3 *0.5, intervalSize *1.5)}`,
+                    backgroundPosition: `${makeOffsetPosition(data, 0, 0)}, ${makeOffsetPosition(data, 0, intervalSize)}, ${makeOffsetPosition(data, intervalSize *root3 *0.5, intervalSize *0.5)}, ${makeOffsetPosition(data, intervalSize *root3 *0.5, intervalSize *1.5)}`,
                 });
             }
             default:
@@ -380,7 +380,7 @@ export module flounderStyle
                     backgroundColor,
                     backgroundImage: radialGradient,
                     backgroundSize: `${numberToString(data, xUnit)}px ${numberToString(data, yUnit)}px`,
-                    backgroundPosition: makeOffsetPosition(data, xUnit, yUnit, 0, 0),
+                    backgroundPosition: makeOffsetPosition(data, 0, 0),
                 });
             }
             case "alternative": // slant
@@ -392,7 +392,7 @@ export module flounderStyle
                     backgroundColor,
                     backgroundImage: Array.from({ length: 2 }).map(_ => radialGradient).join(", "),
                     backgroundSize: `${numberToString(data, xUnit)}px ${numberToString(data, yUnit)}px`,
-                    backgroundPosition: `${makeOffsetPosition(data, xUnit, yUnit, 0, 0)}, ${makeOffsetPosition(data, xUnit, yUnit, intervalSize /root2, intervalSize /root2)}`,
+                    backgroundPosition: `${makeOffsetPosition(data, 0, 0)}, ${makeOffsetPosition(data, intervalSize /root2, intervalSize /root2)}`,
                 });
             }
             default:
@@ -478,43 +478,81 @@ export module flounderStyle
             });
         }
     );
-    export const calculateOffsetCoefficient = (data: Pick<Arguments, "type" | "layoutAngle">): { x: Pixel, y: Pixel } =>
+    export const calculateOffsetCoefficient = (data: Arguments): { x: Pixel, y: Pixel, isMustUseBoth: boolean, } =>
     {
-        let x = 0;
-        let y = 0;
+        const makeResult = (x: Pixel, y: Pixel, isMustUseBoth: boolean) => ({ x, y, isMustUseBoth, });
         switch(data.type)
         {
-        case "tetraspot":
-            break;
         case "trispot":
+            switch(data.layoutAngle ?? "regular")
+            {
+            case "regular":
+                return makeResult(2.0, 2.0 *root3, false);
+            case "alternative":
+                return makeResult(2.0 *root3, 2.0, false);
+            }
+            break;
+        case "tetraspot":
+            switch(data.layoutAngle ?? "regular")
+            {
+            case "regular":
+                return makeResult(1.0, 1.0, false);
+            case "alternative":
+                return makeResult(root2, root2, false);
+            }
             break;
         case "stripe":
+            {
+                const angleOffset = getAngleOffset(data);
+                return makeResult
+                (
+                    1.0 *sin(angleOffset),
+                    -1.0 *cos(angleOffset),
+                    true
+                );
+            }
             break;
         case "diline":
-            switch(data.layoutAngle ?? "regular")
             {
-            case "regular":
-                x = y = 1.0;
-                break;
-            case "alternative":
-                x = y = root2;
-                break;
+                if (0 === (data.anglePerDepth ?? 0))
+                {
+                    switch(data.layoutAngle ?? "regular")
+                    {
+                    case "regular":
+                        return makeResult(1.0, 1.0, false);
+                    case "alternative":
+                        return makeResult(root2, root2, false);
+                    }
+                }
+                const angleOffset = getAngleOffset(data);
+                return makeResult
+                (
+                    1.0 *cos(angleOffset),
+                    1.0 *sin(angleOffset),
+                    true
+                );
             }
-            break;
         case "triline":
-            switch(data.layoutAngle ?? "regular")
             {
-            case "regular":
-                x = 2.0 /root3;
-                y = 2.0;
-                break;
-            case "alternative":
-                x = 2.0;
-                y = 2.0 /root3;
-                break;
+                if (0 === (data.anglePerDepth ?? 0))
+                {
+                    switch(data.layoutAngle ?? "regular")
+                    {
+                    case "regular":
+                        return makeResult(2.0 /root3, 2.0, false);
+                    case "alternative":
+                        return makeResult(2.0, 2.0 /root3, false);
+                    }
+                }
+                const angleOffset = getAngleOffset(data);
+                return makeResult
+                (
+                    (2.0 /root3) *cos(angleOffset),
+                    (2.0 /root3) *sin(angleOffset),
+                    true
+                );
             }
-            break;
         }
-        return { x, y };
+        return makeResult(0.0, 0.0, false);
     };
 }
