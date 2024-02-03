@@ -237,6 +237,39 @@ export module flounderStyle
         }
         return calculateMaxPatternSize(data, intervalSize, radius);
     };
+    const calculatePatternSize = (data: Arguments) =>
+    {
+        switch(getPatternType(data))
+        {
+        case "trispot":
+            return calculateSpotSize(data, triPatternHalfRadiusSpotArea, 1.0 /root3);
+        case "tetraspot":
+            return calculateSpotSize(data, TetraPatternHalfRadiusSpotArea, 0.5 *root2);
+        case "stripe":
+            return calculateMaxPatternSize
+            (
+                data,
+                getIntervalSize(data),
+                data.depth *(getIntervalSize(data) /2.0)
+            );
+        case "diline":
+            return calculateMaxPatternSize
+            (
+                data,
+                getIntervalSize(data),
+                (1.0 -Math.sqrt(1.0 -data.depth)) *(getIntervalSize(data) /2.0)
+            );
+        case "triline":
+            return calculateMaxPatternSize
+            (
+                data,
+                getIntervalSize(data),
+                (1.0 -Math.sqrt(1.0 -data.depth)) *(getIntervalSize(data) /3.0)
+            );
+        default:
+            throw new Error(`Unknown FlounderType: ${data.type}`);
+        }
+    };
     export const simpleStructuredClone = //window.structuredClone ??
     (
         <T>(value: T): T =>
@@ -327,7 +360,7 @@ export module flounderStyle
     (
         data, data =>
         {
-            const { intervalSize, radius, } = calculateSpotSize(data, triPatternHalfRadiusSpotArea, 1.0 /root3);
+            const { intervalSize, radius, } = calculatePatternSize(data);
             const radialGradient = makeRadialGradientString(data, radius);
             const backgroundColor: StyleValue = getBackgroundColor(data);
             const backgroundImage: StyleValue = Array.from({ length: 4 }).map(_ => radialGradient).join(", ");
@@ -366,7 +399,7 @@ export module flounderStyle
     (
         data, data =>
         {
-            const { intervalSize, radius, } = calculateSpotSize(data, TetraPatternHalfRadiusSpotArea, 0.5 *root2);
+            const { intervalSize, radius, } = calculatePatternSize(data);
             const radialGradient = makeRadialGradientString(data, radius);
             const backgroundColor: StyleValue = getBackgroundColor(data);
             switch(getLayoutAngle(data))
@@ -406,12 +439,7 @@ export module flounderStyle
         {
             const backgroundColor: StyleValue = getBackgroundColor(data);
             const angleOffset = getAngleOffset(data);
-            const { intervalSize, radius, } = calculateMaxPatternSize
-            (
-                data,
-                getIntervalSize(data),
-                data.depth *(getIntervalSize(data) /2.0)
-            );
+            const { intervalSize, radius, } = calculatePatternSize(data);
             const angles =
             [
                 angleOffset %1.0,
@@ -431,12 +459,7 @@ export module flounderStyle
         {
             const backgroundColor: StyleValue = getBackgroundColor(data);
             const angleOffset = getAngleOffset(data);
-            const { intervalSize, radius, } = calculateMaxPatternSize
-            (
-                data,
-                getIntervalSize(data),
-                (1.0 -Math.sqrt(1.0 -data.depth)) *(getIntervalSize(data) /2.0)
-            );
+            const { intervalSize, radius, } = calculatePatternSize(data);
             const angles =
             [
                 ((0.0 /4.0) +angleOffset) %1.0,
@@ -457,12 +480,7 @@ export module flounderStyle
         {
             const backgroundColor: StyleValue = getBackgroundColor(data);
             const angleOffset = getAngleOffset(data);
-            const { intervalSize, radius, } = calculateMaxPatternSize
-            (
-                data,
-                getIntervalSize(data),
-                (1.0 -Math.sqrt(1.0 -data.depth)) *(getIntervalSize(data) /3.0)
-            );
+            const { intervalSize, radius, } = calculatePatternSize(data);
             const angles =
             [
                 ((0.0 /6.0) +angleOffset) %1.0,
@@ -478,9 +496,13 @@ export module flounderStyle
             });
         }
     );
-    export const calculateOffsetCoefficient = (data: Arguments): { x: Pixel, y: Pixel, isMustUseBoth: boolean, } =>
+    export const calculateOffsetCoefficient = (data: Arguments): { x: Pixel, y: Pixel, isMustUseBoth: boolean, intervalSize: number, radius: number, } =>
     {
-        const makeResult = (x: Pixel, y: Pixel, isMustUseBoth: boolean) => ({ x, y, isMustUseBoth, });
+        const makeResult = (x: Pixel, y: Pixel, isMustUseBoth: boolean) =>
+        {
+            const { intervalSize, radius, } = calculatePatternSize(data);
+            return { x, y, isMustUseBoth, intervalSize, radius, };
+        };
         switch(data.type)
         {
         case "trispot":

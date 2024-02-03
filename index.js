@@ -206,6 +206,22 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             }
             return calculateMaxPatternSize(data, intervalSize, radius);
         };
+        var calculatePatternSize = function (data) {
+            switch (flounderStyle.getPatternType(data)) {
+                case "trispot":
+                    return calculateSpotSize(data, triPatternHalfRadiusSpotArea, 1.0 / root3);
+                case "tetraspot":
+                    return calculateSpotSize(data, TetraPatternHalfRadiusSpotArea, 0.5 * root2);
+                case "stripe":
+                    return calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), data.depth * (flounderStyle.getIntervalSize(data) / 2.0));
+                case "diline":
+                    return calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (flounderStyle.getIntervalSize(data) / 2.0));
+                case "triline":
+                    return calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (flounderStyle.getIntervalSize(data) / 3.0));
+                default:
+                    throw new Error("Unknown FlounderType: ".concat(data.type));
+            }
+        };
         flounderStyle.simpleStructuredClone = (function (value) {
             if (undefined !== value && null !== value) {
                 if (Array.isArray(value)) {
@@ -267,7 +283,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             }
         };
         flounderStyle.makeTrispotStyle = function (data) { return makeStyleCommon(data, function (data) {
-            var _a = calculateSpotSize(data, triPatternHalfRadiusSpotArea, 1.0 / root3), intervalSize = _a.intervalSize, radius = _a.radius;
+            var _a = calculatePatternSize(data), intervalSize = _a.intervalSize, radius = _a.radius;
             var radialGradient = makeRadialGradientString(data, radius);
             var backgroundColor = flounderStyle.getBackgroundColor(data);
             var backgroundImage = Array.from({ length: 4 }).map(function (_) { return radialGradient; }).join(", ");
@@ -299,7 +315,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             }
         }); };
         flounderStyle.makeTetraspotStyle = function (data) { return makeStyleCommon(data, function (data) {
-            var _a = calculateSpotSize(data, TetraPatternHalfRadiusSpotArea, 0.5 * root2), intervalSize = _a.intervalSize, radius = _a.radius;
+            var _a = calculatePatternSize(data), intervalSize = _a.intervalSize, radius = _a.radius;
             var radialGradient = makeRadialGradientString(data, radius);
             var backgroundColor = flounderStyle.getBackgroundColor(data);
             switch (flounderStyle.getLayoutAngle(data)) {
@@ -332,7 +348,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
         flounderStyle.makeStripeStyle = function (data) { return makeStyleCommon(data, function (data) {
             var backgroundColor = flounderStyle.getBackgroundColor(data);
             var angleOffset = flounderStyle.getAngleOffset(data);
-            var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), data.depth * (flounderStyle.getIntervalSize(data) / 2.0)), intervalSize = _a.intervalSize, radius = _a.radius;
+            var _a = calculatePatternSize(data), intervalSize = _a.intervalSize, radius = _a.radius;
             var angles = [
                 angleOffset % 1.0,
             ];
@@ -346,7 +362,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
         flounderStyle.makeDilineStyle = function (data) { return makeStyleCommon(data, function (data) {
             var backgroundColor = flounderStyle.getBackgroundColor(data);
             var angleOffset = flounderStyle.getAngleOffset(data);
-            var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (flounderStyle.getIntervalSize(data) / 2.0)), intervalSize = _a.intervalSize, radius = _a.radius;
+            var _a = calculatePatternSize(data), intervalSize = _a.intervalSize, radius = _a.radius;
             var angles = [
                 ((0.0 / 4.0) + angleOffset) % 1.0,
                 ((1.0 / 4.0) + angleOffset) % 1.0
@@ -361,7 +377,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
         flounderStyle.makeTrilineStyle = function (data) { return makeStyleCommon(data, function (data) {
             var backgroundColor = flounderStyle.getBackgroundColor(data);
             var angleOffset = flounderStyle.getAngleOffset(data);
-            var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (flounderStyle.getIntervalSize(data) / 3.0)), intervalSize = _a.intervalSize, radius = _a.radius;
+            var _a = calculatePatternSize(data), intervalSize = _a.intervalSize, radius = _a.radius;
             var angles = [
                 ((0.0 / 6.0) + angleOffset) % 1.0,
                 ((1.0 / 6.0) + angleOffset) % 1.0,
@@ -376,7 +392,10 @@ define("index", ["require", "exports", "config"], function (require, exports, co
         }); };
         flounderStyle.calculateOffsetCoefficient = function (data) {
             var _a, _b, _c, _d, _e, _f;
-            var makeResult = function (x, y, isMustUseBoth) { return ({ x: x, y: y, isMustUseBoth: isMustUseBoth, }); };
+            var makeResult = function (x, y, isMustUseBoth) {
+                var _a = calculatePatternSize(data), intervalSize = _a.intervalSize, radius = _a.radius;
+                return { x: x, y: y, isMustUseBoth: isMustUseBoth, intervalSize: intervalSize, radius: radius, };
+            };
             switch (data.type) {
                 case "trispot":
                     switch ((_a = data.layoutAngle) !== null && _a !== void 0 ? _a : "regular") {

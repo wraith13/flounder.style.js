@@ -77,6 +77,8 @@ declare module "index" {
             x: Pixel;
             y: Pixel;
             isMustUseBoth: boolean;
+            intervalSize: number;
+            radius: number;
         };
     }
 }
