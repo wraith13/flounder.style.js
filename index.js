@@ -392,31 +392,37 @@ define("index", ["require", "exports", "config"], function (require, exports, co
         }); };
         flounderStyle.calculateOffsetCoefficient = function (data) {
             var _a, _b, _c, _d, _e, _f;
-            var makeResult = function (x, y, isMustUseBoth) {
+            var makeResult = function (regular, alternative) {
                 var _a = calculatePatternSize(data), intervalSize = _a.intervalSize, radius = _a.radius;
-                return { x: x, y: y, isMustUseBoth: isMustUseBoth, intervalSize: intervalSize, radius: radius, };
+                return { regular: regular, alternative: alternative, intervalSize: intervalSize, radius: radius, };
             };
             switch (data.type) {
                 case "trispot":
                     switch ((_a = data.layoutAngle) !== null && _a !== void 0 ? _a : "regular") {
                         case "regular":
-                            return makeResult(2.0, 2.0 * root3, false);
+                            return makeResult({ x: 2.0, y: 0.0 }, { x: 0.0, y: 2.0 * root3, });
                         case "alternative":
-                            return makeResult(2.0 * root3, 2.0, false);
+                            return makeResult({ x: 2.0 * root3, y: 0.0, }, { x: 0.0, y: 2.0, });
                     }
                     break;
                 case "tetraspot":
                     switch ((_b = data.layoutAngle) !== null && _b !== void 0 ? _b : "regular") {
                         case "regular":
-                            return makeResult(1.0, 1.0, false);
+                            return makeResult({ x: 1.0, y: 0.0, }, { x: 0.0, y: 1.0, });
                         case "alternative":
-                            return makeResult(root2, root2, false);
+                            return makeResult({ x: root2, y: 0.0, }, { x: 0.0, y: root2 });
                     }
                     break;
                 case "stripe":
                     {
                         var angleOffset = flounderStyle.getAngleOffset(data);
-                        return makeResult(1.0 * flounderStyle.sin(angleOffset), -1.0 * flounderStyle.cos(angleOffset), true);
+                        return makeResult({
+                            x: 1.0 * flounderStyle.sin(angleOffset),
+                            y: -1.0 * flounderStyle.cos(angleOffset),
+                        }, {
+                            x: -1.0 * flounderStyle.sin(angleOffset),
+                            y: 1.0 * flounderStyle.cos(angleOffset),
+                        });
                     }
                     break;
                 case "diline":
@@ -424,29 +430,41 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                         if (0 === ((_c = data.anglePerDepth) !== null && _c !== void 0 ? _c : 0)) {
                             switch ((_d = data.layoutAngle) !== null && _d !== void 0 ? _d : "regular") {
                                 case "regular":
-                                    return makeResult(1.0, 1.0, false);
+                                    return makeResult({ x: 1.0, y: 0.0, }, { x: 0.0, y: 1.0, });
                                 case "alternative":
-                                    return makeResult(root2, root2, false);
+                                    return makeResult({ x: root2, y: 0.0, }, { x: 0.0, y: root2 });
                             }
                         }
                         var angleOffset = flounderStyle.getAngleOffset(data);
-                        return makeResult(1.0 * flounderStyle.cos(angleOffset), 1.0 * flounderStyle.sin(angleOffset), true);
+                        return makeResult({
+                            x: 1.0 * flounderStyle.cos(angleOffset),
+                            y: 1.0 * flounderStyle.sin(angleOffset),
+                        }, {
+                            x: root2 * flounderStyle.sin(angleOffset), // 🚧
+                            y: root2 * flounderStyle.cos(angleOffset),
+                        });
                     }
                 case "triline":
                     {
                         if (0 === ((_e = data.anglePerDepth) !== null && _e !== void 0 ? _e : 0)) {
                             switch ((_f = data.layoutAngle) !== null && _f !== void 0 ? _f : "regular") {
                                 case "regular":
-                                    return makeResult(2.0 / root3, 2.0, false);
+                                    return makeResult({ x: 2.0 / root3, y: 0.0, }, { x: 0.0, y: 2.0, });
                                 case "alternative":
-                                    return makeResult(2.0, 2.0 / root3, false);
+                                    return makeResult({ x: 2.0, y: 0.0, }, { x: 0.0, y: 2.0 / root3, });
                             }
                         }
                         var angleOffset = flounderStyle.getAngleOffset(data);
-                        return makeResult((2.0 / root3) * flounderStyle.cos(angleOffset), (2.0 / root3) * flounderStyle.sin(angleOffset), true);
+                        return makeResult({
+                            x: (2.0 / root3) * flounderStyle.cos(angleOffset),
+                            y: (2.0 / root3) * flounderStyle.sin(angleOffset),
+                        }, {
+                            x: (2.0 / root3) * flounderStyle.cos(angleOffset), // 🚧
+                            y: (2.0 / root3) * flounderStyle.sin(angleOffset),
+                        });
                     }
             }
-            return makeResult(0.0, 0.0, false);
+            return makeResult({ x: 0.0, y: 0.0, }, { x: 0.0, y: 0.0, });
         };
     })(flounderStyle || (exports.flounderStyle = flounderStyle = {}));
 });

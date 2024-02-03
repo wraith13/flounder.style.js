@@ -73,12 +73,16 @@ declare module "index" {
         const makeStripeStyle: (data: Arguments) => Style;
         const makeDilineStyle: (data: Arguments) => Style;
         const makeTrilineStyle: (data: Arguments) => Style;
-        const calculateOffsetCoefficient: (data: Arguments) => {
-            x: Pixel;
-            y: Pixel;
-            isMustUseBoth: boolean;
+        interface OffsetCoefficientCore {
+            x: number;
+            y: number;
+        }
+        interface OffsetCoefficient {
+            regular: OffsetCoefficientCore;
+            alternative: OffsetCoefficientCore;
             intervalSize: number;
             radius: number;
-        };
+        }
+        const calculateOffsetCoefficient: (data: Arguments) => OffsetCoefficient;
     }
 }

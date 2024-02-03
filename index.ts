@@ -3,6 +3,7 @@ export module flounderStyle
 {
     export const sin = (rate: number) => Math.sin(Math.PI *2.0 *rate);
     export const cos = (rate: number) => Math.cos(Math.PI *2.0 *rate);
+    export const atan2 = (x:number, y:number) => Math.atan2(y, x) /(Math.PI *2.0);
     export type StyleKey = string;
     export type StyleValue = string | undefined;
     export type StyleProperty = { key: StyleKey; value: StyleValue; };
@@ -496,42 +497,71 @@ export module flounderStyle
             });
         }
     );
-    export const calculateOffsetCoefficient = (data: Arguments): { x: Pixel, y: Pixel, isMustUseBoth: boolean, intervalSize: number, radius: number, } =>
+    export interface OffsetCoefficientCore
     {
-        const makeResult = (x: Pixel, y: Pixel, isMustUseBoth: boolean) =>
+        x: number;
+        y: number;
+    }
+    export interface OffsetCoefficient
+    {
+
+        list: OffsetCoefficientCore[],
+        intervalSize: number,
+        radius: number,
+    }
+    export const calculateOffsetCoefficient = (data: Arguments): OffsetCoefficient =>
+    {
+        const makeVariationA = (master: OffsetCoefficientCore): OffsetCoefficientCore[] =>
+        [
+            { x: master.x, y: 0.0, },
+            { x: 0.0, y: master.y, },
+            { x: master.x, y: master.y, },
+            { x: master.x, y: -master.y, },
+        ];
+        const makeVariationB = (master: OffsetCoefficientCore): OffsetCoefficientCore[] =>
+        [
+            { x: master.x, y: 0.0, },
+            { x: 0.0, y: master.y, },
+            { x: master.x /2.0, y: master.y /2.0, },
+            { x: master.x /2.0, y: -master.y /2.0, },
+        ];
+        const makeResult = (list: OffsetCoefficientCore[]): OffsetCoefficient =>
         {
             const { intervalSize, radius, } = calculatePatternSize(data);
-            return { x, y, isMustUseBoth, intervalSize, radius, };
+            return { list, intervalSize, radius, };
         };
-        switch(data.type)
+        switch(getPatternType(data))
         {
         case "trispot":
             switch(data.layoutAngle ?? "regular")
             {
             case "regular":
-                return makeResult(2.0, 2.0 *root3, false);
+                return makeResult(makeVariationB({ x: 2.0, y: 2.0 *root3, }));
             case "alternative":
-                return makeResult(2.0 *root3, 2.0, false);
+                return makeResult(makeVariationB({ x: 2.0 *root3, y: 2.0, }));
+            default:
+                throw new Error(`Unknown LayoutAngle: ${data.layoutAngle}`);
             }
             break;
         case "tetraspot":
             switch(data.layoutAngle ?? "regular")
             {
             case "regular":
-                return makeResult(1.0, 1.0, false);
+                return makeResult(makeVariationA({ x: 1.0, y: 1.0, }));
             case "alternative":
-                return makeResult(root2, root2, false);
+                return makeResult(makeVariationB({ x: root2, y: root2, }));
+            default:
+                throw new Error(`Unknown LayoutAngle: ${data.layoutAngle}`);
             }
             break;
         case "stripe":
             {
                 const angleOffset = getAngleOffset(data);
                 return makeResult
-                (
-                    1.0 *sin(angleOffset),
-                    -1.0 *cos(angleOffset),
-                    true
-                );
+                ([{
+                    x: 1.0 *sin(angleOffset),
+                    y: -1.0 *cos(angleOffset),
+                }]);
             }
             break;
         case "diline":
@@ -541,18 +571,31 @@ export module flounderStyle
                     switch(data.layoutAngle ?? "regular")
                     {
                     case "regular":
-                        return makeResult(1.0, 1.0, false);
+                        return makeResult(makeVariationA({ x: 1.0, y: 1.0, }));
                     case "alternative":
-                        return makeResult(root2, root2, false);
+                        return makeResult(makeVariationB({ x: root2, y: root2, }));
                     }
                 }
                 const angleOffset = getAngleOffset(data);
                 return makeResult
-                (
-                    1.0 *cos(angleOffset),
-                    1.0 *sin(angleOffset),
-                    true
-                );
+                ([
+                    {
+                        x: 1.0 *cos(angleOffset),
+                        y: 1.0 *sin(angleOffset),
+                    },
+                    {
+                        x: 1.0 *cos(angleOffset +(2.0 / 8.0)), // 🚧
+                        y: 1.0 *sin(angleOffset +(2.0 / 8.0)),
+                    },
+                    {
+                        x: root2 *cos(angleOffset +(1.0 / 8.0)), // 🚧
+                        y: root2 *sin(angleOffset +(1.0 / 8.0)),
+                    },
+                    {
+                        x: root2 *cos(angleOffset +(3.0 / 8.0)), // 🚧
+                        y: root2 *sin(angleOffset +(3.0 / 8.0)),
+                    },
+                ]);
             }
         case "triline":
             {
@@ -561,20 +604,34 @@ export module flounderStyle
                     switch(data.layoutAngle ?? "regular")
                     {
                     case "regular":
-                        return makeResult(2.0 /root3, 2.0, false);
+                        return makeResult([ { x: 2.0 /root3, y: 0.0, }, { x: 0.0, y: 2.0, }, ]);
                     case "alternative":
-                        return makeResult(2.0, 2.0 /root3, false);
+                        return makeResult([ { x: 2.0, y: 0.0, }, { x: 0.0, y: 2.0 /root3, }, ]);
                     }
                 }
                 const angleOffset = getAngleOffset(data);
                 return makeResult
-                (
-                    (2.0 /root3) *cos(angleOffset),
-                    (2.0 /root3) *sin(angleOffset),
-                    true
-                );
+                ([
+                    {
+                        x: (2.0 /root3) *cos(angleOffset),
+                        y: (2.0 /root3) *sin(angleOffset),
+                    },
+                    {
+                        x: (2.0 /root3) *cos(angleOffset), // 🚧
+                        y: (2.0 /root3) *sin(angleOffset),
+                    },
+                ]);
             }
+        default:
+            throw new Error(`Unknown FlounderType: ${data.type}`);
         }
-        return makeResult(0.0, 0.0, false);
     };
+    export const comparer = <valueT>(a: valueT, b: valueT) =>
+        a < b ? -1:
+        b < a ? 1:
+        0;
+    export const makeComparer =  <objectT, valueT>(f: (o: objectT) => valueT) =>
+        (a: objectT, b: objectT) => comparer(f(a), f(b));
+    export const selectClosestAngle = (angle: SignedRate, list: OffsetCoefficientCore[]) =>
+        list.concat(list.map(i => ({ x: -i.x, y: -i.y, }))).sort(makeComparer(i => Math.abs(atan2(i.x, i.y) -angle) %1.0))[0];
 }
