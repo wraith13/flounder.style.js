@@ -5,7 +5,7 @@
 ### Added
 
 - offsetX and offsetY arguments
-- calculateOffsetCoefficient and selectClosestAngle functions for offsetX and offsetY arguments
+- calculateOffsetCoefficient and selectClosestAngleDirection functions for offsetX and offsetY arguments
 
 ### Fixed
 

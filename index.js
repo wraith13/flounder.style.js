@@ -15,6 +15,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
     (function (flounderStyle) {
         flounderStyle.sin = function (rate) { return Math.sin(Math.PI * 2.0 * rate); };
         flounderStyle.cos = function (rate) { return Math.cos(Math.PI * 2.0 * rate); };
+        flounderStyle.atan2 = function (x, y) { return Math.atan2(y, x) / (Math.PI * 2.0); };
         flounderStyle.styleToStylePropertyList = function (style) {
             return Object.keys(style).map(function (key) { return ({ key: key, value: style[key], }); });
         };
@@ -45,6 +46,35 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                 .filter(function (i) { return undefined !== i.value; })
                 .map(function (i) { return flounderStyle.stylePropertyToString(i); })
                 .join(separator);
+        };
+        flounderStyle.regulateRate = function (rate) {
+            var result = rate % 1.0;
+            if (result < 0.0) {
+                result += 1.0;
+            }
+            return result;
+        };
+        flounderStyle.directionAngleToRate = function (angle) {
+            switch (angle) {
+                case "right":
+                    return 0.0 / 8.0;
+                case "right-down":
+                    return 1.0 / 8.0;
+                case "down":
+                    return 2.0 / 8.0;
+                case "left-down":
+                    return 3.0 / 8.0;
+                case "left":
+                    return 4.0 / 8.0;
+                case "left-up":
+                    return 5.0 / 8.0;
+                case "up":
+                    return 6.0 / 8.0;
+                case "right-up":
+                    return 7.0 / 8.0;
+                default:
+                    return flounderStyle.regulateRate(angle);
+            }
         };
         flounderStyle.isArguments = function (value) {
             return null !== value &&
@@ -350,7 +380,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             var angleOffset = flounderStyle.getAngleOffset(data);
             var _a = calculatePatternSize(data), intervalSize = _a.intervalSize, radius = _a.radius;
             var angles = [
-                angleOffset % 1.0,
+                flounderStyle.regulateRate(angleOffset),
             ];
             return makeResult({
                 backgroundColor: backgroundColor,
@@ -364,8 +394,8 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             var angleOffset = flounderStyle.getAngleOffset(data);
             var _a = calculatePatternSize(data), intervalSize = _a.intervalSize, radius = _a.radius;
             var angles = [
-                ((0.0 / 4.0) + angleOffset) % 1.0,
-                ((1.0 / 4.0) + angleOffset) % 1.0
+                flounderStyle.regulateRate((0.0 / 4.0) + angleOffset),
+                flounderStyle.regulateRate((1.0 / 4.0) + angleOffset),
             ];
             return makeResult({
                 backgroundColor: backgroundColor,
@@ -379,9 +409,9 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             var angleOffset = flounderStyle.getAngleOffset(data);
             var _a = calculatePatternSize(data), intervalSize = _a.intervalSize, radius = _a.radius;
             var angles = [
-                ((0.0 / 6.0) + angleOffset) % 1.0,
-                ((1.0 / 6.0) + angleOffset) % 1.0,
-                ((2.0 / 6.0) + angleOffset) % 1.0
+                flounderStyle.regulateRate((0.0 / 6.0) + angleOffset),
+                flounderStyle.regulateRate((1.0 / 6.0) + angleOffset),
+                flounderStyle.regulateRate((2.0 / 6.0) + angleOffset)
             ];
             return makeResult({
                 backgroundColor: backgroundColor,
@@ -392,37 +422,54 @@ define("index", ["require", "exports", "config"], function (require, exports, co
         }); };
         flounderStyle.calculateOffsetCoefficient = function (data) {
             var _a, _b, _c, _d, _e, _f;
-            var makeResult = function (regular, alternative) {
-                var _a = calculatePatternSize(data), intervalSize = _a.intervalSize, radius = _a.radius;
-                return { regular: regular, alternative: alternative, intervalSize: intervalSize, radius: radius, };
+            var makeVariationA = function (master) {
+                return [
+                    { x: master.x, y: 0.0, },
+                    { x: 0.0, y: master.y, },
+                    { x: master.x, y: master.y, },
+                    { x: master.x, y: -master.y, },
+                ];
             };
-            switch (data.type) {
+            var makeVariationB = function (master) {
+                return [
+                    { x: master.x, y: 0.0, },
+                    { x: 0.0, y: master.y, },
+                    { x: master.x / 2.0, y: master.y / 2.0, },
+                    { x: master.x / 2.0, y: -master.y / 2.0, },
+                ];
+            };
+            var makeResult = function (list) {
+                var _a = calculatePatternSize(data), intervalSize = _a.intervalSize, radius = _a.radius;
+                return { list: list, intervalSize: intervalSize, radius: radius, };
+            };
+            switch (flounderStyle.getPatternType(data)) {
                 case "trispot":
                     switch ((_a = data.layoutAngle) !== null && _a !== void 0 ? _a : "regular") {
                         case "regular":
-                            return makeResult({ x: 2.0, y: 0.0 }, { x: 0.0, y: 2.0 * root3, });
+                            return makeResult(makeVariationB({ x: 2.0, y: 2.0 * root3, }));
                         case "alternative":
-                            return makeResult({ x: 2.0 * root3, y: 0.0, }, { x: 0.0, y: 2.0, });
+                            return makeResult(makeVariationB({ x: 2.0 * root3, y: 2.0, }));
+                        default:
+                            throw new Error("Unknown LayoutAngle: ".concat(data.layoutAngle));
                     }
                     break;
                 case "tetraspot":
                     switch ((_b = data.layoutAngle) !== null && _b !== void 0 ? _b : "regular") {
                         case "regular":
-                            return makeResult({ x: 1.0, y: 0.0, }, { x: 0.0, y: 1.0, });
+                            return makeResult(makeVariationA({ x: 1.0, y: 1.0, }));
                         case "alternative":
-                            return makeResult({ x: root2, y: 0.0, }, { x: 0.0, y: root2 });
+                            return makeResult(makeVariationB({ x: root2, y: root2, }));
+                        default:
+                            throw new Error("Unknown LayoutAngle: ".concat(data.layoutAngle));
                     }
                     break;
                 case "stripe":
                     {
                         var angleOffset = flounderStyle.getAngleOffset(data);
-                        return makeResult({
-                            x: 1.0 * flounderStyle.sin(angleOffset),
-                            y: -1.0 * flounderStyle.cos(angleOffset),
-                        }, {
-                            x: -1.0 * flounderStyle.sin(angleOffset),
-                            y: 1.0 * flounderStyle.cos(angleOffset),
-                        });
+                        return makeResult([{
+                                x: 1.0 * flounderStyle.sin(angleOffset),
+                                y: -1.0 * flounderStyle.cos(angleOffset),
+                            }]);
                     }
                     break;
                 case "diline":
@@ -430,41 +477,78 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                         if (0 === ((_c = data.anglePerDepth) !== null && _c !== void 0 ? _c : 0)) {
                             switch ((_d = data.layoutAngle) !== null && _d !== void 0 ? _d : "regular") {
                                 case "regular":
-                                    return makeResult({ x: 1.0, y: 0.0, }, { x: 0.0, y: 1.0, });
+                                    return makeResult(makeVariationA({ x: 1.0, y: 1.0, }));
                                 case "alternative":
-                                    return makeResult({ x: root2, y: 0.0, }, { x: 0.0, y: root2 });
+                                    return makeResult(makeVariationB({ x: root2, y: root2, }));
                             }
                         }
                         var angleOffset = flounderStyle.getAngleOffset(data);
-                        return makeResult({
-                            x: 1.0 * flounderStyle.cos(angleOffset),
-                            y: 1.0 * flounderStyle.sin(angleOffset),
-                        }, {
-                            x: root2 * flounderStyle.sin(angleOffset), // 🚧
-                            y: root2 * flounderStyle.cos(angleOffset),
-                        });
+                        return makeResult([
+                            {
+                                x: 1.0 * flounderStyle.cos(angleOffset),
+                                y: 1.0 * flounderStyle.sin(angleOffset),
+                            },
+                            {
+                                x: 1.0 * flounderStyle.cos(angleOffset + (2.0 / 8.0)), // 🚧
+                                y: 1.0 * flounderStyle.sin(angleOffset + (2.0 / 8.0)),
+                            },
+                            {
+                                x: root2 * flounderStyle.cos(angleOffset + (1.0 / 8.0)), // 🚧
+                                y: root2 * flounderStyle.sin(angleOffset + (1.0 / 8.0)),
+                            },
+                            {
+                                x: root2 * flounderStyle.cos(angleOffset + (3.0 / 8.0)), // 🚧
+                                y: root2 * flounderStyle.sin(angleOffset + (3.0 / 8.0)),
+                            },
+                        ]);
                     }
                 case "triline":
                     {
                         if (0 === ((_e = data.anglePerDepth) !== null && _e !== void 0 ? _e : 0)) {
                             switch ((_f = data.layoutAngle) !== null && _f !== void 0 ? _f : "regular") {
                                 case "regular":
-                                    return makeResult({ x: 2.0 / root3, y: 0.0, }, { x: 0.0, y: 2.0, });
+                                    return makeResult([{ x: 2.0 / root3, y: 0.0, }, { x: 0.0, y: 2.0, },]);
                                 case "alternative":
-                                    return makeResult({ x: 2.0, y: 0.0, }, { x: 0.0, y: 2.0 / root3, });
+                                    return makeResult([{ x: 2.0, y: 0.0, }, { x: 0.0, y: 2.0 / root3, },]);
                             }
                         }
                         var angleOffset = flounderStyle.getAngleOffset(data);
-                        return makeResult({
-                            x: (2.0 / root3) * flounderStyle.cos(angleOffset),
-                            y: (2.0 / root3) * flounderStyle.sin(angleOffset),
-                        }, {
-                            x: (2.0 / root3) * flounderStyle.cos(angleOffset), // 🚧
-                            y: (2.0 / root3) * flounderStyle.sin(angleOffset),
-                        });
+                        return makeResult([
+                            {
+                                x: (2.0 / root3) * flounderStyle.cos(angleOffset),
+                                y: (2.0 / root3) * flounderStyle.sin(angleOffset),
+                            },
+                            {
+                                x: (2.0 / root3) * flounderStyle.cos(angleOffset), // 🚧
+                                y: (2.0 / root3) * flounderStyle.sin(angleOffset),
+                            },
+                        ]);
                     }
+                default:
+                    throw new Error("Unknown FlounderType: ".concat(data.type));
             }
-            return makeResult({ x: 0.0, y: 0.0, }, { x: 0.0, y: 0.0, });
+        };
+        flounderStyle.comparer = function (a, b) {
+            return a < b ? -1 :
+                b < a ? 1 :
+                    0;
+        };
+        flounderStyle.makeComparer = function (f) {
+            return function (a, b) { return flounderStyle.comparer(f(a), f(b)); };
+        };
+        flounderStyle.compareAngles = function (a, b) {
+            var result = (b - a) % 1.0;
+            if (0.5 < result) {
+                result -= 1.0;
+            }
+            else if (result < -0.5) {
+                result += 1.0;
+            }
+            return result;
+        };
+        flounderStyle.selectClosestAngle = function (list, angle) {
+            var rate = flounderStyle.directionAngleToRate(angle);
+            return list.concat(list.map(function (i) { return ({ x: -i.x, y: -i.y, }); })).sort(flounderStyle.makeComparer(function (i) { return Math.abs(flounderStyle.compareAngles(flounderStyle.atan2(i.x, i.y), rate)); }))[0];
         };
     })(flounderStyle || (exports.flounderStyle = flounderStyle = {}));
 });

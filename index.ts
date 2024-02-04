@@ -49,6 +49,40 @@ export module flounderStyle
     export type SignedPixel = Real;
     export type Integer = number;
     export type Count = Integer;
+    export type DirectionAngle = "right" | "right-down" | "down" | "left-down" | "left" | "left-up" | "up" | "right-up" | SignedRate;
+    export const regulateRate = (rate: SignedRate): Rate =>
+    {
+        let result = rate % 1.0;
+        if (result < 0.0)
+        {
+            result += 1.0;
+        }
+        return result;
+    };
+    export const directionAngleToRate = (angle: DirectionAngle): Rate =>
+    {
+        switch(angle)
+        {
+        case "right":
+            return 0.0 /8.0;
+        case "right-down":
+            return 1.0 /8.0;
+        case "down":
+            return 2.0 /8.0;
+        case "left-down":
+            return 3.0 /8.0;
+        case "left":
+            return 4.0 /8.0;
+        case "left-up":
+            return 5.0 /8.0;
+        case "up":
+            return 6.0 /8.0;
+        case "right-up":
+            return 7.0 /8.0;
+        default:
+            return regulateRate(angle);
+        }
+    };
     export interface ArgumentsBase
     {
         type: FlounderType;
@@ -443,7 +477,7 @@ export module flounderStyle
             const { intervalSize, radius, } = calculatePatternSize(data);
             const angles =
             [
-                angleOffset %1.0,
+                regulateRate(angleOffset),
             ];
             return makeResult
             ({
@@ -463,8 +497,8 @@ export module flounderStyle
             const { intervalSize, radius, } = calculatePatternSize(data);
             const angles =
             [
-                ((0.0 /4.0) +angleOffset) %1.0,
-                ((1.0 /4.0) +angleOffset) %1.0
+                regulateRate((0.0 /4.0) +angleOffset),
+                regulateRate((1.0 /4.0) +angleOffset),
             ];
             return makeResult
             ({
@@ -484,9 +518,9 @@ export module flounderStyle
             const { intervalSize, radius, } = calculatePatternSize(data);
             const angles =
             [
-                ((0.0 /6.0) +angleOffset) %1.0,
-                ((1.0 /6.0) +angleOffset) %1.0,
-                ((2.0 /6.0) +angleOffset) %1.0
+                regulateRate((0.0 /6.0) +angleOffset),
+                regulateRate((1.0 /6.0) +angleOffset),
+                regulateRate((2.0 /6.0) +angleOffset)
             ];
             return makeResult
             ({
@@ -504,13 +538,13 @@ export module flounderStyle
     }
     export interface OffsetCoefficient
     {
-
-        list: OffsetCoefficientCore[],
+        directions: OffsetCoefficientCore[],
         intervalSize: number,
         radius: number,
     }
     export const calculateOffsetCoefficient = (data: Arguments): OffsetCoefficient =>
     {
+        const { intervalSize, radius, } = calculatePatternSize(data);
         const makeVariationA = (master: OffsetCoefficientCore): OffsetCoefficientCore[] =>
         [
             { x: master.x, y: 0.0, },
@@ -525,11 +559,8 @@ export module flounderStyle
             { x: master.x /2.0, y: master.y /2.0, },
             { x: master.x /2.0, y: -master.y /2.0, },
         ];
-        const makeResult = (list: OffsetCoefficientCore[]): OffsetCoefficient =>
-        {
-            const { intervalSize, radius, } = calculatePatternSize(data);
-            return { list, intervalSize, radius, };
-        };
+        const makeResult = (directions: OffsetCoefficientCore[]): OffsetCoefficient =>
+            ({ directions, intervalSize, radius, });
         switch(getPatternType(data))
         {
         case "trispot":
@@ -630,8 +661,26 @@ export module flounderStyle
         a < b ? -1:
         b < a ? 1:
         0;
-    export const makeComparer =  <objectT, valueT>(f: (o: objectT) => valueT) =>
+    export const makeComparer = <objectT, valueT>(f: (o: objectT) => valueT) =>
         (a: objectT, b: objectT) => comparer(f(a), f(b));
-    export const selectClosestAngle = (angle: SignedRate, list: OffsetCoefficientCore[]) =>
-        list.concat(list.map(i => ({ x: -i.x, y: -i.y, }))).sort(makeComparer(i => Math.abs(atan2(i.x, i.y) -angle) %1.0))[0];
+    export const compareAngles = (a: SignedRate, b: SignedRate): SignedRate =>
+    {
+        let result = (b -a) %1.0;
+        if (0.5 < result)
+        {
+            result -= 1.0;
+        }
+        else
+        if (result < -0.5)
+        {
+            result += 1.0;
+        }
+        return result;
+    };
+    export const selectClosestAngleDirection = (directions: OffsetCoefficientCore[], angle: DirectionAngle): OffsetCoefficientCore =>
+    {
+        const rate = directionAngleToRate(angle);
+        return directions.concat(directions.map(i => ({ x: -i.x, y: -i.y, })))
+            .sort(makeComparer(i => Math.abs(compareAngles(atan2(i.x, i.y), rate))))[0];
+    }
 }

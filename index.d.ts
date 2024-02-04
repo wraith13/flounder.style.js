@@ -2,6 +2,7 @@ declare module "index" {
     export namespace flounderStyle {
         const sin: (rate: number) => number;
         const cos: (rate: number) => number;
+        const atan2: (x: number, y: number) => number;
         type StyleKey = string;
         type StyleValue = string | undefined;
         type StyleProperty = {
@@ -27,6 +28,9 @@ declare module "index" {
         type SignedPixel = Real;
         type Integer = number;
         type Count = Integer;
+        type DirectionAngle = "right" | "right-down" | "down" | "left-down" | "left" | "left-up" | "up" | "right-up" | SignedRate;
+        const regulateRate: (rate: SignedRate) => Rate;
+        const directionAngleToRate: (angle: DirectionAngle) => Rate;
         interface ArgumentsBase {
             type: FlounderType;
             layoutAngle?: LayoutAngle | SignedRate;
@@ -78,11 +82,14 @@ declare module "index" {
             y: number;
         }
         interface OffsetCoefficient {
-            regular: OffsetCoefficientCore;
-            alternative: OffsetCoefficientCore;
+            list: OffsetCoefficientCore[];
             intervalSize: number;
             radius: number;
         }
         const calculateOffsetCoefficient: (data: Arguments) => OffsetCoefficient;
+        const comparer: <valueT>(a: valueT, b: valueT) => 0 | 1 | -1;
+        const makeComparer: <objectT, valueT>(f: (o: objectT) => valueT) => (a: objectT, b: objectT) => 0 | 1 | -1;
+        const compareAngles: (a: SignedRate, b: SignedRate) => SignedRate;
+        const selectClosestAngle: (list: OffsetCoefficientCore[], angle: DirectionAngle) => OffsetCoefficientCore;
     }
 }
