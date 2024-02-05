@@ -49,7 +49,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
         };
         flounderStyle.regulateRate = function (rate) {
             var result = rate % 1.0;
-            if (result < 0.0) {
+            if (result < -0.0000000000001) {
                 result += 1.0;
             }
             return result;

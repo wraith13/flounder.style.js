@@ -53,7 +53,7 @@ export module flounderStyle
     export const regulateRate = (rate: SignedRate): Rate =>
     {
         let result = rate % 1.0;
-        if (result < 0.0)
+        if (result < -0.0000000000001)
         {
             result += 1.0;
         }
