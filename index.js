@@ -15,7 +15,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
     (function (flounderStyle) {
         flounderStyle.sin = function (rate) { return Math.sin(Math.PI * 2.0 * rate); };
         flounderStyle.cos = function (rate) { return Math.cos(Math.PI * 2.0 * rate); };
-        flounderStyle.atan2 = function (x, y) { return Math.atan2(y, x) / (Math.PI * 2.0); };
+        flounderStyle.atan2 = function (direction) { return Math.atan2(direction.y, direction.x) / (Math.PI * 2.0); };
         flounderStyle.styleToStylePropertyList = function (style) {
             return Object.keys(style).map(function (key) { return ({ key: key, value: style[key], }); });
         };
@@ -422,6 +422,7 @@ define("index", ["require", "exports", "config"], function (require, exports, co
         }); };
         flounderStyle.calculateOffsetCoefficient = function (data) {
             var _a, _b, _c, _d, _e, _f;
+            var _g = calculatePatternSize(data), intervalSize = _g.intervalSize, radius = _g.radius;
             var makeVariationA = function (master) {
                 return [
                     { x: master.x, y: 0.0, },
@@ -438,9 +439,14 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                     { x: master.x / 2.0, y: -master.y / 2.0, },
                 ];
             };
-            var makeResult = function (list) {
-                var _a = calculatePatternSize(data), intervalSize = _a.intervalSize, radius = _a.radius;
-                return { list: list, intervalSize: intervalSize, radius: radius, };
+            var makeResult = function (directions) {
+                return ({
+                    directions: directions
+                        .concat(directions.map(function (i) { return ({ x: -i.x, y: -i.y, }); }))
+                        .sort(flounderStyle.makeComparer(function (i) { return flounderStyle.regulateRate(flounderStyle.atan2(i)); })),
+                    intervalSize: intervalSize,
+                    radius: radius,
+                });
             };
             switch (flounderStyle.getPatternType(data)) {
                 case "trispot":
@@ -546,9 +552,9 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             }
             return result;
         };
-        flounderStyle.selectClosestAngle = function (list, angle) {
+        flounderStyle.selectClosestAngleDirection = function (directions, angle) {
             var rate = flounderStyle.directionAngleToRate(angle);
-            return list.concat(list.map(function (i) { return ({ x: -i.x, y: -i.y, }); })).sort(flounderStyle.makeComparer(function (i) { return Math.abs(flounderStyle.compareAngles(flounderStyle.atan2(i.x, i.y), rate)); }))[0];
+            return directions.sort(flounderStyle.makeComparer(function (i) { return Math.abs(flounderStyle.compareAngles(flounderStyle.atan2(i), rate)); }))[0];
         };
     })(flounderStyle || (exports.flounderStyle = flounderStyle = {}));
 });

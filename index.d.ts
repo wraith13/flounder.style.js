@@ -2,7 +2,10 @@ declare module "index" {
     export namespace flounderStyle {
         const sin: (rate: number) => number;
         const cos: (rate: number) => number;
-        const atan2: (x: number, y: number) => number;
+        const atan2: (direction: {
+            x: number;
+            y: number;
+        }) => number;
         type StyleKey = string;
         type StyleValue = string | undefined;
         type StyleProperty = {
@@ -77,12 +80,12 @@ declare module "index" {
         const makeStripeStyle: (data: Arguments) => Style;
         const makeDilineStyle: (data: Arguments) => Style;
         const makeTrilineStyle: (data: Arguments) => Style;
-        interface OffsetCoefficientCore {
+        interface OffsetCoefficientDirection {
             x: number;
             y: number;
         }
         interface OffsetCoefficient {
-            list: OffsetCoefficientCore[];
+            directions: OffsetCoefficientDirection[];
             intervalSize: number;
             radius: number;
         }
@@ -90,6 +93,6 @@ declare module "index" {
         const comparer: <valueT>(a: valueT, b: valueT) => 0 | 1 | -1;
         const makeComparer: <objectT, valueT>(f: (o: objectT) => valueT) => (a: objectT, b: objectT) => 0 | 1 | -1;
         const compareAngles: (a: SignedRate, b: SignedRate) => SignedRate;
-        const selectClosestAngle: (list: OffsetCoefficientCore[], angle: DirectionAngle) => OffsetCoefficientCore;
+        const selectClosestAngleDirection: (directions: OffsetCoefficientDirection[], angle: DirectionAngle) => OffsetCoefficientDirection;
     }
 }

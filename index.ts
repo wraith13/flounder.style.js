@@ -3,7 +3,7 @@ export module flounderStyle
 {
     export const sin = (rate: number) => Math.sin(Math.PI *2.0 *rate);
     export const cos = (rate: number) => Math.cos(Math.PI *2.0 *rate);
-    export const atan2 = (x:number, y:number) => Math.atan2(y, x) /(Math.PI *2.0);
+    export const atan2 = (direction: { x: number, y: number, }) => Math.atan2(direction.y, direction.x) /(Math.PI *2.0);
     export type StyleKey = string;
     export type StyleValue = string | undefined;
     export type StyleProperty = { key: StyleKey; value: StyleValue; };
@@ -531,36 +531,42 @@ export module flounderStyle
             });
         }
     );
-    export interface OffsetCoefficientCore
+    export interface OffsetCoefficientDirection
     {
         x: number;
         y: number;
     }
     export interface OffsetCoefficient
     {
-        directions: OffsetCoefficientCore[],
+        directions: OffsetCoefficientDirection[], // Clockwise from 3 o'clock direction
         intervalSize: number,
         radius: number,
     }
     export const calculateOffsetCoefficient = (data: Arguments): OffsetCoefficient =>
     {
         const { intervalSize, radius, } = calculatePatternSize(data);
-        const makeVariationA = (master: OffsetCoefficientCore): OffsetCoefficientCore[] =>
+        const makeVariationA = (master: OffsetCoefficientDirection): OffsetCoefficientDirection[] =>
         [
             { x: master.x, y: 0.0, },
             { x: 0.0, y: master.y, },
             { x: master.x, y: master.y, },
             { x: master.x, y: -master.y, },
         ];
-        const makeVariationB = (master: OffsetCoefficientCore): OffsetCoefficientCore[] =>
+        const makeVariationB = (master: OffsetCoefficientDirection): OffsetCoefficientDirection[] =>
         [
             { x: master.x, y: 0.0, },
             { x: 0.0, y: master.y, },
             { x: master.x /2.0, y: master.y /2.0, },
             { x: master.x /2.0, y: -master.y /2.0, },
         ];
-        const makeResult = (directions: OffsetCoefficientCore[]): OffsetCoefficient =>
-            ({ directions, intervalSize, radius, });
+        const makeResult = (directions: OffsetCoefficientDirection[]): OffsetCoefficient =>
+        ({
+            directions: directions
+                .concat(directions.map(i => ({ x: -i.x, y: -i.y, })))
+                .sort(makeComparer(i => regulateRate(atan2(i)))),
+            intervalSize,
+            radius,
+        });
         switch(getPatternType(data))
         {
         case "trispot":
@@ -677,10 +683,9 @@ export module flounderStyle
         }
         return result;
     };
-    export const selectClosestAngleDirection = (directions: OffsetCoefficientCore[], angle: DirectionAngle): OffsetCoefficientCore =>
+    export const selectClosestAngleDirection = (directions: OffsetCoefficientDirection[], angle: DirectionAngle): OffsetCoefficientDirection =>
     {
         const rate = directionAngleToRate(angle);
-        return directions.concat(directions.map(i => ({ x: -i.x, y: -i.y, })))
-            .sort(makeComparer(i => Math.abs(compareAngles(atan2(i.x, i.y), rate))))[0];
+        return directions.sort(makeComparer(i => Math.abs(compareAngles(atan2(i), rate))))[0];
     }
 }
