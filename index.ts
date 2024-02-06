@@ -641,9 +641,9 @@ export module flounderStyle
                     switch(data.layoutAngle ?? "regular")
                     {
                     case "regular":
-                        return makeResult([ { x: 2.0 /root3, y: 0.0, }, { x: 0.0, y: 2.0, }, ]);
+                        return makeResult(makeVariationB({ x: 2.0 *root3, y: 2.0, }));
                     case "alternative":
-                        return makeResult([ { x: 2.0, y: 0.0, }, { x: 0.0, y: 2.0 /root3, }, ]);
+                        return makeResult(makeVariationB({ x: 2.0, y: 2.0 *root3, }));
                     }
                 }
                 const angleOffset = getAngleOffset(data);

@@ -513,9 +513,9 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                         if (0 === ((_e = data.anglePerDepth) !== null && _e !== void 0 ? _e : 0)) {
                             switch ((_f = data.layoutAngle) !== null && _f !== void 0 ? _f : "regular") {
                                 case "regular":
-                                    return makeResult([{ x: 2.0 / root3, y: 0.0, }, { x: 0.0, y: 2.0, },]);
+                                    return makeResult(makeVariationB({ x: root3, y: 2.0, }));
                                 case "alternative":
-                                    return makeResult([{ x: 2.0, y: 0.0, }, { x: 0.0, y: 2.0 / root3, },]);
+                                    return makeResult(makeVariationB({ x: 2.0, y: root3, }));
                             }
                         }
                         var angleOffset = flounderStyle.getAngleOffset(data);
