@@ -421,8 +421,8 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             });
         }); };
         flounderStyle.calculateOffsetCoefficient = function (data) {
-            var _a, _b, _c, _d, _e, _f;
-            var _g = calculatePatternSize(data), intervalSize = _g.intervalSize, radius = _g.radius;
+            var _a, _b, _c, _d;
+            var _e = calculatePatternSize(data), intervalSize = _e.intervalSize, radius = _e.radius;
             var makeVariationA = function (master) {
                 return [
                     { x: master.x, y: 0.0, },
@@ -437,6 +437,14 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                     { x: 0.0, y: master.y, },
                     { x: master.x / 2.0, y: master.y / 2.0, },
                     { x: master.x / 2.0, y: -master.y / 2.0, },
+                ];
+            };
+            var makeVariationC = function (regular, alternative) {
+                return [
+                    { x: regular.x, y: regular.y, },
+                    { x: regular.y, y: regular.x, },
+                    { x: alternative.x, y: alternative.y, },
+                    { x: alternative.y, y: alternative.x, },
                 ];
             };
             var makeResult = function (directions) {
@@ -480,42 +488,23 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                     break;
                 case "diline":
                     {
-                        if (0 === ((_c = data.anglePerDepth) !== null && _c !== void 0 ? _c : 0)) {
-                            switch ((_d = data.layoutAngle) !== null && _d !== void 0 ? _d : "regular") {
-                                case "regular":
-                                    return makeResult(makeVariationA({ x: 1.0, y: 1.0, }));
-                                case "alternative":
-                                    return makeResult(makeVariationB({ x: root2, y: root2, }));
-                            }
-                        }
                         var angleOffset = flounderStyle.getAngleOffset(data);
-                        return makeResult([
-                            {
-                                x: 1.0 * flounderStyle.cos(angleOffset),
-                                y: 1.0 * flounderStyle.sin(angleOffset),
-                            },
-                            {
-                                x: 1.0 * flounderStyle.cos(angleOffset + (2.0 / 8.0)), // 🚧
-                                y: 1.0 * flounderStyle.sin(angleOffset + (2.0 / 8.0)),
-                            },
-                            {
-                                x: root2 * flounderStyle.cos(angleOffset + (1.0 / 8.0)), // 🚧
-                                y: root2 * flounderStyle.sin(angleOffset + (1.0 / 8.0)),
-                            },
-                            {
-                                x: root2 * flounderStyle.cos(angleOffset + (3.0 / 8.0)), // 🚧
-                                y: root2 * flounderStyle.sin(angleOffset + (3.0 / 8.0)),
-                            },
-                        ]);
+                        return makeResult(makeVariationC({
+                            x: 1.0 * flounderStyle.cos(angleOffset),
+                            y: 1.0 * flounderStyle.sin(angleOffset),
+                        }, {
+                            x: root2 * flounderStyle.cos(angleOffset + (1.0 / 8.0)),
+                            y: root2 * flounderStyle.sin(angleOffset + (1.0 / 8.0)),
+                        }));
                     }
                 case "triline":
                     {
-                        if (0 === ((_e = data.anglePerDepth) !== null && _e !== void 0 ? _e : 0)) {
-                            switch ((_f = data.layoutAngle) !== null && _f !== void 0 ? _f : "regular") {
+                        if (0 === ((_c = data.anglePerDepth) !== null && _c !== void 0 ? _c : 0)) {
+                            switch ((_d = data.layoutAngle) !== null && _d !== void 0 ? _d : "regular") {
                                 case "regular":
-                                    return makeResult(makeVariationB({ x: root3, y: 2.0, }));
+                                    return makeResult(makeVariationB({ x: 2.0 * root3, y: 2.0, }));
                                 case "alternative":
-                                    return makeResult(makeVariationB({ x: 2.0, y: root3, }));
+                                    return makeResult(makeVariationB({ x: 2.0, y: 2.0 * root3, }));
                             }
                         }
                         var angleOffset = flounderStyle.getAngleOffset(data);

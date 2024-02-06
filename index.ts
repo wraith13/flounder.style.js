@@ -559,6 +559,13 @@ export module flounderStyle
             { x: master.x /2.0, y: master.y /2.0, },
             { x: master.x /2.0, y: -master.y /2.0, },
         ];
+        const makeVariationC = (regular: OffsetCoefficientDirection, alternative: OffsetCoefficientDirection): OffsetCoefficientDirection[] =>
+        [
+            { x: regular.x, y: regular.y, },
+            { x: regular.y, y: regular.x, },
+            { x: alternative.x, y: alternative.y, },
+            { x: alternative.y, y: alternative.x, },
+        ];
         const makeResult = (directions: OffsetCoefficientDirection[]): OffsetCoefficient =>
         ({
             directions: directions
@@ -603,36 +610,23 @@ export module flounderStyle
             break;
         case "diline":
             {
-                if (0 === (data.anglePerDepth ?? 0))
-                {
-                    switch(data.layoutAngle ?? "regular")
-                    {
-                    case "regular":
-                        return makeResult(makeVariationA({ x: 1.0, y: 1.0, }));
-                    case "alternative":
-                        return makeResult(makeVariationB({ x: root2, y: root2, }));
-                    }
-                }
                 const angleOffset = getAngleOffset(data);
                 return makeResult
-                ([
-                    {
-                        x: 1.0 *cos(angleOffset),
-                        y: 1.0 *sin(angleOffset),
-                    },
-                    {
-                        x: 1.0 *cos(angleOffset +(2.0 / 8.0)), // 🚧
-                        y: 1.0 *sin(angleOffset +(2.0 / 8.0)),
-                    },
-                    {
-                        x: root2 *cos(angleOffset +(1.0 / 8.0)), // 🚧
-                        y: root2 *sin(angleOffset +(1.0 / 8.0)),
-                    },
-                    {
-                        x: root2 *cos(angleOffset +(3.0 / 8.0)), // 🚧
-                        y: root2 *sin(angleOffset +(3.0 / 8.0)),
-                    },
-                ]);
+                (
+                    makeVariationC
+                    (
+                        {
+                            x: 1.0 *cos(angleOffset),
+                            y: 1.0 *sin(angleOffset),
+                        },
+                        {
+                            x: root2 *cos(angleOffset +(1.0 / 8.0)),
+                            y: root2 *sin(angleOffset +(1.0 / 8.0)),
+                        }
+                    )
+                );
+
+
             }
         case "triline":
             {
