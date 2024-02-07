@@ -620,38 +620,33 @@ export module flounderStyle
                             y: 1.0 *sin(angleOffset),
                         },
                         {
-                            x: root2 *cos(angleOffset +(1.0 / 8.0)),
-                            y: root2 *sin(angleOffset +(1.0 / 8.0)),
+                            x: root2 *cos(angleOffset +(1.0 /8.0)),
+                            y: root2 *sin(angleOffset +(1.0 /8.0)),
                         }
                     )
                 );
-
-
             }
         case "triline":
             {
-                if (0 === (data.anglePerDepth ?? 0))
-                {
-                    switch(data.layoutAngle ?? "regular")
-                    {
-                    case "regular":
-                        return makeResult(makeVariationB({ x: 2.0 *root3, y: 2.0, }));
-                    case "alternative":
-                        return makeResult(makeVariationB({ x: 2.0, y: 2.0 *root3, }));
-                    }
-                }
                 const angleOffset = getAngleOffset(data);
                 return makeResult
-                ([
-                    {
-                        x: (2.0 /root3) *cos(angleOffset),
-                        y: (2.0 /root3) *sin(angleOffset),
-                    },
-                    {
-                        x: (2.0 /root3) *cos(angleOffset), // 🚧
-                        y: (2.0 /root3) *sin(angleOffset),
-                    },
-                ]);
+                (
+                    Array.from({ length: 3, }).map
+                    (
+                        (_i, ix) =>
+                        [
+                            {
+                                x: (2.0 /root3) *cos(angleOffset +(ix /6.0)),
+                                y: (2.0 /root3) *sin(angleOffset +(ix /6.0)),
+                            },
+                            {
+                                x: 2.0 *cos(angleOffset +(2.0 /8.0) +(ix /6.0)),
+                                y: 2.0 *sin(angleOffset +(2.0 /8.0) +(ix /6.0)),
+                            },
+                        ]
+                    )
+                    .reduce((a, b) => a.concat(b), [])
+                );
             }
         default:
             throw new Error(`Unknown FlounderType: ${data.type}`);

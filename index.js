@@ -421,8 +421,8 @@ define("index", ["require", "exports", "config"], function (require, exports, co
             });
         }); };
         flounderStyle.calculateOffsetCoefficient = function (data) {
-            var _a, _b, _c, _d;
-            var _e = calculatePatternSize(data), intervalSize = _e.intervalSize, radius = _e.radius;
+            var _a, _b;
+            var _c = calculatePatternSize(data), intervalSize = _c.intervalSize, radius = _c.radius;
             var makeVariationA = function (master) {
                 return [
                     { x: master.x, y: 0.0, },
@@ -499,25 +499,20 @@ define("index", ["require", "exports", "config"], function (require, exports, co
                     }
                 case "triline":
                     {
-                        if (0 === ((_c = data.anglePerDepth) !== null && _c !== void 0 ? _c : 0)) {
-                            switch ((_d = data.layoutAngle) !== null && _d !== void 0 ? _d : "regular") {
-                                case "regular":
-                                    return makeResult(makeVariationB({ x: 2.0 * root3, y: 2.0, }));
-                                case "alternative":
-                                    return makeResult(makeVariationB({ x: 2.0, y: 2.0 * root3, }));
-                            }
-                        }
-                        var angleOffset = flounderStyle.getAngleOffset(data);
-                        return makeResult([
-                            {
-                                x: (2.0 / root3) * flounderStyle.cos(angleOffset),
-                                y: (2.0 / root3) * flounderStyle.sin(angleOffset),
-                            },
-                            {
-                                x: (2.0 / root3) * flounderStyle.cos(angleOffset), // 🚧
-                                y: (2.0 / root3) * flounderStyle.sin(angleOffset),
-                            },
-                        ]);
+                        var angleOffset_1 = flounderStyle.getAngleOffset(data);
+                        return makeResult(Array.from({ length: 3, }).map(function (_i, ix) {
+                            return [
+                                {
+                                    x: (2.0 / root3) * flounderStyle.cos(angleOffset_1 + (ix / 6.0)),
+                                    y: (2.0 / root3) * flounderStyle.sin(angleOffset_1 + (ix / 6.0)),
+                                },
+                                {
+                                    x: 2.0 * flounderStyle.cos(angleOffset_1 + (2.0 / 8.0) + (ix / 6.0)),
+                                    y: 2.0 * flounderStyle.sin(angleOffset_1 + (2.0 / 8.0) + (ix / 6.0)),
+                                },
+                            ];
+                        })
+                            .reduce(function (a, b) { return a.concat(b); }, []));
                     }
                 default:
                     throw new Error("Unknown FlounderType: ".concat(data.type));
