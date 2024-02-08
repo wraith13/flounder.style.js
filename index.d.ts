@@ -89,6 +89,7 @@ declare module "index" {
             intervalSize: number;
             radius: number;
         }
+        const calculateOffsetCoefficientDirections: (data: Arguments) => OffsetCoefficientDirection[];
         const calculateOffsetCoefficient: (data: Arguments) => OffsetCoefficient;
         const comparer: <valueT>(a: valueT, b: valueT) => 0 | 1 | -1;
         const makeComparer: <objectT, valueT>(f: (o: objectT) => valueT) => (a: objectT, b: objectT) => 0 | 1 | -1;

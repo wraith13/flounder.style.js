@@ -140,7 +140,9 @@ export module flounderStyle
         "number" === typeof data.layoutAngle ? data.layoutAngle:
         "regular" === (data.layoutAngle ?? "regular") ? 0.0:
         "stripe" === data.type ? 0.25:
+        "tetraspot" === data.type ? 0.125:
         "diline" === data.type ? 0.125:
+        "trispot" === data.type ? 0.25:
         "triline" === data.type ? 0.25:
         0.5;
     export const getAutoAnglePerDepth = (data: Arguments): number =>
@@ -542,115 +544,82 @@ export module flounderStyle
         intervalSize: number,
         radius: number,
     }
-    export const calculateOffsetCoefficient = (data: Arguments): OffsetCoefficient =>
+    export const calculateOffsetCoefficientDirections = (data: Arguments): OffsetCoefficientDirection[] =>
     {
-        const { intervalSize, radius, } = calculatePatternSize(data);
-        const makeVariationA = (master: OffsetCoefficientDirection): OffsetCoefficientDirection[] =>
-        [
-            { x: master.x, y: 0.0, },
-            { x: 0.0, y: master.y, },
-            { x: master.x, y: master.y, },
-            { x: master.x, y: -master.y, },
-        ];
-        const makeVariationB = (master: OffsetCoefficientDirection): OffsetCoefficientDirection[] =>
-        [
-            { x: master.x, y: 0.0, },
-            { x: 0.0, y: master.y, },
-            { x: master.x /2.0, y: master.y /2.0, },
-            { x: master.x /2.0, y: -master.y /2.0, },
-        ];
-        const makeVariationC = (regular: OffsetCoefficientDirection, alternative: OffsetCoefficientDirection): OffsetCoefficientDirection[] =>
-        [
-            { x: regular.x, y: regular.y, },
-            { x: regular.y, y: regular.x, },
-            { x: alternative.x, y: alternative.y, },
-            { x: alternative.y, y: alternative.x, },
-        ];
-        const makeResult = (directions: OffsetCoefficientDirection[]): OffsetCoefficient =>
+        const calculateDirection = (angleOffset: Rate, a: Rate, b: Rate): OffsetCoefficientDirection =>
         ({
-            directions: directions
-                .concat(directions.map(i => ({ x: -i.x, y: -i.y, })))
-                .sort(makeComparer(i => regulateRate(atan2(i)))),
-            intervalSize,
-            radius,
+            x: a *cos(angleOffset +b),
+            y: a *sin(angleOffset +b),
         });
+        const makeAngleVariation = (divisionCount: number, masterMaker: (angleOffset: Rate) => OffsetCoefficientDirection[]): OffsetCoefficientDirection[] =>
+        {
+            const angleOffset = getAngleOffset(data);
+            const base = Array.from({ length: divisionCount, }).map
+            (
+                (_i, ix) => masterMaker(angleOffset +(ix /(divisionCount *2.0)))
+            )
+            .reduce((a, b) => a.concat(b), []);
+            const result = base
+                .concat(base.map(i => ({ x: -i.x, y: -i.y, })))
+                .sort(makeComparer(i => regulateRate(atan2(i))));
+            return result;
+        }
         switch(getPatternType(data))
         {
-        case "trispot":
-            switch(data.layoutAngle ?? "regular")
-            {
-            case "regular":
-                return makeResult(makeVariationB({ x: 2.0, y: 2.0 *root3, }));
-            case "alternative":
-                return makeResult(makeVariationB({ x: 2.0 *root3, y: 2.0, }));
-            default:
-                throw new Error(`Unknown LayoutAngle: ${data.layoutAngle}`);
-            }
-            break;
-        case "tetraspot":
-            switch(data.layoutAngle ?? "regular")
-            {
-            case "regular":
-                return makeResult(makeVariationA({ x: 1.0, y: 1.0, }));
-            case "alternative":
-                return makeResult(makeVariationB({ x: root2, y: root2, }));
-            default:
-                throw new Error(`Unknown LayoutAngle: ${data.layoutAngle}`);
-            }
-            break;
         case "stripe":
-            {
-                const angleOffset = getAngleOffset(data);
-                return makeResult
-                ([{
-                    x: 1.0 *sin(angleOffset),
-                    y: -1.0 *cos(angleOffset),
-                }]);
-            }
-            break;
+            return makeAngleVariation
+            (
+                1,
+                angleOffset =>
+                [
+                    calculateDirection(angleOffset, 1.0, 1.0 /4.0),
+                ]
+            );
+        case "tetraspot":
         case "diline":
-            {
-                const angleOffset = getAngleOffset(data);
-                return makeResult
-                (
-                    makeVariationC
-                    (
-                        {
-                            x: 1.0 *cos(angleOffset),
-                            y: 1.0 *sin(angleOffset),
-                        },
-                        {
-                            x: root2 *cos(angleOffset +(1.0 /8.0)),
-                            y: root2 *sin(angleOffset +(1.0 /8.0)),
-                        }
-                    )
-                );
-            }
+            return makeAngleVariation
+            (
+                2,
+                angleOffset =>
+                [
+                    calculateDirection(angleOffset, 1.0, 0.0),
+                    calculateDirection(angleOffset, root2, 1.0 /8.0),
+                ]
+            );
+        case "trispot":
+            return makeAngleVariation
+            (
+                3,
+                angleOffset =>
+                [
+                    calculateDirection(angleOffset, 2.0, 0.0),
+                    calculateDirection(angleOffset, 2.0 *root3, 1.0 /4.0),
+                ]
+            );
         case "triline":
-            {
-                const angleOffset = getAngleOffset(data);
-                return makeResult
-                (
-                    Array.from({ length: 3, }).map
-                    (
-                        (_i, ix) =>
-                        [
-                            {
-                                x: (2.0 /root3) *cos(angleOffset +(ix /6.0)),
-                                y: (2.0 /root3) *sin(angleOffset +(ix /6.0)),
-                            },
-                            {
-                                x: 2.0 *cos(angleOffset +(2.0 /8.0) +(ix /6.0)),
-                                y: 2.0 *sin(angleOffset +(2.0 /8.0) +(ix /6.0)),
-                            },
-                        ]
-                    )
-                    .reduce((a, b) => a.concat(b), [])
-                );
-            }
+            return makeAngleVariation
+            (
+                3,
+                angleOffset =>
+                [
+                    calculateDirection(angleOffset, 2.0 /root3, 0.0),
+                    calculateDirection(angleOffset, 2.0, 1.0 /4.0),
+                ]
+            );
         default:
             throw new Error(`Unknown FlounderType: ${data.type}`);
         }
+    };
+    export const calculateOffsetCoefficient = (data: Arguments): OffsetCoefficient =>
+    {
+        const { intervalSize, radius, } = calculatePatternSize(data);
+        const result =
+        {
+            directions: calculateOffsetCoefficientDirections(data),
+            intervalSize,
+            radius,
+        };
+        return result;
     };
     export const comparer = <valueT>(a: valueT, b: valueT) =>
         a < b ? -1:

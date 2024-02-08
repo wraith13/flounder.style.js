@@ -104,6 +104,66 @@ This is the same reason why you can't use "transparent" for `foregroundColor`, a
 
 If you want to use a translucent color pattern, instead of directly specifying a translucent color to `foregroundColor` or `backgroundColor`, instead specify `opacity` in the Style (CSS) of that HTML Element to make the entire HTML Element translucent.
 
+#### How to do pattern rotation animation
+
+```typescript
+import { flounderStyle } from "flounder.style.js";
+
+export const modRate = (value: number, unit: number) => (value %unit) /unit;
+let continueAnimation = false;
+export const animationFrame = (tick: number) =>
+{
+    // make style
+    const step = modRate(tick, 3000); // 3000ms
+    const data: flounderStyle.Arguments =
+    {
+        ...
+    };
+    const offsetCoefficient = flounderStyle.calculateOffsetCoefficient(data);
+    const direction = flounderStyle.selectClosestAngleDirection(offsetCoefficient.directions, "up"); // "up": 0.75
+    // const direction = flounderStyle.selectClosestAngleDirection(offsetCoefficient.directions, 0.0); // "right": 0.0
+    data.offsetX = offsetCoefficient.intervalSize * direction.x *step;
+    data.offsetY = offsetCoefficient.intervalSize * direction.y *step;
+    const style = flounderStyle.makeStyle(data);
+
+    // apply style to element
+    const element = document.getElementById("YOUR-ELEMENT");
+    flounderStyle.setStyle(element, style);
+
+    // apply style to class
+    // const styleElement = document.getElementById("YOUR-ANIMATION-STYLE-ELEMENT") as HTMLStyleElement;
+    // const css = `.YOUR-CSS-CLASS {${flounderStyle.styleToString(style)}}\r\n`;
+    // if (styleElement.innerHTML !== css)
+    // {
+    //     styleElement.innerHTML = css;
+    // }
+
+    if (continueAnimation)
+    {
+        window.requestAnimationFrame(animationFrame);
+    }
+};
+export const = startAnimation() =>
+{
+    if ( ! continueAnimation)
+    {
+        continueAnimation = true;
+        window.requestAnimationFrame(animationFrame);
+    }
+};
+export const = stopAnimation() =>
+{
+    continueAnimation = false;
+};
+
+startAnimation();
+setTimeout(() => stopAnimation(), 60000);
+```
+
+- 必ずしも flounderStyle.calculateOffsetCoefficient() の戻り値を使う必要はないですが、この戻り値を使って offset を計算する事でループの継ぎ目を見せずに綺麗にアニメーションできます。
+- data.intervalSize は data.maxPatternSize の影響で実際の intervalSize とは必ずしも一致しないので offset の計算をする時は offsetCoefficient.intervalSize を使ってください。
+- offsetCoefficient.isMustUseBoth が false の時には X 軸と Y 軸は個別に片方だけ使っても問題ないですが、 true の時には両方を使わないとループの継ぎ目が綺麗になりません。
+
 ## Development environment construction
 
 0. Install [Visual Studio Code](https://code.visualstudio.com/) ( Not required, but recommended. )
