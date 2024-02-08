@@ -415,6 +415,9 @@ window.module.sequentialLoad
         const makeColor = ({ r, g, b}) => `rgb(${Math.floor(r *256)},${Math.floor(g *256)},${Math.floor(b *256)})`;
         screenBody.style.setProperty("background-color", makeColor(color));
         let arguments;
+        let offsetCoefficient;
+        let direction;
+        let rotate;
         const span = 5000;
         const animation = (now) =>
         {
@@ -427,11 +430,25 @@ window.module.sequentialLoad
                     color = nextColor(color);
                     const foregroundColor = makeColor(color);
                     arguments = makeRandomArguments(foregroundColor, backgroundColor);
+                    offsetCoefficient = undefined;
+                    direction = undefined;
                     console.log(stringify(arguments));
                 }
                 else
                 {
                     arguments.depth = (now -startAt) /span;
+                }
+                if (0 == (arguments.anglePerDepth ?? 0) && undefined === arguments.maxPatternSize)
+                {
+                    if (undefined === offsetCoefficient || undefined === direction)
+                    {
+                        offsetCoefficient = flounderStyle.calculateOffsetCoefficient(arguments);
+                        direction = randomSelect(offsetCoefficient.directions);
+                        rotate = 1 +makeRandomInteger(4);
+                    }
+                    const step = (rotate *arguments.depth) %1.0;
+                    arguments.offsetX = offsetCoefficient.intervalSize * direction.x *step;
+                    arguments.offsetY = offsetCoefficient.intervalSize * direction.y *step;
                 }
                 flounderStyle.setStyle(screenBody, arguments);
                 window.requestAnimationFrame(animation);
