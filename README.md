@@ -160,9 +160,8 @@ startAnimation();
 setTimeout(() => stopAnimation(), 60000);
 ```
 
-- 必ずしも flounderStyle.calculateOffsetCoefficient() の戻り値を使う必要はないですが、この戻り値を使って offset を計算する事でループの継ぎ目を見せずに綺麗にアニメーションできます。
-- data.intervalSize は data.maxPatternSize の影響で実際の intervalSize とは必ずしも一致しないので offset の計算をする時は offsetCoefficient.intervalSize を使ってください。
-- offsetCoefficient.isMustUseBoth が false の時には X 軸と Y 軸は個別に片方だけ使っても問題ないですが、 true の時には両方を使わないとループの継ぎ目が綺麗になりません。
+- It is not necessary to use the return value of flounderStyle.calculateOffsetCoefficient(), but by using this return value to calculate offset, you can animate beautifully without showing the loop seam.
+- data.intervalSize does not necessarily match the actual intervalSize due to data.maxPatternSize, so use offsetCoefficient.intervalSize when calculating offset.
 
 ## Development environment construction
 
