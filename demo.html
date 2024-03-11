@@ -120,7 +120,7 @@ button
         fill: rgba(230, 237, 243, 0.9);
     }
 }
-#screen-body #option-panel
+#screen-body .option-panel
 {
     margin-top: 1rem;
     color: rgb(230, 237, 243);
@@ -135,7 +135,27 @@ button
     cursor: pointer;
     transition: opacity 1000ms;
 }
-#screen-body #option-panel input
+#screen-body #fps
+{
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    color: rgb(230, 237, 243);
+    background-color: rgba(1,4, 9, 0.6);
+    border-radius: 0.5rem;
+    padding: 0.5rem 1.0rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: opacity 1000ms;
+}
+#screen-body #fps:empty
+{
+    display: none;
+}
+#screen-body .option-panel input
 {
     margin: 0.5rem;
     padding: 0px;
@@ -241,10 +261,14 @@ body:not(.immersive) #screen-body button svg:last-child
 {
     display: none;
 }
-body.immersive #screen-body #option-panel
+body.immersive #screen-body .option-panel
 {
     opacity: 0;
     pointer-events: none;
+}
+body:not(.immersive) #screen-body #fps
+{
+    display: none;
 }
 body.immersive #screen-footer
 {
@@ -267,7 +291,9 @@ body.immersive #screen-footer
             </g>
         </svg>
     </button>
-    <label id="option-panel" for="with-fullscreen"><input id="with-fullscreen" type="checkbox">fullscreen</label>
+    <label class="option-panel" for="with-fullscreen"><input id="with-fullscreen" type="checkbox">FullScreen</label>
+    <label class="option-panel" for="show-fps"><input id="show-fps" type="checkbox">Show FPS</label>
+    <div id="fps"></div>
 </div>
 <div id="screen-footer">
     <button id="toggle-button">
@@ -379,6 +405,7 @@ window.module.sequentialLoad
         const screenBody = document.getElementById("screen-body");
         const screenFooter = document.getElementById("screen-footer");
         const withFullscreen = document.getElementById("with-fullscreen");
+        const showFPS = document.getElementById("show-fps");
         const fullscreenEnabled = document.fullscreenEnabled || document.webkitFullscreenEnabled;
         if ( ! fullscreenEnabled)
         {
@@ -419,6 +446,23 @@ window.module.sequentialLoad
         let direction;
         let rotate;
         const span = 5000;
+        let frameTimings = [];
+        const resetFps = () =>
+        {
+            frameTimings = [];
+        };
+        const getFpsText = (now) =>
+        {
+            let result = "";
+            if (10 <= frameTimings.length)
+            {
+                const first = frameTimings.shift();
+                const fps = (10.0 *1000.0) /(now -first);
+                result = `${fps.toLocaleString("en-US", { useGrouping: false, maximumFractionDigits: 2, minimumFractionDigits: 2, })} fps`;;
+            }
+            frameTimings.push(now);
+            return result;
+        };
         const animation = (now) =>
         {
             if (document.body.classList.contains("immersive"))
@@ -451,6 +495,10 @@ window.module.sequentialLoad
                     arguments.offsetY = offsetCoefficient.intervalSize * direction.y *step;
                 }
                 flounderStyle.setStyle(screenBody, arguments);
+                if (showFPS.checked)
+                {
+                    document.getElementById("fps").innerText = getFpsText(now);
+                }
                 window.requestAnimationFrame(animation);
             }
             else
@@ -467,6 +515,7 @@ window.module.sequentialLoad
                         }
                     }
                     offsetAt = now -startAt;
+                    document.getElementById("fps").innerText = "";
                 }
             }
         };
@@ -558,6 +607,7 @@ window.module.sequentialLoad
                             {
                                 startAt = now -offsetAt;
                             }
+                            resetFps();
                             animation(now);
                         }
                     );
