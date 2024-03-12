@@ -2,3 +2,4 @@
 node_modules/
 .vscode/
 private/
+.DS_Store
