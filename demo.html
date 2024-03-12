@@ -150,6 +150,9 @@ button
     align-items: center;
     cursor: pointer;
     transition: opacity 1000ms;
+    font-family: Courier;
+    text-align: right;
+    white-space: pre;
 }
 #screen-body #fps:empty
 {
@@ -446,19 +449,52 @@ window.module.sequentialLoad
         let direction;
         let rotate;
         const span = 5000;
+        const fpsCalcUnit = 5;
         let frameTimings = [];
+        let fpsHistory = [];
         const resetFps = () =>
         {
             frameTimings = [];
+            fpsHistory = [];
         };
+        const makeFpsText = (fps) =>
+            `${fps.toLocaleString("en-US", { useGrouping: false, maximumFractionDigits: 2, minimumFractionDigits: 2, })} fps`;
         const getFpsText = (now) =>
         {
             let result = "";
-            if (10 <= frameTimings.length)
+            if (fpsCalcUnit <= frameTimings.length)
             {
                 const first = frameTimings.shift();
-                const fps = (10.0 *1000.0) /(now -first);
-                result = `${fps.toLocaleString("en-US", { useGrouping: false, maximumFractionDigits: 2, minimumFractionDigits: 2, })} fps`;;
+                const fps = (fpsCalcUnit *1000.0) /(now -first);
+                const current =
+                {
+                    fps,
+                    now,
+                    text: makeFpsText(fps),
+                };
+                const expiredAt = now -1000;
+                while(0 < fpsHistory.length && fpsHistory[0].now < expiredAt)
+                {
+                    fpsHistory.shift();
+                }
+                fpsHistory.push(current);
+                let currentMaxFps = current;
+                let currentMinFps = current;
+                fpsHistory.forEach
+                (
+                    i =>
+                    {
+                        if (currentMaxFps.fps < i.fps)
+                        {
+                            currentMaxFps = i;
+                        }
+                        if (i.fps < currentMinFps.fps)
+                        {
+                            currentMinFps = i;
+                        }
+                    }
+                );
+                result = currentMaxFps.text +" (max)\n" + current.text + " (now)\n" +currentMinFps.text +" (min)";
             }
             frameTimings.push(now);
             return result;
