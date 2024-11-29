@@ -1,5 +1,5 @@
 import config from "./config.json";
-export module flounderStyle
+export namespace flounderStyle
 {
     export const sin = (rate: number) => Math.sin(Math.PI *2.0 *rate);
     export const cos = (rate: number) => Math.cos(Math.PI *2.0 *rate);
