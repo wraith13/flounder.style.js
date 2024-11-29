@@ -1,0 +1,189 @@
+{
+    "$schema": "https://raw.githubusercontent.com/wraith13/evil-type.ts/master/generated/schema/type.json#",
+    "imports": [
+        {
+            "import": "{ EvilType }",
+            "from": "../evil-type.ts/common/evil-type"
+        }
+    ],
+    "defines": {
+        "Type": {
+            "type": "namespace",
+            "members": {
+                "FlounderType": {
+                    "type": "type",
+                    "define": {
+                        "type": "memberof",
+                        "value": {
+                            "$ref": "Arguments"
+                        },
+                        "key": "type"
+                    }
+                },
+                "LayoutAngle": {
+                    "type": "type",
+                    "define": {
+                        "type": "enum-type",
+                        "members": [ "regular", "alternative" ]
+                    }
+                },
+                "Color": {
+                    "type": "type",
+                    "define": {
+                        "type": "string"
+                    }
+                },
+                "Rate": {
+                    "type": "type",
+                    "define": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1.0
+                    }
+                },
+                "SignedRate": {
+                    "type": "type",
+                    "define": {
+                        "type": "number",
+                        "minimum": -1.0,
+                        "maximum": 1.0
+                    }
+                },
+                "Pixel": {
+                    "type": "type",
+                    "define": {
+                        "type": "number",
+                        "minimum": 0
+                    }
+                },
+                "SignedPixel": {
+                    "type": "type",
+                    "define": {
+                        "type": "number"
+                    }
+                },
+                "Count": {
+                    "type": "type",
+                    "define": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                },
+                "ArgumentsBase": {
+                    "type": "interface",
+                    "members": {
+                        "type": {
+                            "$ref": "FlounderType"
+                        },
+                        "layoutAngle?": {
+                            "type": "or",
+                            "types": [
+                                {
+                                    "$ref": "LayoutAngle"
+                                },
+                                {
+                                    "$ref": "SignedRate"
+                                }
+                            ]
+                        },
+                        "offsetX?": {
+                            "$ref": "SignedPixel"
+                        },
+                        "offsetY?": {
+                            "$ref": "SignedPixel"
+                        },
+                        "foregroundColor": {
+                            "$ref": "Color"
+                        },
+                        "backgroundColor?": {
+                            "$ref": "Color"
+                        }
+                    }
+                },
+                "SpotArguments": {
+                    "type": "interface",
+                    "extends": [
+                        {
+                            "$ref": "ArgumentsBase"
+                        }
+                    ],
+                    "members": {
+                        "type": {
+                            "type": "enum-type",
+                            "members": [ "trispot", "tetraspot" ]
+                        },
+                        "layoutAngle?": {
+                            "type": "or",
+                            "types": [
+                                {
+                                    "$ref": "LayoutAngle"
+                                },
+                                {
+                                    "const": 0
+                                }
+                            ]
+                        },
+                        "anglePerDepth?": {
+                            "type": "or",
+                            "types": [
+                                {
+                                    "type": "never"
+                                },
+                                {
+                                    "const": 0
+                                }
+                            ]
+                        }
+                    }
+                },
+                "LineArguments": {
+                    "type": "interface",
+                    "extends": [
+                        {
+                            "$ref": "ArgumentsBase"
+                        }
+                    ],
+                    "members": {
+                        "type": {
+                            "type": "enum-type",
+                            "members": [
+                                "stripe",
+                                "diline",
+                                "triline"
+                            ]
+                        }
+                    }
+                },
+                "Arguments": {
+                    "type": "type",
+                    "define": {
+                        "type": "or",
+                        "types": [
+                            {
+                                "$ref": "SpotArguments"
+                            },
+                            {
+                                "$ref": "LineArguments"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "options": {
+        "outputFile": "../generated/type.ts",
+        "indentUnit": 4,
+        "indentStyle": "allman",
+        "validatorOption": "full",
+        "default": {
+            "export": true,
+            "additionalProperties": false
+        },
+        "schema": {
+            "outputFile": "../generated/schema.json",
+            "$id": "https://raw.githubusercontent.com/wraith13/flounder.style.js/master/generated/schema.json#",
+            "$ref": "Type.Arguments"
+        }
+    }
+}

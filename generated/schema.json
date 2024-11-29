@@ -1,0 +1,186 @@
+{
+    "$id": "https://raw.githubusercontent.com/wraith13/flounder.style.js/master/generated/schema.json#",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/Type.Arguments",
+    "definitions": {
+        "Type.FlounderType": {
+            "oneOf": [
+                {
+                    "enum": [
+                        "trispot",
+                        "tetraspot"
+                    ]
+                },
+                {
+                    "enum": [
+                        "stripe",
+                        "diline",
+                        "triline"
+                    ]
+                }
+            ]
+        },
+        "Type.LayoutAngle": {
+            "enum": [
+                "regular",
+                "alternative"
+            ]
+        },
+        "Type.Color": {
+            "type": "string"
+        },
+        "Type.Rate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+        },
+        "Type.SignedRate": {
+            "type": "number",
+            "minimum": -1,
+            "maximum": 1
+        },
+        "Type.Pixel": {
+            "type": "number",
+            "minimum": 0
+        },
+        "Type.SignedPixel": {
+            "type": "number"
+        },
+        "Type.Count": {
+            "type": "integer",
+            "minimum": 0
+        },
+        "Type.ArgumentsBase": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "$ref": "#/definitions/Type.FlounderType"
+                },
+                "layoutAngle": {
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/Type.LayoutAngle"
+                        },
+                        {
+                            "$ref": "#/definitions/Type.SignedRate"
+                        }
+                    ]
+                },
+                "offsetX": {
+                    "$ref": "#/definitions/Type.SignedPixel"
+                },
+                "offsetY": {
+                    "$ref": "#/definitions/Type.SignedPixel"
+                },
+                "foregroundColor": {
+                    "$ref": "#/definitions/Type.Color"
+                },
+                "backgroundColor": {
+                    "$ref": "#/definitions/Type.Color"
+                }
+            },
+            "required": [
+                "type",
+                "foregroundColor"
+            ],
+            "additionalProperties": false
+        },
+        "Type.SpotArguments": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "enum": [
+                        "trispot",
+                        "tetraspot"
+                    ]
+                },
+                "layoutAngle": {
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/Type.LayoutAngle"
+                        },
+                        {
+                            "const": 0
+                        }
+                    ]
+                },
+                "offsetX": {
+                    "$ref": "#/definitions/Type.SignedPixel"
+                },
+                "offsetY": {
+                    "$ref": "#/definitions/Type.SignedPixel"
+                },
+                "foregroundColor": {
+                    "$ref": "#/definitions/Type.Color"
+                },
+                "backgroundColor": {
+                    "$ref": "#/definitions/Type.Color"
+                },
+                "anglePerDepth": {
+                    "oneOf": [
+                        {
+                            "type": "never"
+                        },
+                        {
+                            "const": 0
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "type",
+                "foregroundColor"
+            ],
+            "additionalProperties": false
+        },
+        "Type.LineArguments": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "enum": [
+                        "stripe",
+                        "diline",
+                        "triline"
+                    ]
+                },
+                "layoutAngle": {
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/Type.LayoutAngle"
+                        },
+                        {
+                            "$ref": "#/definitions/Type.SignedRate"
+                        }
+                    ]
+                },
+                "offsetX": {
+                    "$ref": "#/definitions/Type.SignedPixel"
+                },
+                "offsetY": {
+                    "$ref": "#/definitions/Type.SignedPixel"
+                },
+                "foregroundColor": {
+                    "$ref": "#/definitions/Type.Color"
+                },
+                "backgroundColor": {
+                    "$ref": "#/definitions/Type.Color"
+                }
+            },
+            "required": [
+                "type",
+                "foregroundColor"
+            ],
+            "additionalProperties": false
+        },
+        "Type.Arguments": {
+            "oneOf": [
+                {
+                    "$ref": "#/definitions/Type.SpotArguments"
+                },
+                {
+                    "$ref": "#/definitions/Type.LineArguments"
+                }
+            ]
+        }
+    }
+}
