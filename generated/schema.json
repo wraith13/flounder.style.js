@@ -86,6 +86,22 @@
                 },
                 "blur": {
                     "$ref": "#/definitions/Type.Pixel"
+                },
+                "maxPatternSize": {
+                    "$ref": "#/definitions/Type.Pixel"
+                },
+                "reverseRate": {
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/Type.SignedRate"
+                        },
+                        {
+                            "const": "auto"
+                        },
+                        {
+                            "const": "-auto"
+                        }
+                    ]
                 }
             },
             "required": [
@@ -134,6 +150,22 @@
                 },
                 "blur": {
                     "$ref": "#/definitions/Type.Pixel"
+                },
+                "maxPatternSize": {
+                    "$ref": "#/definitions/Type.Pixel"
+                },
+                "reverseRate": {
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/Type.SignedRate"
+                        },
+                        {
+                            "const": "auto"
+                        },
+                        {
+                            "const": "-auto"
+                        }
+                    ]
                 },
                 "anglePerDepth": {
                     "oneOf": [
@@ -193,6 +225,22 @@
                 },
                 "blur": {
                     "$ref": "#/definitions/Type.Pixel"
+                },
+                "maxPatternSize": {
+                    "$ref": "#/definitions/Type.Pixel"
+                },
+                "reverseRate": {
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/Type.SignedRate"
+                        },
+                        {
+                            "const": "auto"
+                        },
+                        {
+                            "const": "-auto"
+                        }
+                    ]
                 }
             },
             "required": [
