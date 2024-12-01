@@ -97,6 +97,15 @@
                         },
                         "backgroundColor?": {
                             "$ref": "Color"
+                        },
+                        "intervalSize?": {
+                            "$ref": "Pixel"
+                        },
+                        "depth": {
+                            "$ref": "Rate"
+                        },
+                        "blur?": {
+                            "$ref": "Pixel"
                         }
                     }
                 },

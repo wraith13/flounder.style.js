@@ -77,11 +77,21 @@
                 },
                 "backgroundColor": {
                     "$ref": "#/definitions/Type.Color"
+                },
+                "intervalSize": {
+                    "$ref": "#/definitions/Type.Pixel"
+                },
+                "depth": {
+                    "$ref": "#/definitions/Type.Rate"
+                },
+                "blur": {
+                    "$ref": "#/definitions/Type.Pixel"
                 }
             },
             "required": [
                 "type",
-                "foregroundColor"
+                "foregroundColor",
+                "depth"
             ],
             "additionalProperties": false
         },
@@ -116,6 +126,15 @@
                 "backgroundColor": {
                     "$ref": "#/definitions/Type.Color"
                 },
+                "intervalSize": {
+                    "$ref": "#/definitions/Type.Pixel"
+                },
+                "depth": {
+                    "$ref": "#/definitions/Type.Rate"
+                },
+                "blur": {
+                    "$ref": "#/definitions/Type.Pixel"
+                },
                 "anglePerDepth": {
                     "oneOf": [
                         {
@@ -129,7 +148,8 @@
             },
             "required": [
                 "type",
-                "foregroundColor"
+                "foregroundColor",
+                "depth"
             ],
             "additionalProperties": false
         },
@@ -164,11 +184,21 @@
                 },
                 "backgroundColor": {
                     "$ref": "#/definitions/Type.Color"
+                },
+                "intervalSize": {
+                    "$ref": "#/definitions/Type.Pixel"
+                },
+                "depth": {
+                    "$ref": "#/definitions/Type.Rate"
+                },
+                "blur": {
+                    "$ref": "#/definitions/Type.Pixel"
                 }
             },
             "required": [
                 "type",
-                "foregroundColor"
+                "foregroundColor",
+                "depth"
             ],
             "additionalProperties": false
         },
