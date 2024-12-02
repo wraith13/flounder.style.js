@@ -115,6 +115,9 @@
                             "const": "-auto"
                         }
                     ]
+                },
+                "maximumFractionDigits": {
+                    "$ref": "#/definitions/Type.Count"
                 }
             },
             "required": [
@@ -189,6 +192,9 @@
                             "const": 0
                         }
                     ]
+                },
+                "maximumFractionDigits": {
+                    "$ref": "#/definitions/Type.Count"
                 }
             },
             "required": [
@@ -267,6 +273,9 @@
                             "const": "-auto"
                         }
                     ]
+                },
+                "maximumFractionDigits": {
+                    "$ref": "#/definitions/Type.Count"
                 }
             },
             "required": [

@@ -137,6 +137,9 @@
                                     "const": "-auto"
                                 }
                             ]
+                        },
+                        "maximumFractionDigits?": {
+                            "$ref": "Count"
                         }
                     }
                 },
