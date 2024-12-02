@@ -102,6 +102,19 @@
                             "const": "-auto"
                         }
                     ]
+                },
+                "anglePerDepth": {
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/Type.SignedRate"
+                        },
+                        {
+                            "const": "auto"
+                        },
+                        {
+                            "const": "-auto"
+                        }
+                    ]
                 }
             },
             "required": [
@@ -230,6 +243,19 @@
                     "$ref": "#/definitions/Type.Pixel"
                 },
                 "reverseRate": {
+                    "oneOf": [
+                        {
+                            "$ref": "#/definitions/Type.SignedRate"
+                        },
+                        {
+                            "const": "auto"
+                        },
+                        {
+                            "const": "-auto"
+                        }
+                    ]
+                },
+                "anglePerDepth": {
                     "oneOf": [
                         {
                             "$ref": "#/definitions/Type.SignedRate"

@@ -22,6 +22,7 @@ export namespace Type
         blur?: Pixel;
         maxPatternSize?: Pixel;
         reverseRate?: SignedRate | "auto" | "-auto";
+        anglePerDepth?: SignedRate | "auto" | "-auto";
     }
     export interface SpotArguments extends ArgumentsBase
     {
@@ -55,7 +56,8 @@ export namespace Type
         EvilType.Validator.isOptional(isColor), intervalSize: EvilType.Validator.isOptional(isPixel), depth: isRate, blur:
         EvilType.Validator.isOptional(isPixel), maxPatternSize: EvilType.Validator.isOptional(isPixel), reverseRate:
         EvilType.Validator.isOptional(EvilType.Validator.isOr(isSignedRate, EvilType.Validator.isJust("auto" as const),
-        EvilType.Validator.isJust("-auto" as const))), });
+        EvilType.Validator.isJust("-auto" as const))), anglePerDepth: EvilType.Validator.isOptional(EvilType.Validator.isOr(isSignedRate,
+        EvilType.Validator.isJust("auto" as const), EvilType.Validator.isJust("-auto" as const))), });
     export const spotArgumentsValidatorObject: EvilType.Validator.ObjectValidator<SpotArguments> = EvilType.Validator.mergeObjectValidator(
         argumentsBaseValidatorObject, { type: EvilType.Validator.isEnum([ "trispot", "tetraspot" ] as const), layoutAngle:
         EvilType.Validator.isOptional(EvilType.Validator.isOr(isLayoutAngle, EvilType.Validator.isJust(0 as const))), anglePerDepth:

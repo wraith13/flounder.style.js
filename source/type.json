@@ -123,6 +123,20 @@
                                     "const": "-auto"
                                 }
                             ]
+                        },
+                        "anglePerDepth?": {
+                            "type": "or",
+                            "types": [
+                                {
+                                    "$ref": "SignedRate"
+                                },
+                                {
+                                    "const": "auto"
+                                },
+                                {
+                                    "const": "-auto"
+                                }
+                            ]
                         }
                     }
                 },
