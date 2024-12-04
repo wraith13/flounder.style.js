@@ -1,7 +1,12 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-define(["require", "exports", "./config.json"], function (require, exports, config_json_1) {
+define("config", [], {
+    "defaultSpotIntervalSize": 24,
+    "defaultBlur": 0.0,
+    "defaultMaximumFractionDigits": 4
+});
+define("index", ["require", "exports", "config"], function (require, exports, config_json_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.flounderStyle = void 0;
