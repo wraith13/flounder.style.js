@@ -30,11 +30,114 @@
                         ]
                     }
                 },
+                "Hex": {
+                    "type": "type",
+                    "define": {
+                        "type": "enum-type",
+                        "members": [
+                            "0",
+                            "1",
+                            "2",
+                            "3",
+                            "4",
+                            "5",
+                            "6",
+                            "7",
+                            "8",
+                            "9",
+                            "A",
+                            "B",
+                            "C",
+                            "D",
+                            "E",
+                            "F",
+                            "a",
+                            "b",
+                            "c",
+                            "d",
+                            "e",
+                            "f"
+                        ]
+                    }
+                },
+                "Hex2": {
+                    "type": "type",
+                    "define": {
+                        "type": "string",
+                        "pattern": "^#(?:[0-9A-Fa-f]){3}$",
+                        "tsPattern": [
+                            "${ Hex }${ Hex }"
+                        ]
+                    }
+                },
+                "Hex3": {
+                    "type": "type",
+                    "define": {
+                        "type": "string",
+                        "pattern": "^#(?:[0-9A-Fa-f]){3}$",
+                        "tsPattern": [
+                            "${ Hex }${ Hex }${ Hex }"
+                        ]
+                    }
+                },
+                "Hex4": {
+                    "type": "type",
+                    "define": {
+                        "type": "string",
+                        "pattern": "^#(?:[0-9A-Fa-f]){3}$",
+                        "tsPattern": [
+                            "${ Hex2 }${ Hex2 }"
+                        ]
+                    }
+                },
+                "Hex3Color": {
+                    "type": "type",
+                    "define": {
+                        "type": "string",
+                        "pattern": "^#(?:[0-9A-Fa-f]){3}$",
+                        "tsPattern": [
+                            "#${ Hex3 }"
+                        ]
+                    }
+                },
+                "Hex4Color": {
+                    "type": "type",
+                    "define": {
+                        "type": "string",
+                        "pattern": "^#(?:[0-9A-Fa-f]){4}$",
+                        "tsPattern": [
+                            "#${ Hex4 }"
+                        ]
+                    }
+                },
+                "Hex6Color": {
+                    "type": "type",
+                    "define": {
+                        "type": "string",
+                        "pattern": "^#(?:[0-9A-Fa-f]){6}$",
+                        "tsPattern": [
+                            "#${ Hex3 }${ Hex3 }"
+                        ]
+                    }
+                },
+                "Hex8Color": {
+                    "type": "type",
+                    "define": {
+                        "type": "string",
+                        "pattern": "^#(?:[0-9A-Fa-f]){8}$",
+                        "tsPattern": [
+                            "#${ Hex4 }${ Hex4 }"
+                        ]
+                    }
+                },
                 "HexColor": {
                     "type": "type",
                     "define": {
                         "type": "string",
-                        "pattern": "^#(?:[0-9A-Fa-f]){3,4,6,8}$"
+                        "pattern": "^#(?:[0-9A-Fa-f]){3,4,6,8}$",
+                        "tsPattern": [
+                            "${ Hex3Color | Hex4Color | Hex6Color | Hex8Color }"
+                        ]
                     }
                 },
                 "NamedColor": {
@@ -344,7 +447,10 @@
                     "members": {
                         "type": {
                             "type": "enum-type",
-                            "members": [ "trispot", "tetraspot" ]
+                            "members": [
+                                "trispot",
+                                "tetraspot"
+                            ]
                         },
                         "layoutAngle?": {
                             "type": "or",

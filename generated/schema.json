@@ -26,6 +26,60 @@
                 "alternative"
             ]
         },
+        "Type.Hex": {
+            "enum": [
+                "0",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "F",
+                "a",
+                "b",
+                "c",
+                "d",
+                "e",
+                "f"
+            ]
+        },
+        "Type.Hex2": {
+            "type": "string",
+            "pattern": "^#(?:[0-9A-Fa-f]){3}$"
+        },
+        "Type.Hex3": {
+            "type": "string",
+            "pattern": "^#(?:[0-9A-Fa-f]){3}$"
+        },
+        "Type.Hex4": {
+            "type": "string",
+            "pattern": "^#(?:[0-9A-Fa-f]){3}$"
+        },
+        "Type.Hex3Color": {
+            "type": "string",
+            "pattern": "^#(?:[0-9A-Fa-f]){3}$"
+        },
+        "Type.Hex4Color": {
+            "type": "string",
+            "pattern": "^#(?:[0-9A-Fa-f]){4}$"
+        },
+        "Type.Hex6Color": {
+            "type": "string",
+            "pattern": "^#(?:[0-9A-Fa-f]){6}$"
+        },
+        "Type.Hex8Color": {
+            "type": "string",
+            "pattern": "^#(?:[0-9A-Fa-f]){8}$"
+        },
         "Type.HexColor": {
             "type": "string",
             "pattern": "^#(?:[0-9A-Fa-f]){3,4,6,8}$"
