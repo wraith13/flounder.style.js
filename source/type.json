@@ -30,8 +30,10 @@
                         ]
                     }
                 },
-                "Hex": {
+                "_H": {
                     "type": "type",
+                    "export": false,
+                    "validator": false,
                     "define": {
                         "type": "enum-type",
                         "members": [
@@ -60,73 +62,87 @@
                         ]
                     }
                 },
-                "Hex2": {
+                "_H2": {
                     "type": "type",
+                    "export": false,
+                    "validator": false,
                     "define": {
                         "type": "string",
                         "pattern": "^#(?:[0-9A-Fa-f]){3}$",
                         "tsPattern": [
-                            "${ Hex }${ Hex }"
+                            "${ _H }${ _H }"
                         ]
                     }
                 },
-                "Hex3": {
+                "_H3": {
                     "type": "type",
+                    "export": false,
+                    "validator": false,
                     "define": {
                         "type": "string",
                         "pattern": "^#(?:[0-9A-Fa-f]){3}$",
                         "tsPattern": [
-                            "${ Hex }${ Hex }${ Hex }"
+                            "${ _H }${ _H }${ _H }"
                         ]
                     }
                 },
-                "Hex4": {
+                "_H4": {
                     "type": "type",
+                    "export": false,
+                    "validator": false,
                     "define": {
                         "type": "string",
                         "pattern": "^#(?:[0-9A-Fa-f]){3}$",
                         "tsPattern": [
-                            "${ Hex2 }${ Hex2 }"
+                            "${ _H2 }${ _H2 }"
                         ]
                     }
                 },
-                "Hex3Color": {
+                "_H3C": {
                     "type": "type",
+                    "export": false,
+                    "validator": false,
                     "define": {
                         "type": "string",
                         "pattern": "^#(?:[0-9A-Fa-f]){3}$",
                         "tsPattern": [
-                            "#${ Hex3 }"
+                            "#${ _H3 }"
                         ]
                     }
                 },
-                "Hex4Color": {
+                "_H4C": {
                     "type": "type",
+                    "export": false,
+                    "validator": false,
                     "define": {
                         "type": "string",
                         "pattern": "^#(?:[0-9A-Fa-f]){4}$",
                         "tsPattern": [
-                            "#${ Hex4 }"
+                            "#${ _H4 }"
                         ]
                     }
                 },
-                "Hex6Color": {
+                "_H6C": {
                     "type": "type",
+                    "export": false,
+                    "validator": false,
                     "define": {
                         "type": "string",
                         "pattern": "^#(?:[0-9A-Fa-f]){6}$",
                         "tsPattern": [
-                            "#${ Hex3 }${ Hex3 }"
+                            "#${ _H3 }${ _H3 }"
                         ]
                     }
                 },
-                "Hex8Color": {
+                "_H8C": {
                     "type": "type",
+                    "export": false,
+                    "validator": false,
                     "define": {
                         "type": "string",
                         "pattern": "^#(?:[0-9A-Fa-f]){8}$",
                         "tsPattern": [
-                            "#${ Hex4 }${ Hex4 }"
+                            "#${ _H4 }${ _H4 }"
                         ]
                     }
                 },
@@ -136,7 +152,7 @@
                         "type": "string",
                         "pattern": "^#(?:[0-9A-Fa-f]){3,4,6,8}$",
                         "tsPattern": [
-                            "${ Hex3Color | Hex4Color | Hex6Color | Hex8Color }"
+                            "${ _H3C | _H4C | _H6C | _H8C }"
                         ]
                     }
                 },

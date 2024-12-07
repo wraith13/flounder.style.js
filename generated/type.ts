@@ -3,16 +3,16 @@ export namespace Type
 {
     export type FlounderType = Arguments["type"];
     export type LayoutAngle = "regular" | "alternative";
-    export type Hex = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "A" | "B" | "C" | "D" | "E" | "F" | "a" | "b" | "c" | "d"
-        | "e" | "f";
-    export type Hex2 = `${ Hex }${ Hex }`;
-    export type Hex3 = `${ Hex }${ Hex }${ Hex }`;
-    export type Hex4 = `${ Hex2 }${ Hex2 }`;
-    export type Hex3Color = `#${ Hex3 }`;
-    export type Hex4Color = `#${ Hex4 }`;
-    export type Hex6Color = `#${ Hex3 }${ Hex3 }`;
-    export type Hex8Color = `#${ Hex4 }${ Hex4 }`;
-    export type HexColor = `${ Hex3Color | Hex4Color | Hex6Color | Hex8Color }`;
+    type _H = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "A" | "B" | "C" | "D" | "E" | "F" | "a" | "b" | "c" | "d" | "e" |
+        "f";
+    type _H2 = `${ _H }${ _H }`;
+    type _H3 = `${ _H }${ _H }${ _H }`;
+    type _H4 = `${ _H2 }${ _H2 }`;
+    type _H3C = `#${ _H3 }`;
+    type _H4C = `#${ _H4 }`;
+    type _H6C = `#${ _H3 }${ _H3 }`;
+    type _H8C = `#${ _H4 }${ _H4 }`;
+    export type HexColor = `${ _H3C | _H4C | _H6C | _H8C }`;
     export type NamedColor = "black" | "silver" | "gray" | "white" | "maroon" | "red" | "purple" | "fuchsia" | "green" | "lime" | "olive" |
         "yellow" | "navy" | "blue" | "teal" | "aqua" | "aliceblue" | "antiquewhite" | "aqua" | "aquamarine" | "azure" | "beige" | "bisque"
         | "black" | "blanchedalmond" | "blue" | "blueviolet" | "brown" | "burlywood" | "cadetblue" | "chartreuse" | "chocolate" | "coral" |
@@ -67,19 +67,6 @@ export namespace Type
     export const isFlounderType: EvilType.Validator.IsType<FlounderType> = EvilType.Validator.isOr(EvilType.Validator.isEnum([ "trispot",
         "tetraspot" ] as const), EvilType.Validator.isEnum([ "stripe", "diline", "triline" ] as const));
     export const isLayoutAngle: EvilType.Validator.IsType<LayoutAngle> = EvilType.Validator.isEnum([ "regular", "alternative" ] as const);
-    export const isHex: EvilType.Validator.IsType<Hex> = EvilType.Validator.isEnum([ "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A",
-        "B", "C", "D", "E", "F", "a", "b", "c", "d", "e", "f" ] as const);
-    export const isHex2: EvilType.Validator.IsType<Hex2> = EvilType.Validator.isDetailedString({ pattern:"^#(?:[0-9A-Fa-f]){3}$", }, "u");
-    export const isHex3: EvilType.Validator.IsType<Hex3> = EvilType.Validator.isDetailedString({ pattern:"^#(?:[0-9A-Fa-f]){3}$", }, "u");
-    export const isHex4: EvilType.Validator.IsType<Hex4> = EvilType.Validator.isDetailedString({ pattern:"^#(?:[0-9A-Fa-f]){3}$", }, "u");
-    export const isHex3Color: EvilType.Validator.IsType<Hex3Color> = EvilType.Validator.isDetailedString({ pattern:"^#(?:[0-9A-Fa-f]){3}$",
-        }, "u");
-    export const isHex4Color: EvilType.Validator.IsType<Hex4Color> = EvilType.Validator.isDetailedString({ pattern:"^#(?:[0-9A-Fa-f]){4}$",
-        }, "u");
-    export const isHex6Color: EvilType.Validator.IsType<Hex6Color> = EvilType.Validator.isDetailedString({ pattern:"^#(?:[0-9A-Fa-f]){6}$",
-        }, "u");
-    export const isHex8Color: EvilType.Validator.IsType<Hex8Color> = EvilType.Validator.isDetailedString({ pattern:"^#(?:[0-9A-Fa-f]){8}$",
-        }, "u");
     export const isHexColor: EvilType.Validator.IsType<HexColor> = EvilType.Validator.isDetailedString({
         pattern:"^#(?:[0-9A-Fa-f]){3,4,6,8}$", }, "u");
     export const isNamedColor: EvilType.Validator.IsType<NamedColor> = EvilType.Validator.isEnum([ "black", "silver", "gray", "white",
