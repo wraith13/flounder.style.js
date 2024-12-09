@@ -1,6 +1,8 @@
+import { Type as GeneratedType } from "../generated/type";
 import config from "./config.json";
 export namespace flounderStyle
 {
+    export import Type = GeneratedType;
     export const sin = (rate: number) => Math.sin(Math.PI *2.0 *rate);
     export const cos = (rate: number) => Math.cos(Math.PI *2.0 *rate);
     export const atan2 = (direction: { x: number, y: number, }) => Math.atan2(direction.y, direction.x) /(Math.PI *2.0);
@@ -26,31 +28,20 @@ export namespace flounderStyle
         }
         return element;
     };
-    export const makeSureStyle = (styleOrArguments: Style | Arguments): Style =>
+    export const makeSureStyle = (styleOrArguments: Style | Type.Arguments): Style =>
         isArguments(styleOrArguments) ? makeStyle(styleOrArguments): styleOrArguments;
-    export const setStyle = (element: HTMLElement, styleOrArguments: Style | Arguments) =>
+    export const setStyle = (element: HTMLElement, styleOrArguments: Style | Type.Arguments) =>
     {
         styleToStylePropertyList(makeSureStyle(styleOrArguments)).forEach(i => setStyleProperty(element, i));
         return element;
     }
     export const stylePropertyToString = (style: StyleProperty) => `${style.key}: ${style.value ?? "inherit"};`;
-    export const styleToString = (styleOrArguments: Style | Arguments, separator: string = " ") =>
+    export const styleToString = (styleOrArguments: Style | Type.Arguments, separator: string = " ") =>
         styleToStylePropertyList(makeSureStyle(styleOrArguments))
             .filter(i => undefined !== i.value)
             .map(i => stylePropertyToString(i))
             .join(separator);
-    export type FlounderType = Arguments["type"];
-    export type Color = string; // https://developer.mozilla.org/en-US/docs/Web/CSS/color_value
-    export type LayoutAngle = "regular" | "alternative";
-    export type Real = number;
-    export type Rate = Real;
-    export type SignedRate = Real;
-    export type Pixel = Real;
-    export type SignedPixel = Real;
-    export type Integer = number;
-    export type Count = Integer;
-    export type DirectionAngle = "right" | "right-down" | "down" | "left-down" | "left" | "left-up" | "up" | "right-up" | SignedRate;
-    export const regulateRate = (rate: SignedRate): Rate =>
+    export const regulateRate = (rate: Type.SignedRate): Type.Rate =>
     {
         let result = rate % 1.0;
         if (result < -0.0000000000001)
@@ -59,7 +50,7 @@ export namespace flounderStyle
         }
         return result;
     };
-    export const directionAngleToRate = (angle: DirectionAngle): Rate =>
+    export const directionAngleToRate = (angle: Type.DirectionAngle): Type.Rate =>
     {
         switch(angle)
         {
@@ -83,41 +74,14 @@ export namespace flounderStyle
             return regulateRate(angle);
         }
     };
-    export interface ArgumentsBase
-    {
-        type: FlounderType;
-        layoutAngle?: LayoutAngle | SignedRate;
-        offsetX?: SignedPixel;
-        offsetY?: SignedPixel;
-        foregroundColor: Color;
-        backgroundColor?: Color;
-        intervalSize?: Pixel;
-        depth: Rate;
-        blur?: Pixel;
-        maxPatternSize?: Pixel;
-        reverseRate?: SignedRate | "auto" | "-auto";
-        anglePerDepth?: SignedRate | "auto" | "-auto";
-        maximumFractionDigits?: Count;
-    }
-    export interface SpotArguments extends ArgumentsBase
-    {
-        type: "trispot" | "tetraspot";
-        layoutAngle?: LayoutAngle | 0;
-        anglePerDepth?: never | 0;
-    }
-    export interface LineArguments extends ArgumentsBase
-    {
-        type: "stripe" | "diline" | "triline";
-    }
-    export type Arguments = SpotArguments | LineArguments;
-    export const isArguments = (value: unknown): value is Arguments =>
+    export const isArguments = (value: unknown): value is Type.Arguments =>
         null !== value &&
         "object" === typeof value &&
         "type" in value && "string" === typeof value.type &&
         "foregroundColor" in value && "string" === typeof value.foregroundColor &&
         "depth" in value && "number" === typeof value.depth;
-    export const getPatternType = (data: Arguments): FlounderType => data.type ?? "trispot";
-    export const getLayoutAngle = (data: Arguments) =>
+    export const getPatternType = (data: Type.Arguments): Type.FlounderType => data.type ?? "trispot";
+    export const getLayoutAngle = (data: Type.Arguments) =>
     {
         if ("number" === typeof data.layoutAngle)
         {
@@ -136,7 +100,7 @@ export namespace flounderStyle
         }
         return data.layoutAngle ?? "regular"
     };
-    export const getActualLayoutAngle = (data: Arguments): number =>
+    export const getActualLayoutAngle = (data: Type.Arguments): number =>
         "number" === typeof data.layoutAngle ? data.layoutAngle:
         "regular" === (data.layoutAngle ?? "regular") ? 0.0:
         "stripe" === data.type ? 0.25:
@@ -145,25 +109,25 @@ export namespace flounderStyle
         "trispot" === data.type ? 0.25:
         "triline" === data.type ? 0.25:
         0.5;
-    export const getAutoAnglePerDepth = (data: Arguments): number =>
+    export const getAutoAnglePerDepth = (data: Type.Arguments): number =>
         "stripe" === getPatternType(data) ? (1.0 / 2.0):
         "diline" === getPatternType(data) ? (1.0 / 4.0):
         "triline" === getPatternType(data) ? (1.0 / 6.0):
         1.0;
-    export const getActualAnglePerDepth = (data: Arguments): number =>
+    export const getActualAnglePerDepth = (data: Type.Arguments): number =>
         "number" === typeof data.anglePerDepth ? data.anglePerDepth:
         "auto" === data.anglePerDepth ? getAutoAnglePerDepth(data):
         "-auto" === data.anglePerDepth ? -getAutoAnglePerDepth(data):
         0.0;
-    export const getAngleOffsetByDepth = (data: Arguments): number =>
+    export const getAngleOffsetByDepth = (data: Type.Arguments): number =>
         getActualAnglePerDepth(data) *data.depth;
-    export const getAngleOffset = (data: Arguments): number =>
+    export const getAngleOffset = (data: Type.Arguments): number =>
         getActualLayoutAngle(data) +getAngleOffsetByDepth(data);
-    export const getBackgroundColor = (data: Arguments): Color => data.backgroundColor ?? "transparent";
-    export const getIntervalSize = (data: Arguments) =>
+    export const getBackgroundColor = (data: Type.Arguments): Type.Color => data.backgroundColor ?? "transparent";
+    export const getIntervalSize = (data: Type.Arguments) =>
         data.intervalSize ?? config.defaultSpotIntervalSize;
-    export const getBlur = (data: Arguments): number => data.blur ?? config.defaultBlur;
-    export const getActualReverseRate = (data: Arguments): number =>
+    export const getBlur = (data: Type.Arguments): number => data.blur ?? config.defaultBlur;
+    export const getActualReverseRate = (data: Type.Arguments): number =>
         "number" === typeof data.reverseRate ? data.reverseRate:
         ("auto" === data.reverseRate && "trispot" === getPatternType(data)) ? triPatternHalfRadiusSpotArea:
         ("auto" === data.reverseRate && "tetraspot" === getPatternType(data)) ? TetraPatternHalfRadiusSpotArea:
@@ -171,11 +135,11 @@ export namespace flounderStyle
         ("auto" === data.reverseRate && "diline" === getPatternType(data)) ? 0.0:
         ("auto" === data.reverseRate && "triline" === getPatternType(data)) ? 0.0:
         999;
-    export const getAbsoulteReverseRate = (data: Arguments): undefined | number | "auto" =>
+    export const getAbsoulteReverseRate = (data: Type.Arguments): undefined | number | "auto" =>
         "number" === typeof data.reverseRate && data.reverseRate < 0.0 ? Math.abs(data.reverseRate):
         "-auto" === data.reverseRate ? "auto":
         data.reverseRate;
-    const numberToString = (data: Arguments, value: number) =>
+    const numberToString = (data: Type.Arguments, value: number) =>
         value.toLocaleString("en-US", { useGrouping: false, maximumFractionDigits: data.maximumFractionDigits ?? config.defaultMaximumFractionDigits, });
     const makeResult = ({ backgroundColor = undefined as StyleValue, backgroundImage = undefined as StyleValue, backgroundSize = undefined as StyleValue, backgroundPosition = undefined as StyleValue}): Style =>
     ({
@@ -184,13 +148,13 @@ export namespace flounderStyle
         "background-size":backgroundSize,
         "background-position": backgroundPosition,
     });
-    const makeAxis = (data: Arguments, value:number) =>
+    const makeAxis = (data: Type.Arguments, value:number) =>
         `calc(${numberToString(data, value)}px + 50%)`;
-    const makeOffsetAxis = (data: Arguments, offset: number, value:number) =>
+    const makeOffsetAxis = (data: Type.Arguments, offset: number, value:number) =>
         makeAxis(data, value +offset);
-    const makeOffsetPosition = (data: Arguments, x: number, y:number) =>
+    const makeOffsetPosition = (data: Type.Arguments, x: number, y:number) =>
         `${makeOffsetAxis(data, data.offsetX ?? 0.0, x)} ${makeOffsetAxis(data, data.offsetY ?? 0.0, y)}`;
-    export const makeStyle = (data: Arguments): Style =>
+    export const makeStyle = (data: Type.Arguments): Style =>
     {
         switch(getPatternType(data))
         {
@@ -208,9 +172,9 @@ export namespace flounderStyle
             throw new Error(`Unknown FlounderType: ${data.type}`);
         }
     };
-    const makeRadialGradientString = (data: Arguments, radius: number, blur = Math.min(radius, getBlur(data)) /0.5) =>
+    const makeRadialGradientString = (data: Type.Arguments, radius: number, blur = Math.min(radius, getBlur(data)) /0.5) =>
         `radial-gradient(circle at center, ${data.foregroundColor} ${numberToString(data, radius -blur)}px, transparent ${numberToString(data, radius +blur)}px)`;
-    const makeLinearGradientString = (data: Arguments, radius: number, intervalSize: number, angle: number, blur = Math.min(intervalSize -radius, radius, getBlur(data)) /0.5) =>
+    const makeLinearGradientString = (data: Type.Arguments, radius: number, intervalSize: number, angle: number, blur = Math.min(intervalSize -radius, radius, getBlur(data)) /0.5) =>
     {
         const deg = numberToString(data, 360.0 *angle);
         const offset = undefined === data.offsetX && undefined === data.offsetY ?
@@ -227,7 +191,7 @@ export namespace flounderStyle
     const root3 = Math.sqrt(3.0);
     const triPatternHalfRadiusSpotArea = Math.PI / (2 *root3);
     const TetraPatternHalfRadiusSpotArea = Math.PI / 4;
-    export const makePlainStyleOrNull = (data: Arguments): Style | null =>
+    export const makePlainStyleOrNull = (data: Type.Arguments): Style | null =>
     {
         if (data.depth <= 0.0)
         {
@@ -243,7 +207,7 @@ export namespace flounderStyle
             return null;
         }
     };
-    const calculateMaxPatternSize = (data: Arguments, intervalSize: number, radius: number) =>
+    const calculateMaxPatternSize = (data: Type.Arguments, intervalSize: number, radius: number) =>
     {
         if (undefined !== data.maxPatternSize && data.maxPatternSize < radius)
         {
@@ -252,7 +216,7 @@ export namespace flounderStyle
         }
         return { intervalSize, radius, };
     };
-    const calculateSpotSize = (data: Arguments, halfRadiusSpotArea: number, maxRadiusRate: number) =>
+    const calculateSpotSize = (data: Type.Arguments, halfRadiusSpotArea: number, maxRadiusRate: number) =>
     {
         let radius: number;
         const intervalSize = getIntervalSize(data);
@@ -274,7 +238,7 @@ export namespace flounderStyle
         }
         return calculateMaxPatternSize(data, intervalSize, radius);
     };
-    const calculatePatternSize = (data: Arguments) =>
+    const calculatePatternSize = (data: Type.Arguments) =>
     {
         switch(getPatternType(data))
         {
@@ -330,7 +294,7 @@ export namespace flounderStyle
             return value;
         }
     );
-    export const reverseArguments = (data: Arguments): Arguments =>
+    export const reverseArguments = (data: Type.Arguments): Type.Arguments =>
     {
         const result = simpleStructuredClone(data);
         result.foregroundColor = getBackgroundColor(data);
@@ -357,7 +321,7 @@ export namespace flounderStyle
         }
         return result;
     };
-    const makeStyleCommon = (data: Arguments, maker: (data: Arguments) => Style): Style =>
+    const makeStyleCommon = (data: Type.Arguments, maker: (data: Type.Arguments) => Style): Style =>
     {
         if ("transparent" === data.foregroundColor)
         {
@@ -393,7 +357,7 @@ export namespace flounderStyle
             return maker(data);
         }
     }
-    export const makeTrispotStyle = (data: Arguments): Style => makeStyleCommon
+    export const makeTrispotStyle = (data: Type.Arguments): Style => makeStyleCommon
     (
         data, data =>
         {
@@ -432,7 +396,7 @@ export namespace flounderStyle
             }
         }
     );
-    export const makeTetraspotStyle = (data: Arguments): Style => makeStyleCommon
+    export const makeTetraspotStyle = (data: Type.Arguments): Style => makeStyleCommon
     (
         data, data =>
         {
@@ -470,7 +434,7 @@ export namespace flounderStyle
             }
         }
     );
-    export const makeStripeStyle = (data: Arguments): Style => makeStyleCommon
+    export const makeStripeStyle = (data: Type.Arguments): Style => makeStyleCommon
     (
         data, data =>
         {
@@ -490,7 +454,7 @@ export namespace flounderStyle
             });
         }
     );
-    export const makeDilineStyle = (data: Arguments): Style => makeStyleCommon
+    export const makeDilineStyle = (data: Type.Arguments): Style => makeStyleCommon
     (
         data, data =>
         {
@@ -511,7 +475,7 @@ export namespace flounderStyle
             });
         }
     );
-    export const makeTrilineStyle = (data: Arguments): Style => makeStyleCommon
+    export const makeTrilineStyle = (data: Type.Arguments): Style => makeStyleCommon
     (
         data, data =>
         {
@@ -544,14 +508,14 @@ export namespace flounderStyle
         intervalSize: number,
         radius: number,
     }
-    export const calculateOffsetCoefficientDirections = (data: Arguments): OffsetCoefficientDirection[] =>
+    export const calculateOffsetCoefficientDirections = (data: Type.Arguments): OffsetCoefficientDirection[] =>
     {
-        const calculateDirection = (angleOffset: Rate, a: Rate, b: Rate): OffsetCoefficientDirection =>
+        const calculateDirection = (angleOffset: Type.Rate, a: Type.Rate, b: Type.Rate): OffsetCoefficientDirection =>
         ({
             x: a *cos(angleOffset +b),
             y: a *sin(angleOffset +b),
         });
-        const makeAngleVariation = (divisionCount: number, masterMaker: (angleOffset: Rate) => OffsetCoefficientDirection[]): OffsetCoefficientDirection[] =>
+        const makeAngleVariation = (divisionCount: number, masterMaker: (angleOffset: Type.Rate) => OffsetCoefficientDirection[]): OffsetCoefficientDirection[] =>
         {
             const angleOffset = getAngleOffset(data);
             const base = Array.from({ length: divisionCount, }).map
@@ -610,7 +574,7 @@ export namespace flounderStyle
             throw new Error(`Unknown FlounderType: ${data.type}`);
         }
     };
-    export const calculateOffsetCoefficient = (data: Arguments): OffsetCoefficient =>
+    export const calculateOffsetCoefficient = (data: Type.Arguments): OffsetCoefficient =>
     {
         const { intervalSize, radius, } = calculatePatternSize(data);
         const result =
@@ -627,7 +591,7 @@ export namespace flounderStyle
         0;
     export const makeComparer = <objectT, valueT>(f: (o: objectT) => valueT) =>
         (a: objectT, b: objectT) => comparer(f(a), f(b));
-    export const compareAngles = (a: SignedRate, b: SignedRate): SignedRate =>
+    export const compareAngles = (a: Type.SignedRate, b: Type.SignedRate): Type.SignedRate =>
     {
         let result = (b -a) %1.0;
         if (0.5 < result)
@@ -641,7 +605,7 @@ export namespace flounderStyle
         }
         return result;
     };
-    export const selectClosestAngleDirection = (directions: OffsetCoefficientDirection[], angle: DirectionAngle): OffsetCoefficientDirection =>
+    export const selectClosestAngleDirection = (directions: OffsetCoefficientDirection[], angle: Type.DirectionAngle): OffsetCoefficientDirection =>
     {
         const rate = directionAngleToRate(angle);
         return directions.sort(makeComparer(i => Math.abs(compareAngles(atan2(i), rate))))[0];
