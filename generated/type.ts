@@ -1,18 +1,10 @@
 import { EvilType } from "../evil-type.ts/common/evil-type";
+export { EvilType };
 export namespace Type
 {
     export type FlounderType = Arguments["type"];
     export type LayoutAngle = "regular" | "alternative";
-    type _H = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "A" | "B" | "C" | "D" | "E" | "F" | "a" | "b" | "c" | "d" | "e" |
-        "f";
-    type _H2 = `${ _H }${ _H }`;
-    type _H3 = `${ _H }${ _H }${ _H }`;
-    type _H4 = `${ _H2 }${ _H2 }`;
-    type _H3C = `#${ _H3 }`;
-    type _H4C = `#${ _H4 }`;
-    type _H6C = `#${ _H3 }${ _H3 }`;
-    type _H8C = `#${ _H4 }${ _H4 }`;
-    export type HexColor = `${ _H3C | _H4C | _H6C | _H8C }`;
+    export type HexColor = `#${ string }`;
     export type NamedColor = "black" | "silver" | "gray" | "white" | "maroon" | "red" | "purple" | "fuchsia" | "green" | "lime" | "olive" |
         "yellow" | "navy" | "blue" | "teal" | "aqua" | "aliceblue" | "antiquewhite" | "aquamarine" | "azure" | "beige" | "bisque" |
         "blanchedalmond" | "blueviolet" | "brown" | "burlywood" | "cadetblue" | "chartreuse" | "chocolate" | "coral" | "cornflowerblue" |

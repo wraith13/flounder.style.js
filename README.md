@@ -51,7 +51,7 @@ npm install @wraith13/flounder.style.js --save
 import { flounderStyle } from "flounder.style.js";
 
 // make style
-const data: flounderStyle.Arguments =
+const data: flounderStyle.Type.Arguments =
 {
     type: "trispot",
     layoutAngle: "regular",
@@ -77,9 +77,9 @@ console.log(`CSS: ${flounderStyle.styleToString(style)}`);
 |---|---|---|---|
 |type|"trispot" \| "tetraspot" \| "stripe" \| "diline" \| "tryline"|`NOT OPTIONAL`|see [samples](https://wraith13.github.io/flounder.style.js/samples.html).|
 |layoutAngle|"regular" \| "alternative" \| number(±rate)|"regular"|see [samples](https://wraith13.github.io/flounder.style.js/samples.html). number can only be specified when type is "stripe" or "diline" or "triline".|
-|offsetX|number(±pixel)|0.0|X-axis offset of pattern|
-|offsetY|number(±pixel)|0.0|Y-axis offset of pattern|
-|foregroundColor|[CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)|`NOT OPTIONAL`|Foreground pattern color. foregroundColor must be other than "transparent".|
+|offsetX|`Type.SignedPixel`|0.0|X-axis offset of pattern|
+|offsetY|`Type.SignedPixel`|0.0|Y-axis offset of pattern|
+|foregroundColor|`Type.Color` ( [CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value) )|`NOT OPTIONAL`|Foreground pattern color. foregroundColor must be other than "transparent".|
 |backgroundColor|[CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)|"transparent"|Background pattern color. When using reverseRate, backgroundColor must be other than "transparent".|
 |intervalSize|number(pixel)|24|Number of pixels from the center of a spot to the center of the next spot.|
 |depth|number(rate)|`NOT OPTIONAL`|Rate of area occupied by foreground color pattern|
@@ -94,7 +94,7 @@ console.log(`CSS: ${flounderStyle.styleToString(style)}`);
 - The range of `rate` number is 0.0 to 1.0.
 - The range of `±rate` number is -1.0 to 1.0.
 - The range of `pixel` number is 0.0 or greater.
-- The range of `±pixel` number is exclude a NaN and ±Infinity.
+- The range of `Type.SignedPixel` number is exclude a NaN and ±Infinity.
 - The range of `count` number is an integer value greater than or equal to 0.
 
 #### ⚠️ About translucent color

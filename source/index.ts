@@ -1,11 +1,12 @@
-import { Type as GeneratedType } from "../generated/type";
+import { EvilType, Type as GeneratedType } from "../generated/type";
 import config from "./config.json";
+export { EvilType };
 export namespace flounderStyle
 {
     export import Type = GeneratedType;
-    export const sin = (rate: number) => Math.sin(Math.PI *2.0 *rate);
-    export const cos = (rate: number) => Math.cos(Math.PI *2.0 *rate);
-    export const atan2 = (direction: { x: number, y: number, }) => Math.atan2(direction.y, direction.x) /(Math.PI *2.0);
+    export const sin = (rate: Type.SignedRate): Type.SignedRate => Math.sin(Math.PI *2.0 *rate);
+    export const cos = (rate: Type.SignedRate): Type.SignedRate => Math.cos(Math.PI *2.0 *rate);
+    export const atan2 = (direction: { x: Type.SignedPixel, y: Type.SignedPixel, }): Type.SignedRate => Math.atan2(direction.y, direction.x) /(Math.PI *2.0);
     export type StyleKey = string;
     export type StyleValue = string | undefined;
     export type StyleProperty = { key: StyleKey; value: StyleValue; };

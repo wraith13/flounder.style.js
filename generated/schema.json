@@ -26,60 +26,6 @@
                 "alternative"
             ]
         },
-        "Type._H": {
-            "enum": [
-                "0",
-                "1",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9",
-                "A",
-                "B",
-                "C",
-                "D",
-                "E",
-                "F",
-                "a",
-                "b",
-                "c",
-                "d",
-                "e",
-                "f"
-            ]
-        },
-        "Type._H2": {
-            "type": "string",
-            "pattern": "^#(?:[0-9A-Fa-f]){3}$"
-        },
-        "Type._H3": {
-            "type": "string",
-            "pattern": "^#(?:[0-9A-Fa-f]){3}$"
-        },
-        "Type._H4": {
-            "type": "string",
-            "pattern": "^#(?:[0-9A-Fa-f]){3}$"
-        },
-        "Type._H3C": {
-            "type": "string",
-            "pattern": "^#(?:[0-9A-Fa-f]){3}$"
-        },
-        "Type._H4C": {
-            "type": "string",
-            "pattern": "^#(?:[0-9A-Fa-f]){4}$"
-        },
-        "Type._H6C": {
-            "type": "string",
-            "pattern": "^#(?:[0-9A-Fa-f]){6}$"
-        },
-        "Type._H8C": {
-            "type": "string",
-            "pattern": "^#(?:[0-9A-Fa-f]){8}$"
-        },
         "Type.HexColor": {
             "type": "string",
             "pattern": "^#(?:[0-9A-Fa-f]){3,4,6,8}$"

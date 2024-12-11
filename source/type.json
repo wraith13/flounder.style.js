@@ -7,6 +7,15 @@
         }
     ],
     "defines": {
+        "export": {
+            "type": "code",
+            "export": true,
+            "tokens": [
+                "{",
+                "EvilType",
+                "}"
+            ]
+        },
         "Type": {
             "type": "namespace",
             "members": {
@@ -30,130 +39,12 @@
                         ]
                     }
                 },
-                "_H": {
-                    "type": "type",
-                    "export": false,
-                    "validator": false,
-                    "define": {
-                        "type": "enum-type",
-                        "members": [
-                            "0",
-                            "1",
-                            "2",
-                            "3",
-                            "4",
-                            "5",
-                            "6",
-                            "7",
-                            "8",
-                            "9",
-                            "A",
-                            "B",
-                            "C",
-                            "D",
-                            "E",
-                            "F",
-                            "a",
-                            "b",
-                            "c",
-                            "d",
-                            "e",
-                            "f"
-                        ]
-                    }
-                },
-                "_H2": {
-                    "type": "type",
-                    "export": false,
-                    "validator": false,
-                    "define": {
-                        "type": "string",
-                        "pattern": "^#(?:[0-9A-Fa-f]){3}$",
-                        "tsPattern": [
-                            "${ _H }${ _H }"
-                        ]
-                    }
-                },
-                "_H3": {
-                    "type": "type",
-                    "export": false,
-                    "validator": false,
-                    "define": {
-                        "type": "string",
-                        "pattern": "^#(?:[0-9A-Fa-f]){3}$",
-                        "tsPattern": [
-                            "${ _H }${ _H }${ _H }"
-                        ]
-                    }
-                },
-                "_H4": {
-                    "type": "type",
-                    "export": false,
-                    "validator": false,
-                    "define": {
-                        "type": "string",
-                        "pattern": "^#(?:[0-9A-Fa-f]){3}$",
-                        "tsPattern": [
-                            "${ _H2 }${ _H2 }"
-                        ]
-                    }
-                },
-                "_H3C": {
-                    "type": "type",
-                    "export": false,
-                    "validator": false,
-                    "define": {
-                        "type": "string",
-                        "pattern": "^#(?:[0-9A-Fa-f]){3}$",
-                        "tsPattern": [
-                            "#${ _H3 }"
-                        ]
-                    }
-                },
-                "_H4C": {
-                    "type": "type",
-                    "export": false,
-                    "validator": false,
-                    "define": {
-                        "type": "string",
-                        "pattern": "^#(?:[0-9A-Fa-f]){4}$",
-                        "tsPattern": [
-                            "#${ _H4 }"
-                        ]
-                    }
-                },
-                "_H6C": {
-                    "type": "type",
-                    "export": false,
-                    "validator": false,
-                    "define": {
-                        "type": "string",
-                        "pattern": "^#(?:[0-9A-Fa-f]){6}$",
-                        "tsPattern": [
-                            "#${ _H3 }${ _H3 }"
-                        ]
-                    }
-                },
-                "_H8C": {
-                    "type": "type",
-                    "export": false,
-                    "validator": false,
-                    "define": {
-                        "type": "string",
-                        "pattern": "^#(?:[0-9A-Fa-f]){8}$",
-                        "tsPattern": [
-                            "#${ _H4 }${ _H4 }"
-                        ]
-                    }
-                },
                 "HexColor": {
                     "type": "type",
                     "define": {
                         "type": "string",
                         "pattern": "^#(?:[0-9A-Fa-f]){3,4,6,8}$",
-                        "tsPattern": [
-                            "${ _H3C | _H4C | _H6C | _H8C }"
-                        ]
+                        "tsPattern": [ "#${ string }" ]
                     }
                 },
                 "NamedColor": {
