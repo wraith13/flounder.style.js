@@ -433,7 +433,7 @@
         }
     },
     "options": {
-        "outputFile": "../generated/type.ts",
+        "outputFile": "./generated/type.ts",
         "indentUnit": 4,
         "indentStyle": "allman",
         "validatorOption": "full",
@@ -442,7 +442,7 @@
             "additionalProperties": false
         },
         "schema": {
-            "outputFile": "../generated/schema.json",
+            "outputFile": "./generated/schema.json",
             "$id": "https://raw.githubusercontent.com/wraith13/flounder.style.js/master/generated/schema.json#",
             "$ref": "Type.Arguments"
         }

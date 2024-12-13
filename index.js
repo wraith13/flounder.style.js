@@ -648,7 +648,8 @@ define("evil-type.ts/common/evil-type", ["require", "exports"], function (requir
 define("generated/type", ["require", "exports", "evil-type.ts/common/evil-type"], function (require, exports, evil_type_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Type = void 0;
+    exports.Type = exports.EvilType = void 0;
+    Object.defineProperty(exports, "EvilType", { enumerable: true, get: function () { return evil_type_1.EvilType; } });
     var Type;
     (function (Type) {
         Type.isFlounderType = evil_type_1.EvilType.Validator.isOr(evil_type_1.EvilType.Validator.isEnum(["trispot",
@@ -692,16 +693,17 @@ define("generated/type", ["require", "exports", "evil-type.ts/common/evil-type"]
         Type.lineArgumentsValidatorObject = evil_type_1.EvilType.Validator.mergeObjectValidator(Type.argumentsBaseValidatorObject, { type: evil_type_1.EvilType.Validator.isEnum(["stripe", "diline", "triline"]), });
     })(Type || (exports.Type = Type = {}));
 });
-define("source/config", [], {
+define("config", [], {
     "defaultSpotIntervalSize": 24,
     "defaultBlur": 0.0,
     "defaultMaximumFractionDigits": 4
 });
-define("source/index", ["require", "exports", "generated/type", "source/config"], function (require, exports, type_1, config_json_1) {
+define("index", ["require", "exports", "generated/type", "config"], function (require, exports, type_1, config_json_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.flounderStyle = void 0;
+    exports.flounderStyle = exports.EvilType = void 0;
     config_json_1 = __importDefault(config_json_1);
+    Object.defineProperty(exports, "EvilType", { enumerable: true, get: function () { return type_1.EvilType; } });
     var flounderStyle;
     (function (flounderStyle) {
         flounderStyle.Type = type_1.Type;

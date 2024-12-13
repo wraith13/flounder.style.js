@@ -1,4 +1,4 @@
-import { EvilType, Type as GeneratedType } from "../generated/type";
+import { EvilType, Type as GeneratedType } from "./generated/type";
 import config from "./config.json";
 export { EvilType };
 export namespace flounderStyle

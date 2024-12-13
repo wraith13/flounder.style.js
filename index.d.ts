@@ -127,6 +127,7 @@ declare module "evil-type.ts/common/evil-type" {
 }
 declare module "generated/type" {
     import { EvilType } from "evil-type.ts/common/evil-type";
+    export { EvilType };
     export namespace Type {
         type FlounderType = Arguments["type"];
         type LayoutAngle = "regular" | "alternative";
@@ -185,16 +186,17 @@ declare module "generated/type" {
         const lineArgumentsValidatorObject: EvilType.Validator.ObjectValidator<LineArguments>;
     }
 }
-declare module "source/index" {
-    import { Type as GeneratedType } from "generated/type";
+declare module "index" {
+    import { EvilType, Type as GeneratedType } from "generated/type";
+    export { EvilType };
     export namespace flounderStyle {
         export import Type = GeneratedType;
-        const sin: (rate: number) => number;
-        const cos: (rate: number) => number;
+        const sin: (rate: Type.SignedRate) => Type.SignedRate;
+        const cos: (rate: Type.SignedRate) => Type.SignedRate;
         const atan2: (direction: {
-            x: number;
-            y: number;
-        }) => number;
+            x: Type.SignedPixel;
+            y: Type.SignedPixel;
+        }) => Type.SignedRate;
         type StyleKey = string;
         type StyleValue = string | undefined;
         type StyleProperty = {
