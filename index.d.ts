@@ -63,6 +63,13 @@ declare module "evil-type.ts/common/evil-type" {
                 multipleOf?: number;
             }, safeNumber?: boolean) => IsType<number>;
             const isString: (value: unknown, listner?: ErrorListener) => value is string;
+            const makeStringTypeName: (data: {
+                minLength?: number;
+                maxLength?: number;
+                pattern?: string;
+                format?: string;
+                regexpFlags?: string;
+            }) => string;
             const isDetailedString: <Type extends string = string>(data: {
                 minLength?: number;
                 maxLength?: number;
@@ -74,6 +81,11 @@ declare module "evil-type.ts/common/evil-type" {
             const isObject: (value: unknown) => value is ActualObject;
             const isEnum: <T>(list: readonly T[]) => (value: unknown, listner?: ErrorListener) => value is T;
             const isUniqueItems: (list: unknown[]) => boolean;
+            const makeArrayTypeName: (data?: {
+                minItems?: number;
+                maxItems?: number;
+                uniqueItems?: boolean;
+            }) => string;
             const isArray: <T>(isType: IsType<T>, data?: {
                 minItems?: number;
                 maxItems?: number;
