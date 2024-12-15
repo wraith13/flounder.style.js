@@ -201,7 +201,7 @@ declare module "generated/type" {
 declare module "index" {
     import { EvilType, Type as GeneratedType } from "generated/type";
     export { EvilType };
-    export namespace flounderStyle {
+    export namespace FlounderStyle {
         export import Type = GeneratedType;
         const sin: (rate: Type.SignedRate) => Type.SignedRate;
         const cos: (rate: Type.SignedRate) => Type.SignedRate;

@@ -4,11 +4,12 @@
 
 ### Changed
 
-- define type with evil-type.ts ( flounderStyle.* -> flounderStyle.Type.* )
+- namespace: flounderStyle -> FlounderStyle
+- define type with evil-type.ts ( FlounderStyle.* -> FlounderStyle.Type.* )
 
 ### Added
 
-- Type guard functions ( flounderStyle.Type.is* )
+- Type guard functions ( FlounderStyle.Type.is* )
 - JSON Schema ( https://raw.githubusercontent.com/wraith13/flounder.style.js/master/generated/schema.json# )
 
 ## 3.2.0 - 2024-02-09

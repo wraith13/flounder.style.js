@@ -1,7 +1,7 @@
 import { EvilType, Type as GeneratedType } from "./generated/type";
 import config from "./config.json";
 export { EvilType };
-export namespace flounderStyle
+export namespace FlounderStyle
 {
     export import Type = GeneratedType;
     export const sin = (rate: Type.SignedRate): Type.SignedRate => Math.sin(Math.PI *2.0 *rate);

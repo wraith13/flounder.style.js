@@ -683,19 +683,19 @@ define("config", [], {
 define("index", ["require", "exports", "generated/type", "config"], function (require, exports, type_1, config_json_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.flounderStyle = exports.EvilType = void 0;
+    exports.FlounderStyle = exports.EvilType = void 0;
     config_json_1 = __importDefault(config_json_1);
     Object.defineProperty(exports, "EvilType", { enumerable: true, get: function () { return type_1.EvilType; } });
-    var flounderStyle;
-    (function (flounderStyle) {
-        flounderStyle.Type = type_1.Type;
-        flounderStyle.sin = function (rate) { return Math.sin(Math.PI * 2.0 * rate); };
-        flounderStyle.cos = function (rate) { return Math.cos(Math.PI * 2.0 * rate); };
-        flounderStyle.atan2 = function (direction) { return Math.atan2(direction.y, direction.x) / (Math.PI * 2.0); };
-        flounderStyle.styleToStylePropertyList = function (style) {
+    var FlounderStyle;
+    (function (FlounderStyle) {
+        FlounderStyle.Type = type_1.Type;
+        FlounderStyle.sin = function (rate) { return Math.sin(Math.PI * 2.0 * rate); };
+        FlounderStyle.cos = function (rate) { return Math.cos(Math.PI * 2.0 * rate); };
+        FlounderStyle.atan2 = function (direction) { return Math.atan2(direction.y, direction.x) / (Math.PI * 2.0); };
+        FlounderStyle.styleToStylePropertyList = function (style) {
             return Object.keys(style).map(function (key) { return ({ key: key, value: style[key], }); });
         };
-        flounderStyle.setStyleProperty = function (element, style) {
+        FlounderStyle.setStyleProperty = function (element, style) {
             var current = element.style.getPropertyValue(style.key);
             if (current !== style.value) // for DOM rendering performance
              {
@@ -708,29 +708,29 @@ define("index", ["require", "exports", "generated/type", "config"], function (re
             }
             return element;
         };
-        flounderStyle.makeSureStyle = function (styleOrArguments) {
-            return flounderStyle.isArguments(styleOrArguments) ? flounderStyle.makeStyle(styleOrArguments) : styleOrArguments;
+        FlounderStyle.makeSureStyle = function (styleOrArguments) {
+            return FlounderStyle.isArguments(styleOrArguments) ? FlounderStyle.makeStyle(styleOrArguments) : styleOrArguments;
         };
-        flounderStyle.setStyle = function (element, styleOrArguments) {
-            flounderStyle.styleToStylePropertyList(flounderStyle.makeSureStyle(styleOrArguments)).forEach(function (i) { return flounderStyle.setStyleProperty(element, i); });
+        FlounderStyle.setStyle = function (element, styleOrArguments) {
+            FlounderStyle.styleToStylePropertyList(FlounderStyle.makeSureStyle(styleOrArguments)).forEach(function (i) { return FlounderStyle.setStyleProperty(element, i); });
             return element;
         };
-        flounderStyle.stylePropertyToString = function (style) { var _a; return "".concat(style.key, ": ").concat((_a = style.value) !== null && _a !== void 0 ? _a : "inherit", ";"); };
-        flounderStyle.styleToString = function (styleOrArguments, separator) {
+        FlounderStyle.stylePropertyToString = function (style) { var _a; return "".concat(style.key, ": ").concat((_a = style.value) !== null && _a !== void 0 ? _a : "inherit", ";"); };
+        FlounderStyle.styleToString = function (styleOrArguments, separator) {
             if (separator === void 0) { separator = " "; }
-            return flounderStyle.styleToStylePropertyList(flounderStyle.makeSureStyle(styleOrArguments))
+            return FlounderStyle.styleToStylePropertyList(FlounderStyle.makeSureStyle(styleOrArguments))
                 .filter(function (i) { return undefined !== i.value; })
-                .map(function (i) { return flounderStyle.stylePropertyToString(i); })
+                .map(function (i) { return FlounderStyle.stylePropertyToString(i); })
                 .join(separator);
         };
-        flounderStyle.regulateRate = function (rate) {
+        FlounderStyle.regulateRate = function (rate) {
             var result = rate % 1.0;
             if (result < -0.0000000000001) {
                 result += 1.0;
             }
             return result;
         };
-        flounderStyle.directionAngleToRate = function (angle) {
+        FlounderStyle.directionAngleToRate = function (angle) {
             switch (angle) {
                 case "right":
                     return 0.0 / 8.0;
@@ -749,18 +749,18 @@ define("index", ["require", "exports", "generated/type", "config"], function (re
                 case "right-up":
                     return 7.0 / 8.0;
                 default:
-                    return flounderStyle.regulateRate(angle);
+                    return FlounderStyle.regulateRate(angle);
             }
         };
-        flounderStyle.isArguments = function (value) {
+        FlounderStyle.isArguments = function (value) {
             return null !== value &&
                 "object" === typeof value &&
                 "type" in value && "string" === typeof value.type &&
                 "foregroundColor" in value && "string" === typeof value.foregroundColor &&
                 "depth" in value && "number" === typeof value.depth;
         };
-        flounderStyle.getPatternType = function (data) { var _a; return (_a = data.type) !== null && _a !== void 0 ? _a : "trispot"; };
-        flounderStyle.getLayoutAngle = function (data) {
+        FlounderStyle.getPatternType = function (data) { var _a; return (_a = data.type) !== null && _a !== void 0 ? _a : "trispot"; };
+        FlounderStyle.getLayoutAngle = function (data) {
             var _a;
             if ("number" === typeof data.layoutAngle) {
                 if (0 === data.layoutAngle) {
@@ -775,7 +775,7 @@ define("index", ["require", "exports", "generated/type", "config"], function (re
             }
             return (_a = data.layoutAngle) !== null && _a !== void 0 ? _a : "regular";
         };
-        flounderStyle.getActualLayoutAngle = function (data) {
+        FlounderStyle.getActualLayoutAngle = function (data) {
             var _a;
             return "number" === typeof data.layoutAngle ? data.layoutAngle :
                 "regular" === ((_a = data.layoutAngle) !== null && _a !== void 0 ? _a : "regular") ? 0.0 :
@@ -786,37 +786,37 @@ define("index", ["require", "exports", "generated/type", "config"], function (re
                                     "triline" === data.type ? 0.25 :
                                         0.5;
         };
-        flounderStyle.getAutoAnglePerDepth = function (data) {
-            return "stripe" === flounderStyle.getPatternType(data) ? (1.0 / 2.0) :
-                "diline" === flounderStyle.getPatternType(data) ? (1.0 / 4.0) :
-                    "triline" === flounderStyle.getPatternType(data) ? (1.0 / 6.0) :
+        FlounderStyle.getAutoAnglePerDepth = function (data) {
+            return "stripe" === FlounderStyle.getPatternType(data) ? (1.0 / 2.0) :
+                "diline" === FlounderStyle.getPatternType(data) ? (1.0 / 4.0) :
+                    "triline" === FlounderStyle.getPatternType(data) ? (1.0 / 6.0) :
                         1.0;
         };
-        flounderStyle.getActualAnglePerDepth = function (data) {
+        FlounderStyle.getActualAnglePerDepth = function (data) {
             return "number" === typeof data.anglePerDepth ? data.anglePerDepth :
-                "auto" === data.anglePerDepth ? flounderStyle.getAutoAnglePerDepth(data) :
-                    "-auto" === data.anglePerDepth ? -flounderStyle.getAutoAnglePerDepth(data) :
+                "auto" === data.anglePerDepth ? FlounderStyle.getAutoAnglePerDepth(data) :
+                    "-auto" === data.anglePerDepth ? -FlounderStyle.getAutoAnglePerDepth(data) :
                         0.0;
         };
-        flounderStyle.getAngleOffsetByDepth = function (data) {
-            return flounderStyle.getActualAnglePerDepth(data) * data.depth;
+        FlounderStyle.getAngleOffsetByDepth = function (data) {
+            return FlounderStyle.getActualAnglePerDepth(data) * data.depth;
         };
-        flounderStyle.getAngleOffset = function (data) {
-            return flounderStyle.getActualLayoutAngle(data) + flounderStyle.getAngleOffsetByDepth(data);
+        FlounderStyle.getAngleOffset = function (data) {
+            return FlounderStyle.getActualLayoutAngle(data) + FlounderStyle.getAngleOffsetByDepth(data);
         };
-        flounderStyle.getBackgroundColor = function (data) { var _a; return (_a = data.backgroundColor) !== null && _a !== void 0 ? _a : "transparent"; };
-        flounderStyle.getIntervalSize = function (data) { var _a; return (_a = data.intervalSize) !== null && _a !== void 0 ? _a : config_json_1.default.defaultSpotIntervalSize; };
-        flounderStyle.getBlur = function (data) { var _a; return (_a = data.blur) !== null && _a !== void 0 ? _a : config_json_1.default.defaultBlur; };
-        flounderStyle.getActualReverseRate = function (data) {
+        FlounderStyle.getBackgroundColor = function (data) { var _a; return (_a = data.backgroundColor) !== null && _a !== void 0 ? _a : "transparent"; };
+        FlounderStyle.getIntervalSize = function (data) { var _a; return (_a = data.intervalSize) !== null && _a !== void 0 ? _a : config_json_1.default.defaultSpotIntervalSize; };
+        FlounderStyle.getBlur = function (data) { var _a; return (_a = data.blur) !== null && _a !== void 0 ? _a : config_json_1.default.defaultBlur; };
+        FlounderStyle.getActualReverseRate = function (data) {
             return "number" === typeof data.reverseRate ? data.reverseRate :
-                ("auto" === data.reverseRate && "trispot" === flounderStyle.getPatternType(data)) ? triPatternHalfRadiusSpotArea :
-                    ("auto" === data.reverseRate && "tetraspot" === flounderStyle.getPatternType(data)) ? TetraPatternHalfRadiusSpotArea :
-                        ("auto" === data.reverseRate && "stripe" === flounderStyle.getPatternType(data)) ? 0.0 :
-                            ("auto" === data.reverseRate && "diline" === flounderStyle.getPatternType(data)) ? 0.0 :
-                                ("auto" === data.reverseRate && "triline" === flounderStyle.getPatternType(data)) ? 0.0 :
+                ("auto" === data.reverseRate && "trispot" === FlounderStyle.getPatternType(data)) ? triPatternHalfRadiusSpotArea :
+                    ("auto" === data.reverseRate && "tetraspot" === FlounderStyle.getPatternType(data)) ? TetraPatternHalfRadiusSpotArea :
+                        ("auto" === data.reverseRate && "stripe" === FlounderStyle.getPatternType(data)) ? 0.0 :
+                            ("auto" === data.reverseRate && "diline" === FlounderStyle.getPatternType(data)) ? 0.0 :
+                                ("auto" === data.reverseRate && "triline" === FlounderStyle.getPatternType(data)) ? 0.0 :
                                     999;
         };
-        flounderStyle.getAbsoulteReverseRate = function (data) {
+        FlounderStyle.getAbsoulteReverseRate = function (data) {
             return "number" === typeof data.reverseRate && data.reverseRate < 0.0 ? Math.abs(data.reverseRate) :
                 "-auto" === data.reverseRate ? "auto" :
                     data.reverseRate;
@@ -838,32 +838,32 @@ define("index", ["require", "exports", "generated/type", "config"], function (re
             return makeAxis(data, value + offset);
         };
         var makeOffsetPosition = function (data, x, y) { var _a, _b; return "".concat(makeOffsetAxis(data, (_a = data.offsetX) !== null && _a !== void 0 ? _a : 0.0, x), " ").concat(makeOffsetAxis(data, (_b = data.offsetY) !== null && _b !== void 0 ? _b : 0.0, y)); };
-        flounderStyle.makeStyle = function (data) {
-            switch (flounderStyle.getPatternType(data)) {
+        FlounderStyle.makeStyle = function (data) {
+            switch (FlounderStyle.getPatternType(data)) {
                 case "trispot":
-                    return flounderStyle.makeTrispotStyle(data);
+                    return FlounderStyle.makeTrispotStyle(data);
                 case "tetraspot":
-                    return flounderStyle.makeTetraspotStyle(data);
+                    return FlounderStyle.makeTetraspotStyle(data);
                 case "stripe":
-                    return flounderStyle.makeStripeStyle(data);
+                    return FlounderStyle.makeStripeStyle(data);
                 case "diline":
-                    return flounderStyle.makeDilineStyle(data);
+                    return FlounderStyle.makeDilineStyle(data);
                 case "triline":
-                    return flounderStyle.makeTrilineStyle(data);
+                    return FlounderStyle.makeTrilineStyle(data);
                 default:
                     throw new Error("Unknown FlounderType: ".concat(data.type));
             }
         };
         var makeRadialGradientString = function (data, radius, blur) {
-            if (blur === void 0) { blur = Math.min(radius, flounderStyle.getBlur(data)) / 0.5; }
+            if (blur === void 0) { blur = Math.min(radius, FlounderStyle.getBlur(data)) / 0.5; }
             return "radial-gradient(circle at center, ".concat(data.foregroundColor, " ").concat(numberToString(data, radius - blur), "px, transparent ").concat(numberToString(data, radius + blur), "px)");
         };
         var makeLinearGradientString = function (data, radius, intervalSize, angle, blur) {
             var _a, _b;
-            if (blur === void 0) { blur = Math.min(intervalSize - radius, radius, flounderStyle.getBlur(data)) / 0.5; }
+            if (blur === void 0) { blur = Math.min(intervalSize - radius, radius, FlounderStyle.getBlur(data)) / 0.5; }
             var deg = numberToString(data, 360.0 * angle);
             var offset = undefined === data.offsetX && undefined === data.offsetY ?
-                0 : flounderStyle.sin(angle) * ((_a = data.offsetX) !== null && _a !== void 0 ? _a : 0.0) - flounderStyle.cos(angle) * ((_b = data.offsetY) !== null && _b !== void 0 ? _b : 0.0);
+                0 : FlounderStyle.sin(angle) * ((_a = data.offsetX) !== null && _a !== void 0 ? _a : 0.0) - FlounderStyle.cos(angle) * ((_b = data.offsetY) !== null && _b !== void 0 ? _b : 0.0);
             var patternStart = 0 + offset;
             var a = Math.max(0, radius - blur) + offset;
             var b = Math.min(intervalSize * 0.5, radius + blur) + offset;
@@ -876,7 +876,7 @@ define("index", ["require", "exports", "generated/type", "config"], function (re
         var root3 = Math.sqrt(3.0);
         var triPatternHalfRadiusSpotArea = Math.PI / (2 * root3);
         var TetraPatternHalfRadiusSpotArea = Math.PI / 4;
-        flounderStyle.makePlainStyleOrNull = function (data) {
+        FlounderStyle.makePlainStyleOrNull = function (data) {
             var _a;
             if (data.depth <= 0.0) {
                 return makeResult({ backgroundColor: (_a = data.backgroundColor) !== null && _a !== void 0 ? _a : "transparent" });
@@ -897,7 +897,7 @@ define("index", ["require", "exports", "generated/type", "config"], function (re
         };
         var calculateSpotSize = function (data, halfRadiusSpotArea, maxRadiusRate) {
             var radius;
-            var intervalSize = flounderStyle.getIntervalSize(data);
+            var intervalSize = FlounderStyle.getIntervalSize(data);
             if (data.depth <= halfRadiusSpotArea) {
                 radius = Math.sqrt(data.depth / halfRadiusSpotArea) * (intervalSize * 0.5);
             }
@@ -915,40 +915,40 @@ define("index", ["require", "exports", "generated/type", "config"], function (re
             return calculateMaxPatternSize(data, intervalSize, radius);
         };
         var calculatePatternSize = function (data) {
-            switch (flounderStyle.getPatternType(data)) {
+            switch (FlounderStyle.getPatternType(data)) {
                 case "trispot":
                     return calculateSpotSize(data, triPatternHalfRadiusSpotArea, 1.0 / root3);
                 case "tetraspot":
                     return calculateSpotSize(data, TetraPatternHalfRadiusSpotArea, 0.5 * root2);
                 case "stripe":
-                    return calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), data.depth * (flounderStyle.getIntervalSize(data) / 2.0));
+                    return calculateMaxPatternSize(data, FlounderStyle.getIntervalSize(data), data.depth * (FlounderStyle.getIntervalSize(data) / 2.0));
                 case "diline":
-                    return calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (flounderStyle.getIntervalSize(data) / 2.0));
+                    return calculateMaxPatternSize(data, FlounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (FlounderStyle.getIntervalSize(data) / 2.0));
                 case "triline":
-                    return calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (flounderStyle.getIntervalSize(data) / 3.0));
+                    return calculateMaxPatternSize(data, FlounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (FlounderStyle.getIntervalSize(data) / 3.0));
                 default:
                     throw new Error("Unknown FlounderType: ".concat(data.type));
             }
         };
-        flounderStyle.simpleStructuredClone = (function (value) {
+        FlounderStyle.simpleStructuredClone = (function (value) {
             if (undefined !== value && null !== value) {
                 if (Array.isArray(value)) {
-                    return value.map(function (i) { return flounderStyle.simpleStructuredClone(i); });
+                    return value.map(function (i) { return FlounderStyle.simpleStructuredClone(i); });
                 }
                 if ("object" === typeof value) {
                     var result_1 = {};
-                    Object.keys(value).forEach(function (key) { return result_1[key] = flounderStyle.simpleStructuredClone(value[key]); });
+                    Object.keys(value).forEach(function (key) { return result_1[key] = FlounderStyle.simpleStructuredClone(value[key]); });
                     return result_1;
                 }
             }
             return value;
         });
-        flounderStyle.reverseArguments = function (data) {
-            var result = flounderStyle.simpleStructuredClone(data);
-            result.foregroundColor = flounderStyle.getBackgroundColor(data);
+        FlounderStyle.reverseArguments = function (data) {
+            var result = FlounderStyle.simpleStructuredClone(data);
+            result.foregroundColor = FlounderStyle.getBackgroundColor(data);
             result.backgroundColor = data.foregroundColor;
             if ("number" === typeof data.layoutAngle) {
-                result.layoutAngle = flounderStyle.getActualLayoutAngle(data) + flounderStyle.getActualAnglePerDepth(data);
+                result.layoutAngle = FlounderStyle.getActualLayoutAngle(data) + FlounderStyle.getActualAnglePerDepth(data);
             }
             result.depth = 1.0 - data.depth;
             delete result.reverseRate;
@@ -967,35 +967,35 @@ define("index", ["require", "exports", "generated/type", "config"], function (re
             if ("transparent" === data.foregroundColor) {
                 throw new Error("foregroundColor must be other than \"transparent\".");
             }
-            var plain = flounderStyle.makePlainStyleOrNull(data);
+            var plain = FlounderStyle.makePlainStyleOrNull(data);
             if (null !== plain) {
                 return plain;
             }
-            var reverseRate = flounderStyle.getAbsoulteReverseRate(data);
+            var reverseRate = FlounderStyle.getAbsoulteReverseRate(data);
             if (reverseRate !== data.reverseRate) {
-                if ("transparent" === flounderStyle.getBackgroundColor(data)) {
+                if ("transparent" === FlounderStyle.getBackgroundColor(data)) {
                     throw new Error("When using reverseRate, backgroundColor must be other than \"transparent\".");
                 }
-                var absoulteData = flounderStyle.reverseArguments(data);
+                var absoulteData = FlounderStyle.reverseArguments(data);
                 absoulteData.reverseRate = reverseRate;
                 return maker(absoulteData);
             }
-            else if (flounderStyle.getActualReverseRate(data) < data.depth) {
-                if ("transparent" === flounderStyle.getBackgroundColor(data)) {
+            else if (FlounderStyle.getActualReverseRate(data) < data.depth) {
+                if ("transparent" === FlounderStyle.getBackgroundColor(data)) {
                     throw new Error("When using reverseRate, backgroundColor must be other than \"transparent\".");
                 }
-                return maker(flounderStyle.reverseArguments(data));
+                return maker(FlounderStyle.reverseArguments(data));
             }
             else {
                 return maker(data);
             }
         };
-        flounderStyle.makeTrispotStyle = function (data) { return makeStyleCommon(data, function (data) {
+        FlounderStyle.makeTrispotStyle = function (data) { return makeStyleCommon(data, function (data) {
             var _a = calculatePatternSize(data), intervalSize = _a.intervalSize, radius = _a.radius;
             var radialGradient = makeRadialGradientString(data, radius);
-            var backgroundColor = flounderStyle.getBackgroundColor(data);
+            var backgroundColor = FlounderStyle.getBackgroundColor(data);
             var backgroundImage = Array.from({ length: 4 }).map(function (_) { return radialGradient; }).join(", ");
-            switch (flounderStyle.getLayoutAngle(data)) {
+            switch (FlounderStyle.getLayoutAngle(data)) {
                 case "regular": // horizontal
                     {
                         var xUnit = intervalSize * 2.0;
@@ -1022,11 +1022,11 @@ define("index", ["require", "exports", "generated/type", "config"], function (re
                     throw new Error("Unknown LayoutAngle: ".concat(data.layoutAngle));
             }
         }); };
-        flounderStyle.makeTetraspotStyle = function (data) { return makeStyleCommon(data, function (data) {
+        FlounderStyle.makeTetraspotStyle = function (data) { return makeStyleCommon(data, function (data) {
             var _a = calculatePatternSize(data), intervalSize = _a.intervalSize, radius = _a.radius;
             var radialGradient = makeRadialGradientString(data, radius);
-            var backgroundColor = flounderStyle.getBackgroundColor(data);
-            switch (flounderStyle.getLayoutAngle(data)) {
+            var backgroundColor = FlounderStyle.getBackgroundColor(data);
+            switch (FlounderStyle.getLayoutAngle(data)) {
                 case "regular": // straight
                     {
                         var xUnit = intervalSize;
@@ -1053,12 +1053,12 @@ define("index", ["require", "exports", "generated/type", "config"], function (re
                     throw new Error("Unknown LayoutAngle: ".concat(data.layoutAngle));
             }
         }); };
-        flounderStyle.makeStripeStyle = function (data) { return makeStyleCommon(data, function (data) {
-            var backgroundColor = flounderStyle.getBackgroundColor(data);
-            var angleOffset = flounderStyle.getAngleOffset(data);
+        FlounderStyle.makeStripeStyle = function (data) { return makeStyleCommon(data, function (data) {
+            var backgroundColor = FlounderStyle.getBackgroundColor(data);
+            var angleOffset = FlounderStyle.getAngleOffset(data);
             var _a = calculatePatternSize(data), intervalSize = _a.intervalSize, radius = _a.radius;
             var angles = [
-                flounderStyle.regulateRate(angleOffset),
+                FlounderStyle.regulateRate(angleOffset),
             ];
             return makeResult({
                 backgroundColor: backgroundColor,
@@ -1067,13 +1067,13 @@ define("index", ["require", "exports", "generated/type", "config"], function (re
                     .join(", ")
             });
         }); };
-        flounderStyle.makeDilineStyle = function (data) { return makeStyleCommon(data, function (data) {
-            var backgroundColor = flounderStyle.getBackgroundColor(data);
-            var angleOffset = flounderStyle.getAngleOffset(data);
+        FlounderStyle.makeDilineStyle = function (data) { return makeStyleCommon(data, function (data) {
+            var backgroundColor = FlounderStyle.getBackgroundColor(data);
+            var angleOffset = FlounderStyle.getAngleOffset(data);
             var _a = calculatePatternSize(data), intervalSize = _a.intervalSize, radius = _a.radius;
             var angles = [
-                flounderStyle.regulateRate((0.0 / 4.0) + angleOffset),
-                flounderStyle.regulateRate((1.0 / 4.0) + angleOffset),
+                FlounderStyle.regulateRate((0.0 / 4.0) + angleOffset),
+                FlounderStyle.regulateRate((1.0 / 4.0) + angleOffset),
             ];
             return makeResult({
                 backgroundColor: backgroundColor,
@@ -1082,14 +1082,14 @@ define("index", ["require", "exports", "generated/type", "config"], function (re
                     .join(", ")
             });
         }); };
-        flounderStyle.makeTrilineStyle = function (data) { return makeStyleCommon(data, function (data) {
-            var backgroundColor = flounderStyle.getBackgroundColor(data);
-            var angleOffset = flounderStyle.getAngleOffset(data);
+        FlounderStyle.makeTrilineStyle = function (data) { return makeStyleCommon(data, function (data) {
+            var backgroundColor = FlounderStyle.getBackgroundColor(data);
+            var angleOffset = FlounderStyle.getAngleOffset(data);
             var _a = calculatePatternSize(data), intervalSize = _a.intervalSize, radius = _a.radius;
             var angles = [
-                flounderStyle.regulateRate((0.0 / 6.0) + angleOffset),
-                flounderStyle.regulateRate((1.0 / 6.0) + angleOffset),
-                flounderStyle.regulateRate((2.0 / 6.0) + angleOffset)
+                FlounderStyle.regulateRate((0.0 / 6.0) + angleOffset),
+                FlounderStyle.regulateRate((1.0 / 6.0) + angleOffset),
+                FlounderStyle.regulateRate((2.0 / 6.0) + angleOffset)
             ];
             return makeResult({
                 backgroundColor: backgroundColor,
@@ -1098,23 +1098,23 @@ define("index", ["require", "exports", "generated/type", "config"], function (re
                     .join(", ")
             });
         }); };
-        flounderStyle.calculateOffsetCoefficientDirections = function (data) {
+        FlounderStyle.calculateOffsetCoefficientDirections = function (data) {
             var calculateDirection = function (angleOffset, a, b) {
                 return ({
-                    x: a * flounderStyle.cos(angleOffset + b),
-                    y: a * flounderStyle.sin(angleOffset + b),
+                    x: a * FlounderStyle.cos(angleOffset + b),
+                    y: a * FlounderStyle.sin(angleOffset + b),
                 });
             };
             var makeAngleVariation = function (divisionCount, masterMaker) {
-                var angleOffset = flounderStyle.getAngleOffset(data);
+                var angleOffset = FlounderStyle.getAngleOffset(data);
                 var base = Array.from({ length: divisionCount, }).map(function (_i, ix) { return masterMaker(angleOffset + (ix / (divisionCount * 2.0))); })
                     .reduce(function (a, b) { return a.concat(b); }, []);
                 var result = base
                     .concat(base.map(function (i) { return ({ x: -i.x, y: -i.y, }); }))
-                    .sort(flounderStyle.makeComparer(function (i) { return flounderStyle.regulateRate(flounderStyle.atan2(i)); }));
+                    .sort(FlounderStyle.makeComparer(function (i) { return FlounderStyle.regulateRate(FlounderStyle.atan2(i)); }));
                 return result;
             };
-            switch (flounderStyle.getPatternType(data)) {
+            switch (FlounderStyle.getPatternType(data)) {
                 case "stripe":
                     return makeAngleVariation(1, function (angleOffset) {
                         return [
@@ -1147,24 +1147,24 @@ define("index", ["require", "exports", "generated/type", "config"], function (re
                     throw new Error("Unknown FlounderType: ".concat(data.type));
             }
         };
-        flounderStyle.calculateOffsetCoefficient = function (data) {
+        FlounderStyle.calculateOffsetCoefficient = function (data) {
             var _a = calculatePatternSize(data), intervalSize = _a.intervalSize, radius = _a.radius;
             var result = {
-                directions: flounderStyle.calculateOffsetCoefficientDirections(data),
+                directions: FlounderStyle.calculateOffsetCoefficientDirections(data),
                 intervalSize: intervalSize,
                 radius: radius,
             };
             return result;
         };
-        flounderStyle.comparer = function (a, b) {
+        FlounderStyle.comparer = function (a, b) {
             return a < b ? -1 :
                 b < a ? 1 :
                     0;
         };
-        flounderStyle.makeComparer = function (f) {
-            return function (a, b) { return flounderStyle.comparer(f(a), f(b)); };
+        FlounderStyle.makeComparer = function (f) {
+            return function (a, b) { return FlounderStyle.comparer(f(a), f(b)); };
         };
-        flounderStyle.compareAngles = function (a, b) {
+        FlounderStyle.compareAngles = function (a, b) {
             var result = (b - a) % 1.0;
             if (0.5 < result) {
                 result -= 1.0;
@@ -1174,10 +1174,10 @@ define("index", ["require", "exports", "generated/type", "config"], function (re
             }
             return result;
         };
-        flounderStyle.selectClosestAngleDirection = function (directions, angle) {
-            var rate = flounderStyle.directionAngleToRate(angle);
-            return directions.sort(flounderStyle.makeComparer(function (i) { return Math.abs(flounderStyle.compareAngles(flounderStyle.atan2(i), rate)); }))[0];
+        FlounderStyle.selectClosestAngleDirection = function (directions, angle) {
+            var rate = FlounderStyle.directionAngleToRate(angle);
+            return directions.sort(FlounderStyle.makeComparer(function (i) { return Math.abs(FlounderStyle.compareAngles(FlounderStyle.atan2(i), rate)); }))[0];
         };
-    })(flounderStyle || (exports.flounderStyle = flounderStyle = {}));
+    })(FlounderStyle || (exports.FlounderStyle = FlounderStyle = {}));
 });
 //# sourceMappingURL=index.js.map

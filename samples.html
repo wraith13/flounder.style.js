@@ -120,7 +120,7 @@ window.module.sequentialLoad
 (
     map =>
     {
-        const { flounderStyle } = require("flounder.style.js");
+        const { FlounderStyle } = require("flounder.style.js");
         const $make = minamo.dom.make;
         const $tag = minamo.dom.tag;
         const $div = $tag("div");
@@ -160,7 +160,7 @@ window.module.sequentialLoad
             result.depth = depth;
             return result;
         };
-        const makeSample = (data) => flounderStyle.setStyle
+        const makeSample = (data) => FlounderStyle.setStyle
         (
             $make(HTMLDivElement)
             (

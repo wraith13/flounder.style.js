@@ -328,7 +328,7 @@ window.module.sequentialLoad
 (
     map =>
     {
-        const { flounderStyle } = require("flounder.style.js");
+        const { FlounderStyle } = require("flounder.style.js");
         const valueToString = (value) => undefined === value ? "undefined": JSON.stringify(value);
         const stringify = (value) =>
         {
@@ -522,7 +522,7 @@ window.module.sequentialLoad
                 {
                     if (undefined === offsetCoefficient || undefined === direction)
                     {
-                        offsetCoefficient = flounderStyle.calculateOffsetCoefficient(arguments);
+                        offsetCoefficient = FlounderStyle.calculateOffsetCoefficient(arguments);
                         direction = randomSelect(offsetCoefficient.directions);
                         rotate = 1 +makeRandomInteger(4);
                     }
@@ -530,7 +530,7 @@ window.module.sequentialLoad
                     arguments.offsetX = offsetCoefficient.intervalSize * direction.x *step;
                     arguments.offsetY = offsetCoefficient.intervalSize * direction.y *step;
                 }
-                flounderStyle.setStyle(screenBody, arguments);
+                FlounderStyle.setStyle(screenBody, arguments);
                 if (showFPS.checked)
                 {
                     document.getElementById("fps").innerText = getFpsText(now);
@@ -544,7 +544,7 @@ window.module.sequentialLoad
                     if (navigator.clipboard)
                     {
                         document.getElementById("arguments").innerText = stringify(arguments);
-                        document.getElementById("style").innerText = flounderStyle.styleToString(arguments);
+                        document.getElementById("style").innerText = FlounderStyle.styleToString(arguments);
                         if ( ! screenFooter.classList.contains("show-arguments") && ! screenFooter.classList.contains("show-style"))
                         {
                             screenFooter.classList.toggle("show-arguments", true);
