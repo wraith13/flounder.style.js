@@ -171,7 +171,7 @@ declare module "generated/type" {
         interface SpotArguments extends ArgumentsBase {
             type: "trispot" | "tetraspot";
             layoutAngle?: LayoutAngle | 0;
-            anglePerDepth?: never | 0;
+            anglePerDepth?: 0;
         }
         interface LineArguments extends ArgumentsBase {
             type: "stripe" | "diline" | "triline";

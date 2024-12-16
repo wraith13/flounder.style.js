@@ -6,6 +6,7 @@
 
 - namespace: flounderStyle -> FlounderStyle
 - define type with evil-type.ts ( FlounderStyle.* -> FlounderStyle.Type.* )
+- SpotArguments.anglePerDepth: 0 | never -> 0
 
 ### Added
 

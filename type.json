@@ -385,15 +385,7 @@
                             ]
                         },
                         "anglePerDepth?": {
-                            "type": "or",
-                            "types": [
-                                {
-                                    "type": "never"
-                                },
-                                {
-                                    "const": 0
-                                }
-                            ]
+                            "const": 0
                         }
                     }
                 },

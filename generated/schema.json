@@ -370,14 +370,7 @@
                     ]
                 },
                 "anglePerDepth": {
-                    "oneOf": [
-                        {
-                            "type": "never"
-                        },
-                        {
-                            "const": 0
-                        }
-                    ]
+                    "const": 0
                 },
                 "maximumFractionDigits": {
                     "$ref": "#/definitions/Type.Count"

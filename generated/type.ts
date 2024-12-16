@@ -50,7 +50,7 @@ export namespace Type
     {
         type: "trispot" | "tetraspot";
         layoutAngle?: LayoutAngle | 0;
-        anglePerDepth?: never | 0;
+        anglePerDepth?: 0;
     }
     export interface LineArguments extends ArgumentsBase
     {
@@ -107,7 +107,7 @@ export namespace Type
     export const spotArgumentsValidatorObject: EvilType.Validator.ObjectValidator<SpotArguments> = EvilType.Validator.mergeObjectValidator(
         argumentsBaseValidatorObject, { type: EvilType.Validator.isEnum([ "trispot", "tetraspot" ] as const), layoutAngle:
         EvilType.Validator.isOptional(EvilType.Validator.isOr(isLayoutAngle, EvilType.Validator.isJust(0 as const))), anglePerDepth:
-        EvilType.Validator.isOptional(EvilType.Validator.isOr(EvilType.Validator.isNever, EvilType.Validator.isJust(0 as const))), });
+        EvilType.Validator.isOptional(EvilType.Validator.isJust(0 as const)), });
     export const lineArgumentsValidatorObject: EvilType.Validator.ObjectValidator<LineArguments> = EvilType.Validator.mergeObjectValidator(
         argumentsBaseValidatorObject, { type: EvilType.Validator.isEnum([ "stripe", "diline", "triline" ] as const), });
 }
