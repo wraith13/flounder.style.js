@@ -75,8 +75,7 @@ console.log(`CSS: ${flounderStyle.styleToString(style)}`);
 
 |key|type|default|description|
 |---|---|---|---|
-|$schema|`FlounderStyle.Type.SignedPixel`|0.0|X-axis offset of pattern|
-
+|$schema|...|OPTIONAL|JSON Schema for manual input support|
 |type|`"trispot"` \| `"tetraspot"` \| `"stripe"` \| `"diline"` \| `"tryline"`|NOT OPTIONAL|see [samples](https://wraith13.github.io/flounder.style.js/samples.html).|
 |layoutAngle|`"regular"` \| `"alternative"` \| `FlounderStyle.Type.SignedRate`|`"regular"`|see [samples](https://wraith13.github.io/flounder.style.js/samples.html). number can only be specified when type is "stripe" or "diline" or "triline".|
 |offsetX|`FlounderStyle.Type.SignedPixel`|0.0|X-axis offset of pattern|
