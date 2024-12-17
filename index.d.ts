@@ -52,7 +52,7 @@ declare module "evil-type.ts/common/evil-type" {
                 maximum?: number;
                 exclusiveMaximum?: number;
                 multipleOf?: number;
-            }, safeInteger?: boolean) => IsType<number>;
+            }, safeInteger?: "safe") => IsType<number>;
             const isNumber: (value: unknown, listner?: ErrorListener) => value is number;
             const isSafeNumber: (value: unknown, listner?: ErrorListener) => value is number;
             const isDetailedNumber: (data: {
@@ -61,7 +61,7 @@ declare module "evil-type.ts/common/evil-type" {
                 maximum?: number;
                 exclusiveMaximum?: number;
                 multipleOf?: number;
-            }, safeNumber?: boolean) => IsType<number>;
+            }, safeNumber?: "safe") => IsType<number>;
             const isString: (value: unknown, listner?: ErrorListener) => value is string;
             const makeStringTypeName: (data: {
                 minLength?: number;
@@ -154,6 +154,7 @@ declare module "generated/type" {
         type NamedDirectionAngle = "right" | "right-down" | "down" | "left-down" | "left" | "left-up" | "up" | "right-up";
         type DirectionAngle = NamedDirectionAngle | SignedRate;
         interface ArgumentsBase {
+            $schema?: "https://raw.githubusercontent.com/wraith13/flounder.style.js/master/generated/schema.json#";
             type: FlounderType;
             layoutAngle?: LayoutAngle | SignedRate;
             offsetX?: SignedPixel;

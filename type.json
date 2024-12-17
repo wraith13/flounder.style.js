@@ -287,6 +287,9 @@
                 "ArgumentsBase": {
                     "type": "interface",
                     "members": {
+                        "$schema?": {
+                            "const": "https://raw.githubusercontent.com/wraith13/flounder.style.js/master/generated/schema.json#"
+                        },
                         "type": {
                             "$ref": "FlounderType"
                         },

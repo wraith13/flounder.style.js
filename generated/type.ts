@@ -32,6 +32,7 @@ export namespace Type
     export type DirectionAngle = NamedDirectionAngle | SignedRate;
     export interface ArgumentsBase
     {
+        $schema?: "https://raw.githubusercontent.com/wraith13/flounder.style.js/master/generated/schema.json#";
         type: FlounderType;
         layoutAngle?: LayoutAngle | SignedRate;
         offsetX?: SignedPixel;
@@ -80,12 +81,11 @@ export namespace Type
         "springgreen", "steelblue", "tan", "thistle", "tomato", "transparent", "turquoise", "violet", "wheat", "whitesmoke", "yellowgreen"
         ] as const);
     export const isColor: EvilType.Validator.IsType<Color> = EvilType.lazy(() => EvilType.Validator.isOr(isHexColor, isNamedColor));
-    export const isRate: EvilType.Validator.IsType<Rate> = EvilType.Validator.isDetailedNumber({ minimum:0, maximum:1, }, false);
-    export const isSignedRate: EvilType.Validator.IsType<SignedRate> = EvilType.Validator.isDetailedNumber({ minimum:-1, maximum:1, },
-        false);
-    export const isPixel: EvilType.Validator.IsType<Pixel> = EvilType.Validator.isDetailedNumber({ minimum:0, }, false);
+    export const isRate: EvilType.Validator.IsType<Rate> = EvilType.Validator.isDetailedNumber({ minimum:0, maximum:1, });
+    export const isSignedRate: EvilType.Validator.IsType<SignedRate> = EvilType.Validator.isDetailedNumber({ minimum:-1, maximum:1, });
+    export const isPixel: EvilType.Validator.IsType<Pixel> = EvilType.Validator.isDetailedNumber({ minimum:0, });
     export const isSignedPixel: EvilType.Validator.IsType<SignedPixel> = EvilType.Validator.isNumber;
-    export const isCount: EvilType.Validator.IsType<Count> = EvilType.Validator.isDetailedInteger({ minimum:0, }, false);
+    export const isCount: EvilType.Validator.IsType<Count> = EvilType.Validator.isDetailedInteger({ minimum:0, });
     export const isNamedDirectionAngle: EvilType.Validator.IsType<NamedDirectionAngle> = EvilType.Validator.isEnum([ "right", "right-down",
         "down", "left-down", "left", "left-up", "up", "right-up" ] as const);
     export const isDirectionAngle: EvilType.Validator.IsType<DirectionAngle> = EvilType.lazy(() => EvilType.Validator.isOr(
@@ -95,10 +95,12 @@ export namespace Type
     export const isLineArguments = EvilType.lazy(() => EvilType.Validator.isSpecificObject(lineArgumentsValidatorObject, false));
     export const isArguments: EvilType.Validator.IsType<Arguments> = EvilType.lazy(() => EvilType.Validator.isOr(isSpotArguments,
         isLineArguments));
-    export const argumentsBaseValidatorObject: EvilType.Validator.ObjectValidator<ArgumentsBase> = ({ type: isFlounderType, layoutAngle:
-        EvilType.Validator.isOptional(EvilType.Validator.isOr(isLayoutAngle, isSignedRate)), offsetX: EvilType.Validator.isOptional(
-        isSignedPixel), offsetY: EvilType.Validator.isOptional(isSignedPixel), foregroundColor: isColor, backgroundColor:
-        EvilType.Validator.isOptional(isColor), intervalSize: EvilType.Validator.isOptional(isPixel), depth: isRate, blur:
+    export const argumentsBaseValidatorObject: EvilType.Validator.ObjectValidator<ArgumentsBase> = ({ $schema:
+        EvilType.Validator.isOptional(EvilType.Validator.isJust(
+        "https://raw.githubusercontent.com/wraith13/flounder.style.js/master/generated/schema.json#" as const)), type: isFlounderType,
+        layoutAngle: EvilType.Validator.isOptional(EvilType.Validator.isOr(isLayoutAngle, isSignedRate)), offsetX:
+        EvilType.Validator.isOptional(isSignedPixel), offsetY: EvilType.Validator.isOptional(isSignedPixel), foregroundColor: isColor,
+        backgroundColor: EvilType.Validator.isOptional(isColor), intervalSize: EvilType.Validator.isOptional(isPixel), depth: isRate, blur:
         EvilType.Validator.isOptional(isPixel), maxPatternSize: EvilType.Validator.isOptional(isPixel), reverseRate:
         EvilType.Validator.isOptional(EvilType.Validator.isOr(isSignedRate, EvilType.Validator.isJust("auto" as const),
         EvilType.Validator.isJust("-auto" as const))), anglePerDepth: EvilType.Validator.isOptional(EvilType.Validator.isOr(isSignedRate,

@@ -71,31 +71,39 @@ console.log(`CSS: ${flounderStyle.styleToString(style)}`);
 // You can also: console.log(`CSS: ${flounderStyle.styleToString(data)}`);
 ```
 
-### flounderStyle.Arguments
+### FlounderStyle.Type.Arguments
 
 |key|type|default|description|
 |---|---|---|---|
-|type|"trispot" \| "tetraspot" \| "stripe" \| "diline" \| "tryline"|`NOT OPTIONAL`|see [samples](https://wraith13.github.io/flounder.style.js/samples.html).|
-|layoutAngle|"regular" \| "alternative" \| number(±rate)|"regular"|see [samples](https://wraith13.github.io/flounder.style.js/samples.html). number can only be specified when type is "stripe" or "diline" or "triline".|
-|offsetX|`Type.SignedPixel`|0.0|X-axis offset of pattern|
-|offsetY|`Type.SignedPixel`|0.0|Y-axis offset of pattern|
-|foregroundColor|`Type.Color` ( [CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value) )|`NOT OPTIONAL`|Foreground pattern color. foregroundColor must be other than "transparent".|
-|backgroundColor|[CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)|"transparent"|Background pattern color. When using reverseRate, backgroundColor must be other than "transparent".|
-|intervalSize|number(pixel)|24|Number of pixels from the center of a spot to the center of the next spot.|
-|depth|number(rate)|`NOT OPTIONAL`|Rate of area occupied by foreground color pattern|
-|blur|number(pixel)|0.0|If you want to improve the visibility of overlapping text, increase this value to blur the pattern.|
-|maxPatternSize|number(pixel)|`undefined`|If maxPatternSize is specified, instead of increasing the spot size beyond this value, intervalSize will be decreased.|
-|reverseRate|number(±rate) \| "auto" \| "-auto" |`undefined`|To avoid pixel collapse, when depth is greater than reverseRate, the foreground color, background color, and depth are reversed. When using reverseRate, backgroundColor must be other than "transparent". If "auto" is specified, it will be set to the same value as the depth at which the spots touch each other. If a negative value is specified, the process will be reversed from the beginning and processed regularly with a depth greater than the absolute value of reverseRate.|
-|anglePerDepth|number(±rate) \| "auto" \| "-auto" |`undefined`|...|
-|maximumFractionDigits|number(count)|3|The maximum number of digits after the decimal point for numbers used in the generated CSS.|
+|$schema|`FlounderStyle.Type.SignedPixel`|0.0|X-axis offset of pattern|
+
+|type|`"trispot"` \| `"tetraspot"` \| `"stripe"` \| `"diline"` \| `"tryline"`|NOT OPTIONAL|see [samples](https://wraith13.github.io/flounder.style.js/samples.html).|
+|layoutAngle|`"regular"` \| `"alternative"` \| `FlounderStyle.Type.SignedRate`|`"regular"`|see [samples](https://wraith13.github.io/flounder.style.js/samples.html). number can only be specified when type is "stripe" or "diline" or "triline".|
+|offsetX|`FlounderStyle.Type.SignedPixel`|0.0|X-axis offset of pattern|
+|offsetY|`FlounderStyle.Type.SignedPixel`|0.0|Y-axis offset of pattern|
+|foregroundColor|`FlounderStyle.Type.Color` ( [CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value) )|NOT OPTIONAL|Foreground pattern color. foregroundColor must be other than "transparent".|
+|backgroundColor|`FlounderStyle.Type.Color` ( [CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value) )|`"transparent"`|Background pattern color. When using reverseRate, backgroundColor must be other than "transparent".|
+|intervalSize|`FlounderStyle.Type.Pixel`|24|Number of pixels from the center of a spot to the center of the next spot.|
+|depth|`FlounderStyle.Type.Rate`|NOT OPTIONAL|Rate of area occupied by foreground color pattern|
+|blur|`FlounderStyle.Type.Pixel`|0.0|If you want to improve the visibility of overlapping text, increase this value to blur the pattern.|
+|maxPatternSize|`FlounderStyle.Type.Pixel`|`undefined`|If maxPatternSize is specified, instead of increasing the spot size beyond this value, intervalSize will be decreased.|
+|reverseRate|`FlounderStyle.Type.SignedRate` \| `"auto"` \| `"-auto"` |`undefined`|To avoid pixel collapse, when depth is greater than reverseRate, the foreground color, background color, and depth are reversed. When using reverseRate, backgroundColor must be other than "transparent". If "auto" is specified, it will be set to the same value as the depth at which the spots touch each other. If a negative value is specified, the process will be reversed from the beginning and processed regularly with a depth greater than the absolute value of reverseRate.|
+|anglePerDepth|`FlounderStyle.Type.SignedRate` \| `"auto"` \| `"-auto"` |`undefined`|...|
+|maximumFractionDigits|`FlounderStyle.Type.Count`|3|The maximum number of digits after the decimal point for numbers used in the generated CSS.|
 
 #### number types
 
-- The range of `rate` number is 0.0 to 1.0.
-- The range of `±rate` number is -1.0 to 1.0.
-- The range of `pixel` number is 0.0 or greater.
-- The range of `Type.SignedPixel` number is exclude a NaN and ±Infinity.
-- The range of `count` number is an integer value greater than or equal to 0.
+- The range of `FlounderStyle.Type.Rate` number is 0.0 to 1.0.
+- The range of `FlounderStyle.Type.SignedRate` number is -1.0 to 1.0.
+- The range of `FlounderStyle.Type.Pixel` number is 0.0 or greater.
+- The range of `FlounderStyle.Type.SignedPixel` number is exclude a NaN and ±Infinity.
+- The range of `FlounderStyle.Type.Count` number is an integer value greater than or equal to 0.
+
+#### JSON Schema
+
+You can use the following JSON Schema when entering `FlounderStyle.Type.Arguments` data manually.
+
+<https://raw.githubusercontent.com/wraith13/flounder.style.js/master/generated/schema.json#>
 
 #### ⚠️ About translucent color
 
@@ -107,7 +115,7 @@ If you want to use a translucent color pattern, instead of directly specifying a
 #### How to do pattern rotation animation
 
 ```typescript
-import { flounderStyle } from "flounder.style.js";
+import { flounderStyle as FlounderStyle } from "flounder.style.js";
 
 export const modRate = (value: number, unit: number) => (value %unit) /unit;
 let continueAnimation = false;
@@ -115,20 +123,20 @@ export const animationFrame = (tick: number) =>
 {
     // make style
     const step = modRate(tick, 3000); // 3000ms
-    const data: flounderStyle.Arguments =
+    const data: FlounderStyle.Type.Arguments =
     {
         ...
     };
-    const offsetCoefficient = flounderStyle.calculateOffsetCoefficient(data);
-    const direction = flounderStyle.selectClosestAngleDirection(offsetCoefficient.directions, "up"); // "up": 0.75
+    const offsetCoefficient = FlounderStyle.calculateOffsetCoefficient(data);
+    const direction = FlounderStyle.selectClosestAngleDirection(offsetCoefficient.directions, "up"); // "up": 0.75
     // const direction = flounderStyle.selectClosestAngleDirection(offsetCoefficient.directions, 0.0); // "right": 0.0
     data.offsetX = offsetCoefficient.intervalSize * direction.x *step;
     data.offsetY = offsetCoefficient.intervalSize * direction.y *step;
-    const style = flounderStyle.makeStyle(data);
+    const style = FlounderStyle.makeStyle(data);
 
     // apply style to element
     const element = document.getElementById("YOUR-ELEMENT");
-    flounderStyle.setStyle(element, style);
+    FlounderStyle.setStyle(element, style);
 
     // apply style to class
     // const styleElement = document.getElementById("YOUR-ANIMATION-STYLE-ELEMENT") as HTMLStyleElement;

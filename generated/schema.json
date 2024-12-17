@@ -239,6 +239,9 @@
         "Type.ArgumentsBase": {
             "type": "object",
             "properties": {
+                "$schema": {
+                    "const": "https://raw.githubusercontent.com/wraith13/flounder.style.js/master/generated/schema.json#"
+                },
                 "type": {
                     "$ref": "#/definitions/Type.FlounderType"
                 },
@@ -316,6 +319,9 @@
         "Type.SpotArguments": {
             "type": "object",
             "properties": {
+                "$schema": {
+                    "const": "https://raw.githubusercontent.com/wraith13/flounder.style.js/master/generated/schema.json#"
+                },
                 "type": {
                     "enum": [
                         "trispot",
@@ -386,6 +392,9 @@
         "Type.LineArguments": {
             "type": "object",
             "properties": {
+                "$schema": {
+                    "const": "https://raw.githubusercontent.com/wraith13/flounder.style.js/master/generated/schema.json#"
+                },
                 "type": {
                     "enum": [
                         "stripe",

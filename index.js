@@ -228,7 +228,7 @@ define("evil-type.ts/common/evil-type", ["require", "exports"], function (requir
                 return Error.withErrorHandling(Number.isSafeInteger(value), listner, "safe-integer", value);
             };
             Validator.isDetailedInteger = function (data, safeInteger) {
-                var base = true === safeInteger ? Validator.isSafeInteger : Validator.isInteger;
+                var base = "safe" === safeInteger ? Validator.isSafeInteger : Validator.isInteger;
                 if ([data.minimum, data.exclusiveMinimum, data.maximum, data.exclusiveMaximum, data.multipleOf].every(function (i) { return undefined === i; })) {
                     return base;
                 }
@@ -255,7 +255,7 @@ define("evil-type.ts/common/evil-type", ["require", "exports"], function (requir
                         if (undefined !== data.multipleOf) {
                             details.push("multipleOf:".concat(data.multipleOf));
                         }
-                        return "".concat(true === safeInteger ? "safe-integer" : "integer", "(").concat(details.join(","), ")");
+                        return "".concat("safe" === safeInteger ? "safe-integer" : "integer", "(").concat(details.join(","), ")");
                     }, value); };
                     return result;
                 }
@@ -267,7 +267,7 @@ define("evil-type.ts/common/evil-type", ["require", "exports"], function (requir
                 return Error.withErrorHandling(Number.isFinite(value), listner, "safe-number", value);
             };
             Validator.isDetailedNumber = function (data, safeNumber) {
-                var base = true === safeNumber ? Validator.isSafeNumber : Validator.isNumber;
+                var base = "safe" === safeNumber ? Validator.isSafeNumber : Validator.isNumber;
                 if ([data.minimum, data.exclusiveMinimum, data.maximum, data.exclusiveMaximum, data.multipleOf].every(function (i) { return undefined === i; })) {
                     return base;
                 }
@@ -294,7 +294,7 @@ define("evil-type.ts/common/evil-type", ["require", "exports"], function (requir
                         if (undefined !== data.multipleOf) {
                             details.push("multipleOf:".concat(data.multipleOf));
                         }
-                        return "".concat(true === safeNumber ? "safe-number" : "number", "(").concat(details.join(","), ")");
+                        return "".concat("safe" === safeNumber ? "safe-number" : "number", "(").concat(details.join(","), ")");
                     }, value); };
                     return result;
                 }
@@ -658,11 +658,11 @@ define("generated/type", ["require", "exports", "evil-type.ts/common/evil-type"]
             "springgreen", "steelblue", "tan", "thistle", "tomato", "transparent", "turquoise", "violet", "wheat", "whitesmoke", "yellowgreen"
         ]);
         Type.isColor = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isOr(Type.isHexColor, Type.isNamedColor); });
-        Type.isRate = evil_type_1.EvilType.Validator.isDetailedNumber({ minimum: 0, maximum: 1, }, false);
-        Type.isSignedRate = evil_type_1.EvilType.Validator.isDetailedNumber({ minimum: -1, maximum: 1, }, false);
-        Type.isPixel = evil_type_1.EvilType.Validator.isDetailedNumber({ minimum: 0, }, false);
+        Type.isRate = evil_type_1.EvilType.Validator.isDetailedNumber({ minimum: 0, maximum: 1, });
+        Type.isSignedRate = evil_type_1.EvilType.Validator.isDetailedNumber({ minimum: -1, maximum: 1, });
+        Type.isPixel = evil_type_1.EvilType.Validator.isDetailedNumber({ minimum: 0, });
         Type.isSignedPixel = evil_type_1.EvilType.Validator.isNumber;
-        Type.isCount = evil_type_1.EvilType.Validator.isDetailedInteger({ minimum: 0, }, false);
+        Type.isCount = evil_type_1.EvilType.Validator.isDetailedInteger({ minimum: 0, });
         Type.isNamedDirectionAngle = evil_type_1.EvilType.Validator.isEnum(["right", "right-down",
             "down", "left-down", "left", "left-up", "up", "right-up"]);
         Type.isDirectionAngle = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isOr(Type.isNamedDirectionAngle, Type.isSignedRate); });
@@ -670,7 +670,9 @@ define("generated/type", ["require", "exports", "evil-type.ts/common/evil-type"]
         Type.isSpotArguments = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isSpecificObject(Type.spotArgumentsValidatorObject, false); });
         Type.isLineArguments = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isSpecificObject(Type.lineArgumentsValidatorObject, false); });
         Type.isArguments = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isOr(Type.isSpotArguments, Type.isLineArguments); });
-        Type.argumentsBaseValidatorObject = ({ type: Type.isFlounderType, layoutAngle: evil_type_1.EvilType.Validator.isOptional(evil_type_1.EvilType.Validator.isOr(Type.isLayoutAngle, Type.isSignedRate)), offsetX: evil_type_1.EvilType.Validator.isOptional(Type.isSignedPixel), offsetY: evil_type_1.EvilType.Validator.isOptional(Type.isSignedPixel), foregroundColor: Type.isColor, backgroundColor: evil_type_1.EvilType.Validator.isOptional(Type.isColor), intervalSize: evil_type_1.EvilType.Validator.isOptional(Type.isPixel), depth: Type.isRate, blur: evil_type_1.EvilType.Validator.isOptional(Type.isPixel), maxPatternSize: evil_type_1.EvilType.Validator.isOptional(Type.isPixel), reverseRate: evil_type_1.EvilType.Validator.isOptional(evil_type_1.EvilType.Validator.isOr(Type.isSignedRate, evil_type_1.EvilType.Validator.isJust("auto"), evil_type_1.EvilType.Validator.isJust("-auto"))), anglePerDepth: evil_type_1.EvilType.Validator.isOptional(evil_type_1.EvilType.Validator.isOr(Type.isSignedRate, evil_type_1.EvilType.Validator.isJust("auto"), evil_type_1.EvilType.Validator.isJust("-auto"))), maximumFractionDigits: evil_type_1.EvilType.Validator.isOptional(Type.isCount), });
+        Type.argumentsBaseValidatorObject = ({ $schema: evil_type_1.EvilType.Validator.isOptional(evil_type_1.EvilType.Validator.isJust("https://raw.githubusercontent.com/wraith13/flounder.style.js/master/generated/schema.json#")), type: Type.isFlounderType,
+            layoutAngle: evil_type_1.EvilType.Validator.isOptional(evil_type_1.EvilType.Validator.isOr(Type.isLayoutAngle, Type.isSignedRate)), offsetX: evil_type_1.EvilType.Validator.isOptional(Type.isSignedPixel), offsetY: evil_type_1.EvilType.Validator.isOptional(Type.isSignedPixel), foregroundColor: Type.isColor,
+            backgroundColor: evil_type_1.EvilType.Validator.isOptional(Type.isColor), intervalSize: evil_type_1.EvilType.Validator.isOptional(Type.isPixel), depth: Type.isRate, blur: evil_type_1.EvilType.Validator.isOptional(Type.isPixel), maxPatternSize: evil_type_1.EvilType.Validator.isOptional(Type.isPixel), reverseRate: evil_type_1.EvilType.Validator.isOptional(evil_type_1.EvilType.Validator.isOr(Type.isSignedRate, evil_type_1.EvilType.Validator.isJust("auto"), evil_type_1.EvilType.Validator.isJust("-auto"))), anglePerDepth: evil_type_1.EvilType.Validator.isOptional(evil_type_1.EvilType.Validator.isOr(Type.isSignedRate, evil_type_1.EvilType.Validator.isJust("auto"), evil_type_1.EvilType.Validator.isJust("-auto"))), maximumFractionDigits: evil_type_1.EvilType.Validator.isOptional(Type.isCount), });
         Type.spotArgumentsValidatorObject = evil_type_1.EvilType.Validator.mergeObjectValidator(Type.argumentsBaseValidatorObject, { type: evil_type_1.EvilType.Validator.isEnum(["trispot", "tetraspot"]), layoutAngle: evil_type_1.EvilType.Validator.isOptional(evil_type_1.EvilType.Validator.isOr(Type.isLayoutAngle, evil_type_1.EvilType.Validator.isJust(0))), anglePerDepth: evil_type_1.EvilType.Validator.isOptional(evil_type_1.EvilType.Validator.isJust(0)), });
         Type.lineArgumentsValidatorObject = evil_type_1.EvilType.Validator.mergeObjectValidator(Type.argumentsBaseValidatorObject, { type: evil_type_1.EvilType.Validator.isEnum(["stripe", "diline", "triline"]), });
     })(Type || (exports.Type = Type = {}));
