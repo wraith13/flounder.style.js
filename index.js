@@ -321,17 +321,31 @@ define("evil-type.ts/common/evil-type", ["require", "exports"], function (requir
                 }
                 return "string(".concat(details.join(","), ")");
             };
+            Validator.regexpTest = function (pattern, flags, text) {
+                switch (pattern) {
+                    case "^[[:regex:]]$":
+                        try {
+                            new RegExp(text, flags);
+                            return true;
+                        }
+                        catch (_a) {
+                            return false;
+                        }
+                    default:
+                        return new RegExp(pattern, flags).test(text);
+                }
+            };
             Validator.isDetailedString = function (data, regexpFlags) {
                 if ([data.minLength, data.maxLength, data.pattern, data.format].every(function (i) { return undefined === i; })) {
                     return Validator.isString;
                 }
                 var pattern = data.pattern;
                 var result = function (value, listner) {
-                    var _a, _b;
+                    var _a, _b, _c;
                     return Error.withErrorHandling("string" === typeof value &&
                         (undefined === data.minLength || data.minLength <= value.length) &&
                         (undefined === data.maxLength || value.length <= data.maxLength) &&
-                        (undefined === pattern || new RegExp(pattern, (_b = (_a = data.regexpFlags) !== null && _a !== void 0 ? _a : regexpFlags) !== null && _b !== void 0 ? _b : "u").test(value)), listner, function () { return Validator.makeStringTypeName(data); }, value);
+                        (undefined === pattern || ((_a = data.regexpTest) !== null && _a !== void 0 ? _a : Validator.regexpTest)(pattern, (_c = (_b = data.regexpFlags) !== null && _b !== void 0 ? _b : regexpFlags) !== null && _c !== void 0 ? _c : "u", value)), listner, function () { return Validator.makeStringTypeName(data); }, value);
                 };
                 return result;
             };
@@ -566,12 +580,12 @@ define("evil-type.ts/common/evil-type", ["require", "exports"], function (requir
                 }
                 return Object.assign.apply(Object, __spreadArray([{}, target], sources, true));
             };
-            Validator.isSpecificObject = function (memberValidator, additionalProperties) {
+            Validator.isSpecificObject = function (memberValidator, options) {
                 return function (value, listner) {
                     if (Validator.isObject(value)) {
                         var result = Object.entries("function" === typeof memberValidator ? memberValidator() : memberValidator).map(function (kv) { return Validator.isMemberType(value, kv[0], kv[1], Error.nextListener(kv[0], listner)); })
                             .every(function (i) { return i; });
-                        if (false === additionalProperties) {
+                        if (false === (options === null || options === void 0 ? void 0 : options.additionalProperties)) {
                             var regularKeys_1 = Object.keys(memberValidator);
                             var additionalKeys = Object.keys(value)
                                 .filter(function (key) { return !regularKeys_1.includes(key); });
@@ -595,13 +609,13 @@ define("evil-type.ts/common/evil-type", ["require", "exports"], function (requir
                     }
                 };
             };
-            Validator.isDictionaryObject = function (isType, keys, additionalProperties) {
+            Validator.isDictionaryObject = function (isType, keys, options) {
                 return function (value, listner) {
                     if (Validator.isObject(value)) {
                         var result = undefined === keys ?
                             Object.entries(value).map(function (kv) { return isType(kv[1], Error.nextListener(kv[0], listner)); }).every(function (i) { return i; }) :
                             keys.map(function (key) { return isType(value, Error.nextListener(key, listner)); }).every(function (i) { return i; });
-                        if (undefined !== keys && false === additionalProperties) {
+                        if (undefined !== keys && false === (options === null || options === void 0 ? void 0 : options.additionalProperties)) {
                             var additionalKeys = Object.keys(value)
                                 .filter(function (key) { return !keys.includes(key); });
                             if (additionalKeys.some(function (_) { return true; })) {
@@ -666,9 +680,15 @@ define("generated/type", ["require", "exports", "evil-type.ts/common/evil-type"]
         Type.isNamedDirectionAngle = evil_type_1.EvilType.Validator.isEnum(["right", "right-down",
             "down", "left-down", "left", "left-up", "up", "right-up"]);
         Type.isDirectionAngle = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isOr(Type.isNamedDirectionAngle, Type.isSignedRate); });
-        Type.isArgumentsBase = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isSpecificObject(Type.argumentsBaseValidatorObject, false); });
-        Type.isSpotArguments = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isSpecificObject(Type.spotArgumentsValidatorObject, false); });
-        Type.isLineArguments = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isSpecificObject(Type.lineArgumentsValidatorObject, false); });
+        Type.isArgumentsBase = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isSpecificObject(Type.argumentsBaseValidatorObject, {
+            additionalProperties: false
+        }); });
+        Type.isSpotArguments = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isSpecificObject(Type.spotArgumentsValidatorObject, {
+            additionalProperties: false
+        }); });
+        Type.isLineArguments = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isSpecificObject(Type.lineArgumentsValidatorObject, {
+            additionalProperties: false
+        }); });
         Type.isArguments = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isOr(Type.isSpotArguments, Type.isLineArguments); });
         Type.argumentsBaseValidatorObject = ({ $schema: evil_type_1.EvilType.Validator.isOptional(evil_type_1.EvilType.Validator.isJust("https://raw.githubusercontent.com/wraith13/flounder.style.js/master/generated/schema.json#")), type: Type.isFlounderType,
             layoutAngle: evil_type_1.EvilType.Validator.isOptional(evil_type_1.EvilType.Validator.isOr(Type.isLayoutAngle, Type.isSignedRate)), offsetX: evil_type_1.EvilType.Validator.isOptional(Type.isSignedPixel), offsetY: evil_type_1.EvilType.Validator.isOptional(Type.isSignedPixel), foregroundColor: Type.isColor,

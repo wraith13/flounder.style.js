@@ -70,12 +70,14 @@ declare module "evil-type.ts/common/evil-type" {
                 format?: string;
                 regexpFlags?: string;
             }) => string;
+            const regexpTest: (pattern: string, flags: string, text: string) => boolean;
             const isDetailedString: <Type extends string = string>(data: {
                 minLength?: number;
                 maxLength?: number;
                 pattern?: string;
                 format?: string;
                 regexpFlags?: string;
+                regexpTest?: (pattern: string, flags: string, text: string) => boolean;
             }, regexpFlags?: string) => IsType<Type>;
             type ActualObject = Exclude<object, null>;
             const isObject: (value: unknown) => value is ActualObject;
@@ -132,8 +134,12 @@ declare module "evil-type.ts/common/evil-type" {
             type MergeType<A, B> = Omit<A, keyof B> & B;
             type MergeMultipleType<A, B extends any[]> = B extends [infer Head, ...infer Tail] ? MergeMultipleType<MergeType<A, Head>, Tail> : B extends [infer Last] ? MergeType<A, Last> : A;
             const mergeObjectValidator: <A, B extends ObjectValidator<unknown>[]>(target: ObjectValidator<A>, ...sources: B) => MergeMultipleType<ObjectValidator<A>, B>;
-            const isSpecificObject: <ObjectType extends ActualObject>(memberValidator: ObjectValidator<ObjectType> | (() => ObjectValidator<ObjectType>), additionalProperties?: boolean) => (value: unknown, listner?: ErrorListener) => value is ObjectType;
-            const isDictionaryObject: <MemberType, Keys extends string>(isType: IsType<MemberType>, keys?: Keys[], additionalProperties?: boolean) => (value: unknown, listner?: ErrorListener) => value is { [key in Keys]: MemberType; };
+            const isSpecificObject: <ObjectType extends ActualObject>(memberValidator: ObjectValidator<ObjectType> | (() => ObjectValidator<ObjectType>), options?: {
+                additionalProperties?: boolean;
+            }) => (value: unknown, listner?: ErrorListener) => value is ObjectType;
+            const isDictionaryObject: <MemberType, Keys extends string>(isType: IsType<MemberType>, keys?: Keys[], options?: {
+                additionalProperties?: boolean;
+            }) => (value: unknown, listner?: ErrorListener) => value is { [key in Keys]: MemberType; };
         }
     }
 }

@@ -90,9 +90,12 @@ export namespace Type
         "down", "left-down", "left", "left-up", "up", "right-up" ] as const);
     export const isDirectionAngle: EvilType.Validator.IsType<DirectionAngle> = EvilType.lazy(() => EvilType.Validator.isOr(
         isNamedDirectionAngle, isSignedRate));
-    export const isArgumentsBase = EvilType.lazy(() => EvilType.Validator.isSpecificObject(argumentsBaseValidatorObject, false));
-    export const isSpotArguments = EvilType.lazy(() => EvilType.Validator.isSpecificObject(spotArgumentsValidatorObject, false));
-    export const isLineArguments = EvilType.lazy(() => EvilType.Validator.isSpecificObject(lineArgumentsValidatorObject, false));
+    export const isArgumentsBase = EvilType.lazy(() => EvilType.Validator.isSpecificObject(argumentsBaseValidatorObject, {
+        additionalProperties: false }));
+    export const isSpotArguments = EvilType.lazy(() => EvilType.Validator.isSpecificObject(spotArgumentsValidatorObject, {
+        additionalProperties: false }));
+    export const isLineArguments = EvilType.lazy(() => EvilType.Validator.isSpecificObject(lineArgumentsValidatorObject, {
+        additionalProperties: false }));
     export const isArguments: EvilType.Validator.IsType<Arguments> = EvilType.lazy(() => EvilType.Validator.isOr(isSpotArguments,
         isLineArguments));
     export const argumentsBaseValidatorObject: EvilType.Validator.ObjectValidator<ArgumentsBase> = ({ $schema:
