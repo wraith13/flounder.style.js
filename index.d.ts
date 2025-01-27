@@ -20,10 +20,10 @@ declare module "evil-type.ts/common/evil-type" {
             const nextListener: <T extends Listener | undefined>(name: string | number, listner: T) => T;
             const makePath: (path: string, name: string | number) => string;
             const getPathDepth: (path: string) => number;
-            const getType: (isType: ((v: unknown, listner?: Listener) => boolean)) => string[];
-            const isMtached: (matchRate: boolean | number) => matchRate is true;
+            const getType: (isType: (v: unknown, listner?: Listener) => boolean) => string[];
+            const isMtached: (matchRate: boolean | number) => boolean;
             const matchRateToNumber: (matchRate: boolean | number) => number;
-            const setMatchRate: (listner: Listener | undefined, matchRate: boolean | number) => matchRate is true;
+            const setMatchRate: (listner: Listener | undefined, matchRate: boolean | number) => boolean;
             const getMatchRate: (listner: Listener, path?: string) => number | boolean;
             const calculateMatchRate: (listner: Listener, path?: string) => number | true;
             const setMatch: (listner: Listener | undefined) => void;
@@ -72,15 +72,15 @@ declare module "evil-type.ts/common/evil-type" {
             }) => string;
             const regexpTest: (pattern: string, flags: string, text: string) => boolean;
             const isDetailedString: <Type extends string = string>(data: {
-                minLength?: number;
-                maxLength?: number;
-                pattern?: string;
-                format?: string;
-                regexpFlags?: string;
-                regexpTest?: (pattern: string, flags: string, text: string) => boolean;
+                minLength?: number | undefined;
+                maxLength?: number | undefined;
+                pattern?: string | undefined;
+                format?: string | undefined;
+                regexpFlags?: string | undefined;
+                regexpTest?: ((pattern: string, flags: string, text: string) => boolean) | undefined;
             }, regexpFlags?: string) => IsType<Type>;
             type ActualObject = Exclude<object, null>;
-            const isObject: (value: unknown) => value is ActualObject;
+            const isObject: (value: unknown) => value is object;
             const isEnum: <T>(list: readonly T[]) => (value: unknown, listner?: ErrorListener) => value is T;
             const isUniqueItems: (list: unknown[]) => boolean;
             const makeArrayTypeName: (data?: {
@@ -102,7 +102,7 @@ declare module "evil-type.ts/common/evil-type" {
                 $type: "never-type-guard";
             }
             const isNeverTypeGuard: (value: unknown, listner?: ErrorListener) => value is NeverTypeGuard;
-            const isNeverMemberType: <ObjectType extends ActualObject>(value: ActualObject, member: keyof ObjectType, _neverTypeGuard: NeverTypeGuard, listner?: ErrorListener) => boolean;
+            const isNeverMemberType: <ObjectType extends object>(value: ActualObject, member: keyof ObjectType, _neverTypeGuard: NeverTypeGuard, listner?: ErrorListener) => boolean;
             interface OptionalTypeGuard<T> {
                 $type: "optional-type-guard";
                 isType: IsType<T> | ObjectValidator<T>;
@@ -111,8 +111,8 @@ declare module "evil-type.ts/common/evil-type" {
             const makeOptionalTypeGuard: <T>(isType: IsType<T> | ObjectValidator<T>) => OptionalTypeGuard<T>;
             const invokeIsType: <T>(isType: IsType<T> | ObjectValidator<T>) => IsType<T> | ((value: unknown, listner?: ErrorListener) => value is object);
             const isOptional: <T>(isType: IsType<T> | ObjectValidator<T>) => OptionalTypeGuard<T>;
-            const isOptionalMemberType: <ObjectType extends ActualObject>(value: ActualObject, member: keyof ObjectType, optionalTypeGuard: OptionalTypeGuard<unknown>, listner?: ErrorListener) => boolean;
-            const isMemberType: <ObjectType extends ActualObject>(value: ActualObject, member: keyof ObjectType, isType: IsType<unknown> | OptionalTypeGuard<unknown>, listner?: ErrorListener) => boolean;
+            const isOptionalMemberType: <ObjectType extends object>(value: ActualObject, member: keyof ObjectType, optionalTypeGuard: OptionalTypeGuard<unknown>, listner?: ErrorListener) => boolean;
+            const isMemberType: <ObjectType extends object>(value: ActualObject, member: keyof ObjectType, isType: IsType<unknown> | OptionalTypeGuard<unknown>, listner?: ErrorListener) => boolean;
             type NeverKeys<T> = {
                 [K in keyof T]: T[K] extends never ? K : never;
             }[keyof T];
@@ -134,10 +134,10 @@ declare module "evil-type.ts/common/evil-type" {
             type MergeType<A, B> = Omit<A, keyof B> & B;
             type MergeMultipleType<A, B extends any[]> = B extends [infer Head, ...infer Tail] ? MergeMultipleType<MergeType<A, Head>, Tail> : B extends [infer Last] ? MergeType<A, Last> : A;
             const mergeObjectValidator: <A, B extends ObjectValidator<unknown>[]>(target: ObjectValidator<A>, ...sources: B) => MergeMultipleType<ObjectValidator<A>, B>;
-            const isSpecificObject: <ObjectType extends ActualObject>(memberValidator: ObjectValidator<ObjectType> | (() => ObjectValidator<ObjectType>), options?: {
+            const isSpecificObject: <ObjectType extends object>(memberValidator: ObjectValidator<ObjectType> | (() => ObjectValidator<ObjectType>), options?: {
                 additionalProperties?: boolean;
             }) => (value: unknown, listner?: ErrorListener) => value is ObjectType;
-            const isDictionaryObject: <MemberType, Keys extends string>(isType: IsType<MemberType>, keys?: Keys[], options?: {
+            const isDictionaryObject: <MemberType, Keys extends string>(isType: IsType<MemberType>, keys?: Keys[] | undefined, options?: {
                 additionalProperties?: boolean;
             }) => (value: unknown, listner?: ErrorListener) => value is { [key in Keys]: MemberType; };
         }
@@ -196,9 +196,9 @@ declare module "generated/type" {
         const isCount: EvilType.Validator.IsType<Count>;
         const isNamedDirectionAngle: EvilType.Validator.IsType<NamedDirectionAngle>;
         const isDirectionAngle: EvilType.Validator.IsType<DirectionAngle>;
-        const isArgumentsBase: (value: unknown, listner?: EvilType.Validator.ErrorListener) => value is ArgumentsBase;
-        const isSpotArguments: (value: unknown, listner?: EvilType.Validator.ErrorListener) => value is SpotArguments;
-        const isLineArguments: (value: unknown, listner?: EvilType.Validator.ErrorListener) => value is LineArguments;
+        const isArgumentsBase: (value: unknown, listner?: EvilType.Error.Listener | undefined) => value is ArgumentsBase;
+        const isSpotArguments: (value: unknown, listner?: EvilType.Error.Listener | undefined) => value is SpotArguments;
+        const isLineArguments: (value: unknown, listner?: EvilType.Error.Listener | undefined) => value is LineArguments;
         const isArguments: EvilType.Validator.IsType<Arguments>;
         const argumentsBaseValidatorObject: EvilType.Validator.ObjectValidator<ArgumentsBase>;
         const spotArgumentsValidatorObject: EvilType.Validator.ObjectValidator<SpotArguments>;
