@@ -322,6 +322,7 @@ body.immersive #screen-footer
 window.module.sequentialLoad
 ([
     { path:"https://wraith13.github.io/evil-timer.js/index.js", mapping:["evil-timer.js"] },
+    { path:"https://wraith13.github.io/phi-colors/library/source/index.js", mapping:["phi-colors"] },
     //{ path:"https://wraith13.github.io/flounder.style.js/index.js", mapping:["flounder.style.js"] },
     { path:"./index.js", mapping:["flounder.style.js"] },
 ]).then
@@ -329,6 +330,8 @@ window.module.sequentialLoad
     map =>
     {
         const { FlounderStyle } = require("flounder.style.js");
+        const { phiColors } = require("phi-colors");
+        const rate = (min, max, r) => min + ((max -min) *r);
         const valueToString = (value) => undefined === value ? "undefined": JSON.stringify(value);
         const stringify = (value) =>
         {
@@ -414,35 +417,16 @@ window.module.sequentialLoad
         {
             withFullscreen.parentElement.style.setProperty("display", "none");
         }
-        const phi = 1.618033988749895;
         let startAt = 0;
         let offsetAt = -1;
         let color = { r: Math.random(), g: Math.random(), b: Math.random() };
         const nextColor = ({ r, g, b}) =>
         {
-            r = (r +(1.0 / phi));
-            g = (g +(1.0 / phi));
-            b = (b +(1.0 / phi));
-            if (1.0 <= r && g <= r && b <= r)
-            {
-                g += 0.3;
-            }
-            else
-            if (1.0 <= b && r <= g && b <= g)
-            {
-                b += 0.3;
-            }
-            else
-            if (1.0 <= g)
-            {
-                r += 0.3;
-            }
-            r %= 1;
-            g %= 1;
-            b %= 1;
-            return { r, g, b, };
+            const hsl = phiColors.rgbToHsl({ r, g, b, });
+            hsl.h += rate(phiColors.HslHMin, phiColors.HslHMax, 1 /phiColors.phi)
+            return phiColors.clipRgb(phiColors.hslToRgb(hsl));
         };
-        const makeColor = ({ r, g, b}) => `rgb(${Math.floor(r *256)},${Math.floor(g *256)},${Math.floor(b *256)})`;
+        const makeColor = ({ r, g, b, }) => phiColors.rgbForStyle({ r, g, b, });
         screenBody.style.setProperty("background-color", makeColor(color));
         let arguments;
         let offsetCoefficient;
