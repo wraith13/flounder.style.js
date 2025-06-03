@@ -136,7 +136,7 @@ export namespace FlounderStyle
         ("auto" === data.reverseRate && "diline" === getPatternType(data)) ? 0.0:
         ("auto" === data.reverseRate && "triline" === getPatternType(data)) ? 0.0:
         999;
-    export const getAbsoulteReverseRate = (data: Type.Arguments): undefined | number | "auto" =>
+    export const getAbsoluteReverseRate = (data: Type.Arguments): undefined | number | "auto" =>
         "number" === typeof data.reverseRate && data.reverseRate < 0.0 ? Math.abs(data.reverseRate):
         "-auto" === data.reverseRate ? "auto":
         data.reverseRate;
@@ -333,7 +333,7 @@ export namespace FlounderStyle
         {
             return plain;
         }
-        const reverseRate = getAbsoulteReverseRate(data);
+        const reverseRate = getAbsoluteReverseRate(data);
         if (reverseRate !== data.reverseRate)
         {
             if ("transparent" === getBackgroundColor(data))
